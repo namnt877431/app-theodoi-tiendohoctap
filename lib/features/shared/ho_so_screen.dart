@@ -7,7 +7,7 @@ import '../../core/utils/ngay.dart';
 import '../../core/widgets/common.dart';
 import '../../data/app_state.dart';
 import '../../data/models/models.dart';
-import '../auth/chon_vai_tro.dart';
+import '../auth/ma_moi.dart';
 
 /// Trang tài khoản. Cùng một khung cho cả ba vai trò, chỉ khác phần thông tin
 /// riêng: phụ huynh thấy danh sách con, học sinh thấy lớp và trường.
@@ -94,31 +94,41 @@ class HoSoScreen extends StatelessWidget {
                 ],
               ),
             ),
-            if (nd.vaiTro == VaiTro.phuHuynh && s.dsCon.isNotEmpty) ...[
+            if (nd.vaiTro == VaiTro.phuHuynh) ...[
               const SizedBox(height: Gap.xl),
-              TieuDeMuc('Con đang theo dõi', eyebrow: '${s.dsCon.length} học sinh'),
-              const SizedBox(height: Gap.md),
-              for (final con in s.dsCon)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: Gap.sm + 2),
-                  child: _TheCon(con: con, dangChon: con.id == s.hocSinhHienTai?.id),
+              TieuDeMuc(
+                'Con đang theo dõi',
+                eyebrow: s.dsCon.isEmpty ? 'Chưa nối tài khoản nào' : '${s.dsCon.length} học sinh',
+                hanhDong: TextButton.icon(
+                  onPressed: () => moNhapMaMoi(context),
+                  icon: const Icon(Icons.add_rounded, size: 17),
+                  label: const Text('Thêm con'),
+                  style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
                 ),
+              ),
+              const SizedBox(height: Gap.md),
+              if (s.dsCon.isEmpty)
+                const LoiMoiNhapMa()
+              else
+                for (final con in s.dsCon)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: Gap.sm + 2),
+                    child: _TheCon(con: con, dangChon: con.id == s.hocSinhHienTai?.id),
+                  ),
             ],
             if (nd.vaiTro == VaiTro.hocSinh) ...[
               const SizedBox(height: Gap.xl),
-              _ThongKeHs(),
+              const TaoMaMoiThe(),
+              const SizedBox(height: Gap.xl),
+              const _ThongKeHs(),
             ],
             const SizedBox(height: Gap.xl),
             OutlinedButton.icon(
-              onPressed: () {
-                context.read<AppState>().dangXuat();
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const ChonVaiTroScreen()),
-                  (_) => false,
-                );
-              },
+              // AuthGate nghe trạng thái phiên nên đăng xuất xong màn hình tự
+              // quay về đăng nhập — không cần điều hướng tay ở đây.
+              onPressed: context.read<AppState>().dangXuat,
               icon: const Icon(Icons.logout_rounded, size: 18),
-              label: const Text('Đăng xuất'),
+              label: Text(s.dungThu ? 'Thoát chế độ xem thử' : 'Đăng xuất'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColor.butDo,
                 side: BorderSide(color: AppColor.butDo.withValues(alpha: .35)),

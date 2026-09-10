@@ -40,7 +40,7 @@ class _SoanBaoCaoScreenState extends State<SoanBaoCaoScreen> {
     super.initState();
     final b = widget.baoCao;
     _loai = b?.loai ?? widget.loaiMacDinh ?? LoaiBaiTap.trenLop;
-    _monId = b?.monId ?? context.read<AppState>().monHoc.first.id;
+    _monId = b?.monId ?? context.read<AppState>().monMacDinh;
     _gvId = b?.giaoVienId;
     _ngay = b?.ngay ?? Ngay.dauNgay(DateTime.now());
     _trangThai = b?.trangThai ?? TrangThai.xong;
@@ -113,6 +113,19 @@ class _SoanBaoCaoScreenState extends State<SoanBaoCaoScreen> {
   Widget build(BuildContext context) {
     final s = context.watch<AppState>();
     final dsGv = s.gvTheoLoai(_loai);
+
+    // Chưa có môn nào thì không dựng biểu mẫu — một danh sách chọn rỗng chỉ
+    // làm người dùng bối rối chứ không nói được vấn đề nằm ở đâu.
+    if (s.monHoc.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Viết báo cáo')),
+        body: const TrangTrong(
+          icon: Icons.menu_book_outlined,
+          tieuDe: 'Chưa có môn học nào',
+          moTa: 'Danh mục môn học còn trống nên chưa viết báo cáo được. Nhờ quản trị nạp danh mục trước.',
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(

@@ -39,7 +39,7 @@ abstract final class Seed {
     NguoiDung(id: 'qt_01', hoTen: 'Trần Quản Trị', vaiTro: VaiTro.quanTri, email: 'admin@solienlac.vn'),
     NguoiDung(id: 'ph_02', hoTen: 'Lê Thị Hồng', vaiTro: VaiTro.phuHuynh, email: 'hong.le@gmail.com', soDienThoai: '0918 442 019', conIds: ['hs_03']),
     NguoiDung(id: 'hs_03', hoTen: 'Lê Gia Bảo', vaiTro: VaiTro.hocSinh, lop: '8A4', truong: 'THCS Nguyễn Trãi'),
-    NguoiDung(id: 'hs_04', hoTen: 'Phạm Thùy Linh', vaiTro: VaiTro.hocSinh, lop: '9A2', truong: 'THCS Nguyễn Trãi', hoatDong: false),
+    NguoiDung(id: 'hs_04', hoTen: 'Phạm Thùy Linh', vaiTro: VaiTro.hocSinh, lop: '9A2', truong: 'THCS Nguyễn Trãi', email: 'linh.pham@hocsinh.vn', hoatDong: false),
   ];
 
   /// Thời khóa biểu chính khóa của Khôi (9A2) cộng bốn buổi học thêm.

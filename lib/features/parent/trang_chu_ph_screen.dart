@@ -7,6 +7,7 @@ import '../../core/utils/ngay.dart';
 import '../../core/widgets/common.dart';
 import '../../data/app_state.dart';
 import '../../data/models/models.dart';
+import '../auth/ma_moi.dart';
 import '../shared/chi_tiet_bao_cao_screen.dart';
 import '../shared/the_bao_cao.dart';
 import 'nhac_nho_screen.dart';
@@ -31,35 +32,52 @@ class TrangChuPhScreen extends StatelessWidget {
           color: AppColor.muc,
           onRefresh: s.taiLai,
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.md, Gap.lg, Gap.xxl + Gap.xl),
+            padding: const EdgeInsets.fromLTRB(
+              Gap.lg,
+              Gap.md,
+              Gap.lg,
+              Gap.xxl + Gap.xl,
+            ),
             children: [
               const _HeaderPh(),
               const SizedBox(height: Gap.lg),
+              if (hs == null) ...[
+                const SizedBox(height: Gap.xl),
+                const LoiMoiNhapMa(),
+              ],
               if (s.dsCon.length > 1) ...[
                 _ChonCon(dsCon: s.dsCon, dangChon: hs),
                 const SizedBox(height: Gap.lg),
               ],
-              _TomTatNgay(tongKet: tk, chuoi: s.chuoiNgayTron),
-              const SizedBox(height: Gap.xl),
-              const _TietHomNay(),
-              const SizedBox(height: Gap.xl),
-              TieuDeMuc(
-                'Báo cáo hôm nay',
-                eyebrow: Ngay.dayDu(homNay),
-                hanhDong: dsHomNay.isEmpty
-                    ? null
-                    : Text('${dsHomNay.length} mục',
-                        style: AppType.ui(12.5, color: AppColor.mucNhat, w: FontWeight.w500)),
-              ),
-              const SizedBox(height: Gap.md),
-              if (dsHomNay.isEmpty)
-                _ChuaCoBaoCao(tenCon: hs?.tenGoi ?? 'con')
-              else
-                for (final loai in LoaiBaiTap.values)
-                  _NhomTheoLoai(
-                    loai: loai,
-                    ds: dsHomNay.where((b) => b.loai == loai).toList(),
-                  ),
+              if (hs != null) ...[
+                _TomTatNgay(tongKet: tk, chuoi: s.chuoiNgayTron),
+                const SizedBox(height: Gap.xl),
+                const _TietHomNay(),
+                const SizedBox(height: Gap.xl),
+                TieuDeMuc(
+                  'Báo cáo hôm nay',
+                  eyebrow: Ngay.dayDu(homNay),
+                  hanhDong: dsHomNay.isEmpty
+                      ? null
+                      : Text(
+                          '${dsHomNay.length} mục',
+                          style: AppType.ui(
+                            12.5,
+                            color: AppColor.mucNhat,
+                            w: FontWeight.w500,
+                          ),
+                        ),
+                ),
+                const SizedBox(height: Gap.md),
+                if (dsHomNay.isEmpty)
+                  _ChuaCoBaoCao(tenCon: hs.tenGoi)
+                else
+                  for (final loai in LoaiBaiTap.values)
+                    _NhomTheoLoai(
+                      loai: loai,
+                      ds: dsHomNay.where((b) => b.loai == loai).toList(),
+                    ),
+              ],
             ],
           ),
         ),
@@ -84,10 +102,7 @@ class _HeaderPh extends StatelessWidget {
             children: [
               Eyebrow(Ngay.dayDu(DateTime.now())),
               const SizedBox(height: 3),
-              Text(
-                'Chào ${ph?.tenGoi ?? ''}',
-                style: AppType.display(26),
-              ),
+              Text('Chào ${ph?.tenGoi ?? ''}', style: AppType.display(26)),
             ],
           ),
         ),
@@ -95,9 +110,9 @@ class _HeaderPh extends StatelessWidget {
           icon: Icons.notifications_none_rounded,
           huyHieu: s.soNhacNhoChuaDoc,
           tooltip: 'Nhắc nhở đã gửi',
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const NhacNhoScreen()),
-          ),
+          onTap: () => Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const NhacNhoScreen())),
         ),
       ],
     );
@@ -128,10 +143,15 @@ class _ChonCon extends StatelessWidget {
               borderRadius: BorderRadius.circular(R.md),
               onTap: () => context.read<AppState>().chonCon(con),
               child: Ink(
-                padding: const EdgeInsets.symmetric(horizontal: Gap.md, vertical: Gap.sm),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: Gap.md,
+                  vertical: Gap.sm,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(R.md),
-                  border: Border.all(color: chon ? AppColor.ink : AppColor.dongKe),
+                  border: Border.all(
+                    color: chon ? AppColor.ink : AppColor.dongKe,
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -139,7 +159,9 @@ class _ChonCon extends StatelessWidget {
                       con.hoTen,
                       kichThuoc: 34,
                       mau: chon ? Colors.white : AppColor.muc,
-                      mauNen: chon ? Colors.white.withValues(alpha: .14) : AppColor.sky,
+                      mauNen: chon
+                          ? Colors.white.withValues(alpha: .14)
+                          : AppColor.sky,
                     ),
                     const SizedBox(width: Gap.sm + 2),
                     Column(
@@ -148,14 +170,21 @@ class _ChonCon extends StatelessWidget {
                       children: [
                         Text(
                           con.hoTen.split(' ').skip(1).join(' '),
-                          style: AppType.ui(13.5,
-                              w: FontWeight.w600, color: chon ? Colors.white : AppColor.ink),
+                          style: AppType.ui(
+                            13.5,
+                            w: FontWeight.w600,
+                            color: chon ? Colors.white : AppColor.ink,
+                          ),
                         ),
                         Text(
                           'Lớp ${con.lop}',
-                          style: AppType.ui(11,
-                              w: FontWeight.w500,
-                              color: chon ? Colors.white.withValues(alpha: .7) : AppColor.mucNhat),
+                          style: AppType.ui(
+                            11,
+                            w: FontWeight.w500,
+                            color: chon
+                                ? Colors.white.withValues(alpha: .7)
+                                : AppColor.mucNhat,
+                          ),
                         ),
                       ],
                     ),
@@ -217,7 +246,10 @@ class _TomTatNgay extends StatelessWidget {
               Expanded(child: Eyebrow('Tổng kết hôm nay')),
               if (chuoi >= 2)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: Gap.sm, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: Gap.sm,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColor.xongNhat,
                     borderRadius: BorderRadius.circular(R.sm),
@@ -225,12 +257,20 @@ class _TomTatNgay extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.local_fire_department_rounded,
-                          size: 13, color: AppColor.xong),
+                      const Icon(
+                        Icons.local_fire_department_rounded,
+                        size: 13,
+                        color: AppColor.xong,
+                      ),
                       const SizedBox(width: 4),
-                      Text('$chuoi ngày trọn bài',
-                          style:
-                              AppType.ui(11.5, w: FontWeight.w600, color: AppColor.xong)),
+                      Text(
+                        '$chuoi ngày trọn bài',
+                        style: AppType.ui(
+                          11.5,
+                          w: FontWeight.w600,
+                          color: AppColor.xong,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -257,8 +297,10 @@ class _TomTatNgay extends StatelessWidget {
                       tween: Tween(begin: 0, end: 1),
                       duration: Duration(milliseconds: 320 + i * 90),
                       curve: Curves.easeOutCubic,
-                      builder: (_, v, child) =>
-                          Opacity(opacity: v, child: Transform.scale(scaleX: v, child: child)),
+                      builder: (_, v, child) => Opacity(
+                        opacity: v,
+                        child: Transform.scale(scaleX: v, child: child),
+                      ),
                       child: Container(
                         height: 8,
                         decoration: BoxDecoration(
@@ -287,11 +329,19 @@ class _TomTatNgay extends StatelessWidget {
           ),
           Row(
             children: [
-              const Icon(Icons.schedule_rounded, size: 15, color: AppColor.mucNhat),
+              const Icon(
+                Icons.schedule_rounded,
+                size: 15,
+                color: AppColor.mucNhat,
+              ),
               const SizedBox(width: 6),
               Text(
                 'Học ${Ngay.phut(tongKet.soPhut)}',
-                style: AppType.ui(13, color: AppColor.mucNhat, w: FontWeight.w500),
+                style: AppType.ui(
+                  13,
+                  color: AppColor.mucNhat,
+                  w: FontWeight.w500,
+                ),
               ),
               const Spacer(),
               TextButton.icon(
@@ -329,8 +379,10 @@ class _ChiSo extends StatelessWidget {
         const SizedBox(width: 6),
         Text('$so', style: AppType.numeric(15, w: FontWeight.w700)),
         const SizedBox(width: 4),
-        Text(tt.nhan.toLowerCase(),
-            style: AppType.ui(12, color: AppColor.mucNhat, w: FontWeight.w500)),
+        Text(
+          tt.nhan.toLowerCase(),
+          style: AppType.ui(12, color: AppColor.mucNhat, w: FontWeight.w500),
+        ),
       ],
     );
   }
@@ -355,7 +407,10 @@ class _TietHomNay extends StatelessWidget {
         if (ds.isEmpty)
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: Gap.lg, horizontal: Gap.lg),
+            padding: const EdgeInsets.symmetric(
+              vertical: Gap.lg,
+              horizontal: Gap.lg,
+            ),
             decoration: BoxDecoration(
               color: AppColor.sky.withValues(alpha: .5),
               borderRadius: BorderRadius.circular(R.md),
@@ -363,7 +418,11 @@ class _TietHomNay extends StatelessWidget {
             ),
             child: Text(
               'Hôm nay không có tiết nào trong thời khóa biểu.',
-              style: AppType.ui(13, color: AppColor.mucNhat, w: FontWeight.w400),
+              style: AppType.ui(
+                13,
+                color: AppColor.mucNhat,
+                w: FontWeight.w400,
+              ),
             ),
           )
         else
@@ -396,7 +455,11 @@ class _OTiet extends StatelessWidget {
       decoration: BoxDecoration(
         color: hocThem ? LoaiBaiTap.hocThem.mauNen : AppColor.giayTrang,
         borderRadius: BorderRadius.circular(R.md),
-        border: Border.all(color: hocThem ? AppColor.hocThem.withValues(alpha: .22) : AppColor.dongKe),
+        border: Border.all(
+          color: hocThem
+              ? AppColor.hocThem.withValues(alpha: .22)
+              : AppColor.dongKe,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -411,8 +474,11 @@ class _OTiet extends StatelessWidget {
                 ),
                 child: Text(
                   hocThem ? 'Học thêm' : 'Tiết ${t.tiet}',
-                  style: AppType.ui(9.5,
-                      w: FontWeight.w700, color: hocThem ? Colors.white : AppColor.muc),
+                  style: AppType.ui(
+                    9.5,
+                    w: FontWeight.w700,
+                    color: hocThem ? Colors.white : AppColor.muc,
+                  ),
                 ),
               ),
             ],
@@ -427,7 +493,11 @@ class _OTiet extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             t.khungGio.isEmpty ? (t.phong ?? '') : t.khungGio,
-            style: AppType.numeric(11.5, color: AppColor.mucNhat, w: FontWeight.w500),
+            style: AppType.numeric(
+              11.5,
+              color: AppColor.mucNhat,
+              w: FontWeight.w500,
+            ),
           ),
         ],
       ),
@@ -450,7 +520,12 @@ class _NhomTheoLoai extends StatelessWidget {
 
     final theoGv = <String?, List<BaoCao>>{};
     for (final b in ds) {
-      theoGv.putIfAbsent(loai == LoaiBaiTap.hocThem ? b.giaoVienId : null, () => []).add(b);
+      theoGv
+          .putIfAbsent(
+            loai == LoaiBaiTap.hocThem ? b.giaoVienId : null,
+            () => [],
+          )
+          .add(b);
     }
 
     return Padding(
@@ -462,12 +537,16 @@ class _NhomTheoLoai extends StatelessWidget {
             children: [
               NhanLoai(loai, dayDu: true),
               const SizedBox(width: Gap.sm),
-              Expanded(
-                child: Container(height: 1, color: AppColor.dongKe),
-              ),
+              Expanded(child: Container(height: 1, color: AppColor.dongKe)),
               const SizedBox(width: Gap.sm),
-              Text('${ds.length}',
-                  style: AppType.numeric(12.5, color: AppColor.mucNhat, w: FontWeight.w600)),
+              Text(
+                '${ds.length}',
+                style: AppType.numeric(
+                  12.5,
+                  color: AppColor.mucNhat,
+                  w: FontWeight.w600,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: Gap.md),
@@ -477,11 +556,19 @@ class _NhomTheoLoai extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 2, bottom: Gap.sm),
                 child: Row(
                   children: [
-                    const Icon(Icons.person_rounded, size: 13, color: AppColor.hocThem),
+                    const Icon(
+                      Icons.person_rounded,
+                      size: 13,
+                      color: AppColor.hocThem,
+                    ),
                     const SizedBox(width: 5),
                     Text(
                       s.tenGv(muc.key) ?? '',
-                      style: AppType.ui(12.5, w: FontWeight.w600, color: AppColor.hocThem),
+                      style: AppType.ui(
+                        12.5,
+                        w: FontWeight.w600,
+                        color: AppColor.hocThem,
+                      ),
                     ),
                   ],
                 ),
@@ -491,7 +578,9 @@ class _NhomTheoLoai extends StatelessWidget {
               TheBaoCao(
                 b,
                 onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => ChiTietBaoCaoScreen(baoCaoId: b.id)),
+                  MaterialPageRoute(
+                    builder: (_) => ChiTietBaoCaoScreen(baoCaoId: b.id),
+                  ),
                 ),
               ),
               const SizedBox(height: Gap.sm + 2),
@@ -519,7 +608,8 @@ class _ChuaCoBaoCao extends StatelessWidget {
       child: TrangTrong(
         icon: Icons.edit_note_rounded,
         tieuDe: '$tenCon chưa gửi báo cáo nào hôm nay',
-        moTa: 'Báo cáo thường được gửi vào buổi tối, sau khi con làm xong bài. Gửi một lời nhắc nếu đã muộn.',
+        moTa:
+            'Báo cáo thường được gửi vào buổi tối, sau khi con làm xong bài. Gửi một lời nhắc nếu đã muộn.',
         hanhDong: FilledButton.icon(
           onPressed: () => moSoanNhacNho(context),
           icon: const Icon(Icons.campaign_rounded, size: 18),

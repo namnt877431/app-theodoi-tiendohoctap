@@ -1,35 +1,55 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'core/theme/app_theme.dart';
 import 'data/app_state.dart';
+import 'data/repositories/firebase_repository.dart';
+import 'data/repositories/hoc_tap_repository.dart';
 import 'data/repositories/mock_repository.dart';
-import 'features/auth/chon_vai_tro.dart';
+import 'features/auth/auth_gate.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
   ));
-  runApp(const SoLienLacApp());
+
+  runApp(SoLienLacApp(repo: await _chonKho()));
+}
+
+/// Dùng Firebase nếu project đã được cấu hình; chưa cấu hình thì rơi về dữ liệu
+/// mẫu để app vẫn mở được. Nhờ vậy người mới clone repo chạy được ngay, còn khi
+/// đã chạy `flutterfire configure` thì tự động chuyển sang dữ liệu thật.
+Future<HocTapRepository> _chonKho() async {
+  try {
+    await Firebase.initializeApp();
+    return FirebaseRepository();
+  } catch (e) {
+    debugPrint(
+      'Chưa cấu hình Firebase ($e) — chạy bằng dữ liệu mẫu. '
+      'Xem phần "Ghép Firebase" trong README.',
+    );
+    return MockRepository();
+  }
 }
 
 class SoLienLacApp extends StatelessWidget {
-  const SoLienLacApp({super.key});
+  const SoLienLacApp({super.key, required this.repo});
+
+  final HocTapRepository repo;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      // Đổi MockRepository sang FirebaseRepository khi ghép backend —
-      // phần giao diện không phải sửa dòng nào.
-      create: (_) => AppState(MockRepository()),
+      create: (_) => AppState(repo),
       child: MaterialApp(
         title: 'Sổ liên lạc',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.build(),
-        home: const ChonVaiTroScreen(),
+        home: const AuthGate(),
         builder: (context, child) => MediaQuery.withClampedTextScaling(
           minScaleFactor: 0.9,
           maxScaleFactor: 1.3,

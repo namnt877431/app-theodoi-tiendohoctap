@@ -19,6 +19,8 @@ android {
         applicationId = "vn.hoctap.theodoi_hoctap"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
+        // Mặc định của Flutter là API 24, đã thỏa yêu cầu tối thiểu API 23 của
+        // firebase_auth nên không cần ghi đè.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

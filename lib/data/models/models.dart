@@ -302,3 +302,211 @@ class TongKetNgay {
   int get tong => xong + dangLam + chuaLam;
   double get tiLeXong => tong == 0 ? 0 : xong / tong;
 }
+
+// ---------------------------------------------------------------------------
+// Chuyển đổi sang/từ Firestore
+//
+// Models cố tình không import cloud_firestore: kiểu Timestamp được đọc qua
+// `dynamic` nên tầng miền vẫn dùng được ở test và ở bản mock mà không kéo
+// theo SDK.
+// ---------------------------------------------------------------------------
+
+/// Đọc một giá trị ngày về DateTime, dù nó là Timestamp, DateTime, chuỗi ISO
+/// hay số mili-giây.
+DateTime? ngayTu(Object? v) {
+  if (v == null) return null;
+  if (v is DateTime) return v;
+  if (v is int) return DateTime.fromMillisecondsSinceEpoch(v);
+  if (v is String) return DateTime.tryParse(v);
+  final d = (v as dynamic).toDate();
+  return d is DateTime ? d : null;
+}
+
+/// Đọc tên enum đã lưu; giá trị lạ hoặc thiếu thì rơi về mặc định.
+T enumTu<T extends Enum>(List<T> ds, Object? v, T macDinh) =>
+    ds.where((e) => e.name == v).firstOrNull ?? macDinh;
+
+List<String> chuoiTu(Object? v) =>
+    v is List ? v.map((e) => '$e').toList() : const [];
+
+extension NguoiDungFs on NguoiDung {
+  Map<String, Object?> toMap() => {
+        'hoTen': hoTen,
+        'vaiTro': vaiTro.name,
+        'email': email,
+        'soDienThoai': soDienThoai,
+        'lop': lop,
+        'truong': truong,
+        'conIds': conIds,
+        'hoatDong': hoatDong,
+      };
+
+  static NguoiDung fromMap(String id, Map<String, Object?> m) => NguoiDung(
+        id: id,
+        hoTen: '${m['hoTen'] ?? ''}',
+        vaiTro: enumTu(VaiTro.values, m['vaiTro'], VaiTro.hocSinh),
+        email: m['email'] as String?,
+        soDienThoai: m['soDienThoai'] as String?,
+        lop: m['lop'] as String?,
+        truong: m['truong'] as String?,
+        conIds: chuoiTu(m['conIds']),
+        hoatDong: m['hoatDong'] as bool? ?? true,
+      );
+}
+
+extension MonHocFs on MonHoc {
+  Map<String, Object?> toMap() => {'ten': ten, 'vietTat': vietTat};
+
+  static MonHoc fromMap(String id, Map<String, Object?> m) => MonHoc(
+        id: id,
+        ten: '${m['ten'] ?? ''}',
+        vietTat: '${m['vietTat'] ?? m['ten'] ?? ''}',
+      );
+}
+
+extension GiaoVienFs on GiaoVien {
+  Map<String, Object?> toMap() => {
+        'hoTen': hoTen,
+        'monId': monId,
+        'loai': loai.name,
+        'noiDay': noiDay,
+        'soDienThoai': soDienThoai,
+      };
+
+  static GiaoVien fromMap(String id, Map<String, Object?> m) => GiaoVien(
+        id: id,
+        hoTen: '${m['hoTen'] ?? ''}',
+        monId: '${m['monId'] ?? ''}',
+        loai: enumTu(LoaiBaiTap.values, m['loai'], LoaiBaiTap.trenLop),
+        noiDay: m['noiDay'] as String?,
+        soDienThoai: m['soDienThoai'] as String?,
+      );
+}
+
+extension TietHocFs on TietHoc {
+  Map<String, Object?> toMap() => {
+        'hocSinhId': hocSinhId,
+        'thu': thu,
+        'tiet': tiet,
+        'buoi': buoi.name,
+        'monId': monId,
+        'loai': loai.name,
+        'giaoVienId': giaoVienId,
+        'phong': phong,
+        'batDau': batDau,
+        'ketThuc': ketThuc,
+      };
+
+  static TietHoc fromMap(String id, Map<String, Object?> m) => TietHoc(
+        id: id,
+        hocSinhId: '${m['hocSinhId'] ?? ''}',
+        thu: (m['thu'] as num?)?.toInt() ?? 2,
+        tiet: (m['tiet'] as num?)?.toInt() ?? 1,
+        buoi: enumTu(Buoi.values, m['buoi'], Buoi.sang),
+        monId: '${m['monId'] ?? ''}',
+        loai: enumTu(LoaiBaiTap.values, m['loai'], LoaiBaiTap.trenLop),
+        giaoVienId: m['giaoVienId'] as String?,
+        phong: m['phong'] as String?,
+        batDau: m['batDau'] as String?,
+        ketThuc: m['ketThuc'] as String?,
+      );
+}
+
+extension BaoCaoFs on BaoCao {
+  Map<String, Object?> toMap() => {
+        'hocSinhId': hocSinhId,
+        'ngay': ngay,
+        // Khóa ngày dạng chuỗi để truy vấn "báo cáo của ngày X" chỉ cần so
+        // sánh bằng, khỏi phải dựng chỉ mục cho khoảng thời gian.
+        'khoaNgay': khoaNgay,
+        'loai': loai.name,
+        'monId': monId,
+        'giaoVienId': giaoVienId,
+        'noiDung': noiDung,
+        'trangThai': trangThai.name,
+        'anh': anh,
+        'soPhut': soPhut,
+        'nhanXetPhuHuynh': nhanXetPhuHuynh,
+        'phuHuynhDaXem': phuHuynhDaXem,
+        'taoLuc': taoLuc,
+      };
+
+  /// "2026-09-10" — dùng làm khóa lọc theo ngày.
+  String get khoaNgay => '${ngay.year.toString().padLeft(4, '0')}-'
+      '${ngay.month.toString().padLeft(2, '0')}-'
+      '${ngay.day.toString().padLeft(2, '0')}';
+
+  static BaoCao fromMap(String id, Map<String, Object?> m) => BaoCao(
+        id: id,
+        hocSinhId: '${m['hocSinhId'] ?? ''}',
+        ngay: ngayTu(m['ngay']) ?? DateTime.now(),
+        loai: enumTu(LoaiBaiTap.values, m['loai'], LoaiBaiTap.trenLop),
+        monId: '${m['monId'] ?? ''}',
+        giaoVienId: m['giaoVienId'] as String?,
+        noiDung: '${m['noiDung'] ?? ''}',
+        trangThai: enumTu(TrangThai.values, m['trangThai'], TrangThai.chuaLam),
+        anh: chuoiTu(m['anh']),
+        soPhut: (m['soPhut'] as num?)?.toInt(),
+        nhanXetPhuHuynh: m['nhanXetPhuHuynh'] as String?,
+        phuHuynhDaXem: m['phuHuynhDaXem'] as bool? ?? false,
+        taoLuc: ngayTu(m['taoLuc']) ?? DateTime.now(),
+      );
+}
+
+extension NhacNhoFs on NhacNho {
+  Map<String, Object?> toMap() => {
+        'tuId': tuId,
+        'denId': denId,
+        'noiDung': noiDung,
+        'taoLuc': taoLuc,
+        'hanLuc': hanLuc,
+        'daDoc': daDoc,
+        'baoCaoId': baoCaoId,
+      };
+
+  static NhacNho fromMap(String id, Map<String, Object?> m) => NhacNho(
+        id: id,
+        tuId: '${m['tuId'] ?? ''}',
+        denId: '${m['denId'] ?? ''}',
+        noiDung: '${m['noiDung'] ?? ''}',
+        taoLuc: ngayTu(m['taoLuc']) ?? DateTime.now(),
+        hanLuc: ngayTu(m['hanLuc']),
+        daDoc: m['daDoc'] as bool? ?? false,
+        baoCaoId: m['baoCaoId'] as String?,
+      );
+}
+
+/// Mã mời sáu số để phụ huynh nối vào tài khoản con.
+///
+/// Học sinh sinh mã trên máy mình rồi đọc cho bố mẹ. Mã sống 15 phút và
+/// chỉ dùng được một lần — đủ cho một lần ngồi cạnh nhau, và không để lại
+/// một cánh cửa mở mãi vào dữ liệu của trẻ con.
+class MaMoi {
+  const MaMoi({
+    required this.ma,
+    required this.hocSinhId,
+    required this.hetHan,
+    this.daDung = false,
+  });
+
+  final String ma;
+  final String hocSinhId;
+  final DateTime hetHan;
+  final bool daDung;
+
+  bool get conHieuLuc => !daDung && hetHan.isAfter(DateTime.now());
+  Duration get conLai => hetHan.difference(DateTime.now());
+
+  Map<String, Object?> toMap() => {
+        'hocSinhId': hocSinhId,
+        'hetHan': hetHan,
+        'daDung': daDung,
+      };
+
+  static MaMoi fromMap(String ma, Map<String, Object?> m) => MaMoi(
+        ma: ma,
+        hocSinhId: '${m['hocSinhId'] ?? ''}',
+        hetHan: ngayTu(m['hetHan']) ?? DateTime.now(),
+        daDung: m['daDung'] as bool? ?? false,
+      );
+}

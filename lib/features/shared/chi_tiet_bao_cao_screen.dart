@@ -168,6 +168,7 @@ class AnhBaiLam extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final laDemo = duongDan.startsWith('demo:');
+    final laMang = duongDan.startsWith('http');
 
     return Stack(
       children: [
@@ -196,7 +197,27 @@ class AnhBaiLam extends StatelessWidget {
                     ),
                   ),
                 )
-              : Image.file(File(duongDan), fit: BoxFit.cover),
+              : laMang
+                  ? Image.network(
+                      duongDan,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (_, con, tien) => tien == null
+                          ? con
+                          : const Center(
+                              child: SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 2, color: AppColor.mucNhat),
+                              ),
+                            ),
+                      errorBuilder: (_, _, _) => const _AnhHong(),
+                    )
+                  : Image.file(
+                      File(duongDan),
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) => const _AnhHong(),
+                    ),
         ),
         if (onXoa != null)
           Positioned(
@@ -392,6 +413,26 @@ class _DoiTrangThai extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+/// Ảnh không tải được — nói thẳng là mất ảnh, đừng để một ô xám vô nghĩa.
+class _AnhHong extends StatelessWidget {
+  const _AnhHong();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.broken_image_outlined, size: 20, color: AppColor.mucNhat),
+          const SizedBox(height: 5),
+          Text('Không tải được ảnh',
+              style: AppType.ui(10.5, color: AppColor.mucNhat, w: FontWeight.w500)),
+        ],
+      ),
     );
   }
 }

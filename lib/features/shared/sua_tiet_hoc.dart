@@ -75,7 +75,7 @@ class _SuaTietHocState extends State<_SuaTietHoc> {
     _thu = t?.thu ?? widget.thuMacDinh ?? Ngay.cotTuNgay(DateTime.now());
     _tiet = t?.tiet ?? widget.tietMacDinh ?? 1;
     _buoi = t?.buoi ?? widget.buoiMacDinh ?? Buoi.sang;
-    _monId = t?.monId ?? context.read<AppState>().monHoc.first.id;
+    _monId = t?.monId ?? context.read<AppState>().monMacDinh;
     _gvId = t?.giaoVienId;
     _phong = TextEditingController(text: t?.phong ?? '');
     _batDau = TextEditingController(text: t?.batDau ?? '');
@@ -127,6 +127,23 @@ class _SuaTietHocState extends State<_SuaTietHoc> {
   Widget build(BuildContext context) {
     final s = context.watch<AppState>();
     final dsGv = s.gvTheoLoai(_loai);
+
+    if (s.monHoc.isEmpty) {
+      return Container(
+        decoration: const BoxDecoration(
+          color: AppColor.giayTrang,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(R.lg + 4)),
+        ),
+        child: const SafeArea(
+          top: false,
+          child: TrangTrong(
+            icon: Icons.menu_book_outlined,
+            tieuDe: 'Chưa có môn học nào',
+            moTa: 'Danh mục môn học còn trống nên chưa xếp được tiết. Nhờ quản trị nạp danh mục trước.',
+          ),
+        ),
+      );
+    }
 
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),

@@ -5,7 +5,9 @@ import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../core/widgets/common.dart';
 import '../../data/app_state.dart';
+import '../../data/mock/seed.dart';
 import '../../data/models/models.dart';
+import '../../data/repositories/firebase_repository.dart';
 
 /// Danh mục dùng chung: môn học và thầy cô. Thầy cô tách hai nhóm vì báo cáo
 /// học thêm phải gắn đúng người dạy thêm, không lẫn với giáo viên bộ môn.
@@ -44,12 +46,14 @@ class DanhMucScreen extends StatelessWidget {
                 ],
               ),
               Expanded(
-                child: TabBarView(
-                  children: [
-                    _DsMon(mon: s.monHoc),
-                    const _DsGiaoVien(),
-                  ],
-                ),
+                child: s.monHoc.isEmpty && s.giaoVien.isEmpty
+                    ? const _DanhMucTrong()
+                    : TabBarView(
+                        children: [
+                          _DsMon(mon: s.monHoc),
+                          const _DsGiaoVien(),
+                        ],
+                      ),
               ),
             ],
           ),
@@ -176,6 +180,63 @@ class _DsGiaoVien extends StatelessWidget {
           const SizedBox(height: Gap.lg),
         ],
       ],
+    );
+  }
+}
+
+/// Project Firebase mới dựng thì hai bộ sưu tập danh mục còn trống, mà không
+/// có môn học thì học sinh không viết nổi báo cáo đầu tiên. Cho quản trị nạp
+/// một bộ chuẩn ngay từ trong app, khỏi phải gõ tay trong Console.
+class _DanhMucTrong extends StatefulWidget {
+  const _DanhMucTrong();
+
+  @override
+  State<_DanhMucTrong> createState() => _DanhMucTrongState();
+}
+
+class _DanhMucTrongState extends State<_DanhMucTrong> {
+  bool _dangNap = false;
+
+  Future<void> _nap() async {
+    final s = context.read<AppState>();
+    final repo = s.repo;
+    if (repo is! FirebaseRepository) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Chế độ xem thử đã có sẵn danh mục mẫu')),
+      );
+      return;
+    }
+
+    setState(() => _dangNap = true);
+    try {
+      final so = await repo.napDanhMucMau(Seed.monHoc, Seed.giaoVien);
+      if (!mounted) return;
+      await s.taiLai();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đã nạp $so mục vào danh mục')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Không nạp được: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _dangNap = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TrangTrong(
+      icon: Icons.library_books_outlined,
+      tieuDe: 'Danh mục còn trống',
+      moTa: 'Chưa có môn học và thầy cô nào. Nạp bộ chuẩn gồm 12 môn cấp hai và 8 thầy cô mẫu, rồi sửa lại cho khớp trường mình.',
+      hanhDong: FilledButton.icon(
+        onPressed: _dangNap ? null : _nap,
+        icon: const Icon(Icons.download_rounded, size: 18),
+        label: Text(_dangNap ? 'Đang nạp…' : 'Nạp danh mục mẫu'),
+      ),
     );
   }
 }

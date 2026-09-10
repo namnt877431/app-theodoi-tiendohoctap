@@ -7,6 +7,17 @@ build/
 .flutter-plugins-dependencies
 android/.gradle/
 android/local.properties
+
+# Cấu hình Firebase sinh ra theo từng project, không đưa lên repo
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 lib/firebase_options.dart
+.firebase/
+
+# Emulator
+*-debug.log
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+node_modules/
