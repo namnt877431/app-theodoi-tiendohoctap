@@ -10,9 +10,13 @@ import '../../data/models/models.dart';
 import 'sua_tiet_hoc.dart';
 
 const _cotThu = [2, 3, 4, 5, 6, 7, 8];
-const _rongO = 84.0;
+
+/// Ô hẹp nhất còn đọc được tên môn viết tắt; màn hẹp thì giữ cỡ này và
+/// cuộn ngang, màn rộng thì ô giãn ra cho bảy cột lấp đầy bề ngang.
+const _rongOToiThieu = 80.0;
 const _caoO = 64.0;
 const _rongCotTiet = 36.0;
+const _khe = 4.0;
 
 /// Thời khóa biểu giữ đúng hình dạng tờ giấy dán cánh tủ: hàng là tiết,
 /// cột là thứ. Buổi học thêm tách riêng xuống dưới vì nó không nằm trong
@@ -166,6 +170,14 @@ class _LuoiTkb extends StatelessWidget {
     final s = context.watch<AppState>();
     final homNay = Ngay.cotTuNgay(DateTime.now());
 
+    return LayoutBuilder(builder: (context, rang) {
+      final conLai = rang.maxWidth - Gap.lg * 2 - _rongCotTiet - _khe - _khe * (_cotThu.length - 1);
+      final rongO = (conLai / _cotThu.length).clamp(_rongOToiThieu, 140.0).toDouble();
+      return _luoi(context, s, homNay, rongO);
+    });
+  }
+
+  Widget _luoi(BuildContext context, AppState s, int homNay, double rongO) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -203,7 +215,7 @@ class _LuoiTkb extends StatelessWidget {
                   children: [
                     for (final cot in _cotThu)
                       SizedBox(
-                        width: _rongO,
+                        width: rongO,
                         height: 34,
                         child: Center(
                           child: Text(
@@ -232,6 +244,7 @@ class _LuoiTkb extends StatelessWidget {
                               soTiet: tiet,
                               buoi: buoi,
                               homNay: cot == homNay,
+                              rong: rongO,
                             ),
                           ),
                       ],
@@ -253,6 +266,7 @@ class _OLuoi extends StatelessWidget {
     required this.soTiet,
     required this.buoi,
     required this.homNay,
+    required this.rong,
   });
 
   final TietHoc? tiet;
@@ -260,6 +274,7 @@ class _OLuoi extends StatelessWidget {
   final int soTiet;
   final Buoi buoi;
   final bool homNay;
+  final double rong;
 
   @override
   Widget build(BuildContext context) {
@@ -274,7 +289,7 @@ class _OLuoi extends StatelessWidget {
           borderRadius: BorderRadius.circular(R.sm),
           onTap: () => moSuaTietHoc(context, thu: thu, tiet: soTiet, buoi: buoi),
           child: Ink(
-            width: _rongO,
+            width: rong,
             height: _caoO,
             decoration: BoxDecoration(
               color: homNay ? AppColor.sky.withValues(alpha: .35) : Colors.transparent,
@@ -296,7 +311,7 @@ class _OLuoi extends StatelessWidget {
         borderRadius: BorderRadius.circular(R.sm),
         onTap: () => moSuaTietHoc(context, tietHoc: t),
         child: Ink(
-          width: _rongO,
+          width: rong,
           height: _caoO,
           padding: const EdgeInsets.symmetric(horizontal: Gap.sm, vertical: 7),
           decoration: BoxDecoration(
