@@ -393,6 +393,18 @@ Lần đầu cần ba việc trong Settings của repo trên GitHub:
 3. Repo phải **public** — tài khoản GitHub miễn phí không bật được Pages cho
    repo private.
 
+Nếu tài khoản GitHub chưa chạy được Actions (tab Actions báo *You can't
+perform that action at this time* — GitHub khóa với tài khoản mới hoặc chưa
+xác minh), vẫn đưa web lên được từ máy mình, không qua Actions:
+
+```bash
+python tools/dua_len_web.py
+```
+
+Script build web, đẩy sản phẩm lên nhánh `gh-pages` và trỏ Pages vào nhánh
+đó. Lúc này Pages ở chế độ *Deploy from a branch*; khi Actions chạy được thì
+đổi lại Source = **GitHub Actions** để nhánh `web` tự deploy.
+
 Chạy web tại máy để xem trước: `flutter run -d chrome --dart-define-from-file=.env.json`.
 
 ## Khi có lỗi
