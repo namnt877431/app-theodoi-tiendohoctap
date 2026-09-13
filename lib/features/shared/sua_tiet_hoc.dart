@@ -7,6 +7,7 @@ import '../../core/utils/ngay.dart';
 import '../../core/widgets/common.dart';
 import '../../data/app_state.dart';
 import '../../data/models/models.dart';
+import 'chon_giao_vien.dart';
 
 /// Bảng thêm/sửa một tiết. Mở từ ô trống trong lưới thì thứ và tiết đã điền sẵn,
 /// nên phần lớn trường hợp chỉ còn chọn môn rồi lưu.
@@ -126,7 +127,7 @@ class _SuaTietHocState extends State<_SuaTietHoc> {
   @override
   Widget build(BuildContext context) {
     final s = context.watch<AppState>();
-    final dsGv = s.gvTheoLoai(_loai);
+    final dsGv = s.gvChoHocSinh(_loai);
 
     if (s.monHoc.isEmpty) {
       return Container(
@@ -232,19 +233,11 @@ class _SuaTietHocState extends State<_SuaTietHoc> {
                     ),
                     const SizedBox(height: Gap.lg),
                     _Nhan(_loai == LoaiBaiTap.hocThem ? 'Thầy cô dạy thêm' : 'Giáo viên bộ môn'),
-                    DropdownButtonFormField<String?>(
-                      initialValue: _gvId,
-                      isExpanded: true,
-                      style: AppType.ui(15, w: FontWeight.w500),
-                      hint: const Text('Chưa chọn'),
-                      items: [
-                        const DropdownMenuItem<String?>(value: null, child: Text('Chưa chọn')),
-                        for (final g in dsGv)
-                          DropdownMenuItem<String?>(
-                            value: g.id,
-                            child: Text('${g.hoTen} · ${s.vietTatMon(g.monId)}'),
-                          ),
-                      ],
+                    ChonGiaoVien(
+                      loai: _loai,
+                      giaTri: _gvId,
+                      dsGv: dsGv,
+                      monId: _monId,
                       onChanged: (v) => setState(() => _gvId = v),
                     ),
                     const SizedBox(height: Gap.lg),

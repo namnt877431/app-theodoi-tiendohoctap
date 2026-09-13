@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 
-/// Bìa quyển sổ liên lạc: nền mực đậm, dòng kẻ mờ, lề đỏ chạy dọc bên trái.
+/// Bìa quyển sổ liên lạc: nền mực đậm, dòng kẻ mờ như trang vở.
 /// Đặt ngôn ngữ thị giác của cả app ngay ở màn hình đầu tiên.
+///
+/// Không vẽ lề đỏ ở đây: sát mép màn hình và cụt hai đầu, nó trông như một
+/// vệt lỗi hơn là một cái lề. Lề đỏ để dành cho thẻ báo cáo, nơi nó có nghĩa.
 class BiaSo extends StatelessWidget {
   const BiaSo({super.key, required this.phuDe, this.gonGang = false});
 
@@ -80,11 +83,6 @@ class _KeBia extends CustomPainter {
     for (var y = lineHeight; y < size.height; y += lineHeight) {
       canvas.drawLine(Offset(-Gap.xl, y), Offset(size.width + Gap.xl, y), ke);
     }
-    final le = Paint()
-      ..color = AppColor.butDo.withValues(alpha: .85)
-      ..strokeWidth = 2.5
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(const Offset(-Gap.md, -Gap.xl), Offset(-Gap.md, size.height + Gap.xl), le);
   }
 
   @override

@@ -324,12 +324,24 @@ class DongThongTin extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 7),
       child: Row(
+        // Nhãn đi cùng dòng đầu của giá trị. Tên trường dài hai dòng mà căn
+        // giữa thì nhãn tụt xuống giữa hai dòng, nhìn như lệch hàng so với các
+        // dòng phía trên.
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 16, color: mau ?? AppColor.mucNhat),
+          // 13.5 × 1.4 = 18.9 là chiều cao hộp dòng; đẩy biểu tượng 16px xuống
+          // một nửa phần dôi ra để nó ngang tâm chữ chứ không ngang đỉnh chữ.
+          Padding(
+            padding: const EdgeInsets.only(top: 1.5),
+            child: Icon(icon, size: 16, color: mau ?? AppColor.mucNhat),
+          ),
           const SizedBox(width: Gap.md),
           Text(nhan, style: AppType.ui(13.5, color: AppColor.mucNhat, w: FontWeight.w400)),
-          const Spacer(),
-          Flexible(
+          const SizedBox(width: Gap.md),
+          // Expanded chứ không phải Spacer + Flexible: hai cái đó cùng flex 1
+          // nên chia đôi chỗ trống, giá trị chỉ được nửa bề ngang và xuống dòng
+          // sớm dù còn thừa chỗ.
+          Expanded(
             child: Text(
               giaTri,
               textAlign: TextAlign.right,
@@ -340,4 +352,138 @@ class DongThongTin extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Nhãn nhỏ đặt trên một ô nhập trong biểu mẫu.
+class NhanO extends StatelessWidget {
+  const NhanO(this.chu, {super.key});
+  final String chu;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(bottom: Gap.sm, left: 2),
+        child: Eyebrow(chu),
+      );
+}
+
+/// Khung chung cho các bảng thêm/sửa mở từ dưới lên: tay nắm, tiêu đề, phần
+/// thân cuộn được, và hàng nút Lưu (kèm Xóa khi đang sửa bản ghi cũ).
+///
+/// Tự đẩy lên khi bàn phím hiện, để ô đang gõ không bị che.
+class KhungBieuMau extends StatelessWidget {
+  const KhungBieuMau({
+    super.key,
+    required this.tieuDe,
+    required this.children,
+    required this.onLuu,
+    this.eyebrow,
+    this.nhanLuu = 'Lưu',
+    this.onXoa,
+    this.dangLuu = false,
+  });
+
+  final String tieuDe;
+  final String? eyebrow;
+  final List<Widget> children;
+  final VoidCallback? onLuu;
+  final VoidCallback? onXoa;
+  final String nhanLuu;
+  final bool dangLuu;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: Container(
+        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * .88),
+        decoration: const BoxDecoration(
+          color: AppColor.giayTrang,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(R.lg + 4)),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: Gap.md),
+              Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColor.dongKeDam,
+                  borderRadius: BorderRadius.circular(R.pill),
+                ),
+              ),
+              const SizedBox(height: Gap.lg),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Gap.lg),
+                child: TieuDeMuc(tieuDe, eyebrow: eyebrow),
+              ),
+              const SizedBox(height: Gap.lg),
+              Flexible(
+                child: ListView(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.fromLTRB(Gap.lg, 0, Gap.lg, Gap.lg),
+                  children: [
+                    ...children,
+                    const SizedBox(height: Gap.xl),
+                    Row(
+                      children: [
+                        if (onXoa != null) ...[
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: dangLuu ? null : onXoa,
+                              icon: const Icon(Icons.delete_outline_rounded, size: 18),
+                              label: const Text('Xóa'),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: AppColor.butDo,
+                                side: BorderSide(color: AppColor.butDo.withValues(alpha: .35)),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: Gap.md),
+                        ],
+                        Expanded(
+                          flex: 2,
+                          child: FilledButton(
+                            onPressed: dangLuu ? null : onLuu,
+                            child: Text(dangLuu ? 'Đang lưu…' : nhanLuu),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Hỏi lại trước khi xóa. Trả về true khi người dùng xác nhận.
+Future<bool> hoiXoa(BuildContext context, String viec, {String? giaiThich}) async {
+  final dongY = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: Text(viec, style: AppType.ui(16, w: FontWeight.w700)),
+      content: giaiThich == null
+          ? null
+          : Text(giaiThich, style: AppType.ui(13.5, w: FontWeight.w400, height: 1.45)),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(false),
+          child: const Text('Thôi'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.of(ctx).pop(true),
+          style: FilledButton.styleFrom(backgroundColor: AppColor.butDo),
+          child: const Text('Xóa'),
+        ),
+      ],
+    ),
+  );
+  return dongY ?? false;
 }

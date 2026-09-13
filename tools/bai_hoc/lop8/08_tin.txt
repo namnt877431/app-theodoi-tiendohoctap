@@ -1,0 +1,79 @@
+mon: m_tin
+lop: 8
+hk: 1
+
+# Chủ đề 1: Máy tính và cộng đồng
+- Bài 1: Lược sử công cụ tính toán
+> Từ bàn tính, máy tính cơ khí đến máy tính điện tử qua các thế hệ (đèn điện tử, bán dẫn, vi mạch, vi xử lí) và máy tính hiện đại; các nhân vật như Charles Babbage, Alan Turing, John von Neumann.
+? Máy tính điện tử đầu tiên tên là gì? → ENIAC
+? Kể các thế hệ máy tính đã học.
+
+# Chủ đề 2: Tổ chức lưu trữ, tìm kiếm và trao đổi thông tin
+- Bài 2: Thông tin trong môi trường số
+> Đặc điểm thông tin số: đa dạng, dễ nhân bản, lan truyền nhanh, khó thu hồi; đánh giá độ tin cậy của thông tin và nguồn tin đáng tin cậy.
+? Dấu hiệu nào cho thấy một tin trên mạng đáng tin cậy? → nguồn rõ ràng, tác giả uy tín, có kiểm chứng
+- Bài 3: Thực hành: Khai thác thông tin số
+> Tìm kiếm, đánh giá, chọn lọc thông tin trên Internet cho một chủ đề và ghi rõ nguồn.
+? Con tìm thông tin cho chủ đề gì? Lấy từ nguồn nào?
+
+# Chủ đề 3: Đạo đức, pháp luật và văn hóa trong môi trường số
+- Bài 4: Đạo đức và văn hóa trong sử dụng công nghệ kĩ thuật số
+> Các biểu hiện vi phạm (bắt nạt trên mạng, đăng ảnh người khác không xin phép, vi phạm bản quyền, lan truyền tin giả); ứng xử có văn hóa và tôn trọng pháp luật trên không gian số.
+? Đăng ảnh bạn lên mạng mà không hỏi ý kiến có được không? → không
+
+# Chủ đề 4: Ứng dụng tin học
+- Bài 5: Sử dụng bảng tính giải quyết bài toán thực tế
+> Địa chỉ tương đối và tuyệt đối ($A$1), sao chép công thức, các hàm cơ bản SUM, AVERAGE, MAX, MIN, COUNT trong bảng tính.
+? Địa chỉ $A$1 khác A1 ở chỗ nào? → không đổi khi sao chép công thức
+? Hàm tính trung bình cộng là gì? → AVERAGE
+- Bài 6: Sắp xếp và lọc dữ liệu
+> Sắp xếp tăng, giảm theo một hoặc nhiều cột; lọc dữ liệu theo điều kiện trong bảng tính.
+? Muốn chỉ xem học sinh điểm từ 8 trở lên dùng chức năng gì? → lọc (Filter)
+- Bài 7: Trình bày dữ liệu bằng biểu đồ
+> Chọn kiểu biểu đồ phù hợp (cột, đường, tròn), tạo và chỉnh sửa biểu đồ từ bảng tính.
+? Biểu đồ nào phù hợp để so sánh tỉ lệ phần trăm? → biểu đồ tròn
+- Bài 8a: Làm việc với danh sách dạng liệt kê và hình ảnh trong văn bản
+> Tạo danh sách gạch đầu dòng, đánh số; chèn và bố trí hình ảnh trong văn bản.
+? Con chèn hình vào văn bản và cho chữ bao quanh được chưa?
+- Bài 9a: Tạo đầu trang, chân trang cho văn bản
+> Tạo Header, Footer, đánh số trang tự động cho văn bản nhiều trang.
+? Đánh số trang tự động nằm ở đầu trang hay chân trang? → tùy chọn, thường ở chân trang
+- Bài 10a: Định dạng nâng cao cho trang chiếu
+> Bố cục trang chiếu, màu nền, hiệu ứng chuyển trang và hiệu ứng động cho đối tượng.
+? Con làm được hiệu ứng chuyển trang chưa?
+- Bài 11a: Sử dụng bản mẫu tạo bài trình chiếu
+> Dùng bản mẫu (template, theme) để tạo bài trình chiếu nhanh và nhất quán.
+? Bản mẫu giúp gì khi làm bài trình chiếu? → nhanh, đồng bộ về màu sắc, bố cục
+- Bài 8b: Phần mềm chỉnh sửa ảnh
+> Làm quen phần mềm chỉnh sửa ảnh: mở, lưu, các công cụ cơ bản và vùng làm việc.
+? Con dùng phần mềm nào để chỉnh ảnh ở lớp?
+- Bài 9b: Thay đổi khung hình, kích thước ảnh
+> Cắt (crop), xoay, thay đổi kích thước và độ phân giải ảnh.
+? Cắt ảnh khác thay đổi kích thước ở chỗ nào? → cắt bỏ bớt phần ảnh; đổi kích thước giữ nguyên nội dung
+- Bài 10b: Thêm văn bản, tạo hiệu ứng cho ảnh
+> Chèn chữ, dùng lớp (layer), bộ lọc và hiệu ứng cho ảnh.
+? Lớp (layer) trong phần mềm ảnh dùng để làm gì?
+- Bài 11b: Thực hành tổng hợp
+> Làm một sản phẩm ảnh hoàn chỉnh (poster, thiệp) từ các kĩ năng đã học.
+? Con làm sản phẩm gì? Cho bố mẹ xem.
+
+hk: 2
+
+# Chủ đề 5: Giải quyết vấn đề với sự trợ giúp của máy tính
+- Bài 12: Từ thuật toán đến chương trình
+> Thuật toán được thể hiện thành chương trình (Scratch); cấu trúc tuần tự; khái niệm biến, hằng và kiểu dữ liệu.
+? Thuật toán là gì? → dãy các bước rõ ràng để giải một bài toán
+- Bài 13: Biểu diễn dữ liệu
+> Kiểu dữ liệu số, xâu kí tự, lôgic; biến và hằng; biểu thức và phép toán trong chương trình.
+? Biến dùng để làm gì trong chương trình? → lưu giá trị có thể thay đổi
+- Bài 14: Cấu trúc điều khiển
+> Cấu trúc rẽ nhánh (nếu… thì…, nếu không…) và cấu trúc lặp (lặp n lần, lặp khi điều kiện còn đúng).
+? Muốn lặp một việc 10 lần dùng khối lệnh gì? → lặp lại 10 lần (repeat)
+- Bài 15: Gỡ lỗi
+> Lỗi cú pháp và lỗi lôgic; cách tìm lỗi: chạy từng bước, kiểm tra giá trị biến, thử với dữ liệu nhỏ.
+? Lỗi lôgic là gì? → chương trình chạy được nhưng cho kết quả sai
+
+# Chủ đề 6: Hướng nghiệp với tin học
+- Bài 16: Tin học với nghề nghiệp
+> Các nhóm nghề trong lĩnh vực tin học (lập trình, thiết kế, quản trị mạng, phân tích dữ liệu…) và các nghề ứng dụng tin học; định hướng bản thân.
+? Con thích nghề nào có liên quan đến tin học? Vì sao?

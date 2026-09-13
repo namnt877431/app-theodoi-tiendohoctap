@@ -10,7 +10,10 @@ import '../../data/repositories/hoc_tap_repository.dart';
 import 'dang_nhap_screen.dart';
 
 /// Tạo tài khoản. Chỉ mở cho phụ huynh và học sinh — tài khoản quản trị do
-/// người dựng hệ thống tạo tay trong Firebase Console, không để ai tự đăng ký.
+/// người dựng hệ thống phong tay bằng SQL, không để ai tự đăng ký.
+///
+/// Học sinh chọn trường từ danh mục (tỉnh → trường) chứ không gõ tay, để về
+/// sau chỉ thấy đúng thầy cô trường mình.
 class DangKyScreen extends StatefulWidget {
   const DangKyScreen({super.key});
 
@@ -25,16 +28,27 @@ class _DangKyScreenState extends State<DangKyScreen> {
   final _matKhau = TextEditingController();
   final _nhacLai = TextEditingController();
   final _lop = TextEditingController();
-  final _truong = TextEditingController();
   final _sdt = TextEditingController();
 
   VaiTro _vaiTro = VaiTro.phuHuynh;
+  String? _tinhId;
+  String? _truongId;
   bool _dangGui = false;
   String? _loi;
 
   @override
+  void initState() {
+    super.initState();
+    // Chưa đăng nhập nhưng vẫn đọc được tỉnh và trường — luật ở tầng dữ liệu
+    // mở riêng hai bảng đó cho khách.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) context.read<AppState>().taiTinhTruong().catchError((_) {});
+    });
+  }
+
+  @override
   void dispose() {
-    for (final c in [_hoTen, _email, _matKhau, _nhacLai, _lop, _truong, _sdt]) {
+    for (final c in [_hoTen, _email, _matKhau, _nhacLai, _lop, _sdt]) {
       c.dispose();
     }
     super.dispose();
@@ -54,7 +68,7 @@ class _DangKyScreenState extends State<DangKyScreen> {
             matKhau: _matKhau.text,
             vaiTro: _vaiTro,
             lop: laHocSinh ? _lop.text.trim() : null,
-            truong: laHocSinh ? _truong.text.trim() : null,
+            truongId: laHocSinh ? _truongId : null,
             soDienThoai: laHocSinh ? null : _sdt.text.trim(),
           );
       // Tạo xong là đã đăng nhập luôn; AuthGate lo phần chuyển màn.
@@ -69,6 +83,8 @@ class _DangKyScreenState extends State<DangKyScreen> {
   @override
   Widget build(BuildContext context) {
     final laHocSinh = _vaiTro == VaiTro.hocSinh;
+    final s = context.watch<AppState>();
+    final dsTruong = s.truongTheoTinh(_tinhId);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Tạo tài khoản')),
@@ -148,23 +164,49 @@ class _DangKyScreenState extends State<DangKyScreen> {
               kiemTra: (v) => v == _matKhau.text ? null : 'Hai lần nhập chưa khớp',
             ),
             if (laHocSinh) ...[
-              Row(
-                children: [
-                  Expanded(
-                    child: _O(nhan: 'Lớp', c: _lop, hint: '9A2', capitalize: true),
+              _O(nhan: 'Lớp', c: _lop, hint: '9A2', capitalize: true),
+              if (s.truong.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: Gap.md),
+                  child: Text(
+                    'Danh mục trường còn trống nên chưa chọn được trường. Tạo tài khoản trước, chọn trường sau trong mục Tài khoản.',
+                    style: AppType.ui(12.5,
+                        color: AppColor.mucNhat, w: FontWeight.w400, height: 1.45),
                   ),
-                  const SizedBox(width: Gap.md),
-                  Expanded(
-                    flex: 2,
-                    child: _O(
-                      nhan: 'Trường',
-                      c: _truong,
-                      hint: 'THCS Nguyễn Trãi',
-                      capitalize: true,
-                    ),
+                )
+              else ...[
+                if (s.tinh.isNotEmpty)
+                  _ChonO<String?>(
+                    nhan: 'Tỉnh / thành phố',
+                    giaTri: _tinhId,
+                    hint: 'Mọi tỉnh',
+                    items: [
+                      const DropdownMenuItem<String?>(value: null, child: Text('Mọi tỉnh')),
+                      for (final t in s.tinh)
+                        DropdownMenuItem<String?>(value: t.id, child: Text(t.ten)),
+                    ],
+                    onChanged: (v) => setState(() {
+                      _tinhId = v;
+                      // Đổi tỉnh thì trường đang chọn có thể không còn trong danh sách.
+                      if (s.truongTheoId(_truongId)?.tinhId != v && v != null) {
+                        _truongId = null;
+                      }
+                    }),
                   ),
-                ],
-              ),
+                _ChonO<String?>(
+                  nhan: 'Trường',
+                  giaTri: dsTruong.any((t) => t.id == _truongId) ? _truongId : null,
+                  hint: 'Chọn trường',
+                  items: [
+                    for (final t in dsTruong)
+                      DropdownMenuItem<String?>(
+                        value: t.id,
+                        child: Text(t.ten, overflow: TextOverflow.ellipsis),
+                      ),
+                  ],
+                  onChanged: (v) => setState(() => _truongId = v),
+                ),
+              ],
             ] else
               _O(
                 nhan: 'Số điện thoại (không bắt buộc)',
@@ -206,6 +248,51 @@ class _DangKyScreenState extends State<DangKyScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Ô chọn kèm nhãn, cùng khuôn với [_O] để hàng tỉnh/trường không lệch với
+/// các ô gõ phía trên.
+class _ChonO<T> extends StatelessWidget {
+  const _ChonO({
+    required this.nhan,
+    required this.giaTri,
+    required this.items,
+    required this.onChanged,
+    this.hint,
+  });
+
+  final String nhan;
+  final T? giaTri;
+  final String? hint;
+  final List<DropdownMenuItem<T>> items;
+  final ValueChanged<T?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: Gap.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: Gap.sm, left: 2),
+            child: Eyebrow(nhan),
+          ),
+          DropdownButtonFormField<T>(
+            // Khóa theo giá trị để khi tỉnh đổi làm trường bị bỏ chọn, ô
+            // dựng lại thay vì giữ giá trị cũ không còn trong danh sách.
+            key: ValueKey(giaTri),
+            initialValue: giaTri,
+            isExpanded: true,
+            style: AppType.ui(15, w: FontWeight.w500),
+            hint: hint == null ? null : Text(hint!),
+            items: items,
+            onChanged: onChanged,
+          ),
+        ],
       ),
     );
   }

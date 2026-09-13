@@ -41,6 +41,10 @@ abstract final class AppColor {
   /// Bài học thêm — phân biệt với bài trên lớp.
   static const hocThem = Color(0xFF7A5AF8);
   static const hocThemNhat = Color(0xFFF0EDFE);
+
+  /// Mực vàng — chỉ cho con dấu ở mốc cao nhất. Dùng dè để còn quý.
+  static const vang = Color(0xFFB8860B);
+  static const vangNhat = Color(0xFFFBF3DC);
 }
 
 /// Nhịp giãn cách 4pt.

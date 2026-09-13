@@ -1,131 +1,173 @@
 # Tầng dữ liệu
 
+Supabase: Postgres cho dữ liệu, Auth cho đăng nhập, Storage cho ảnh bài làm.
+Tất cả lược đồ nằm trong `supabase/`, chạy bằng SQL Editor — xem [README](README.md).
+
 ## Nguyên tắc
 
-Màn hình không bao giờ gọi thẳng Firebase. Mọi thứ đi qua interface
-[`HocTapRepository`](lib/data/repositories/hoc_tap_repository.dart), có hai bản
-cài đặt:
+Đây là nhật ký học tập của trẻ con, nên mặc định là **cấm**. Một người chạm
+được vào dữ liệu của học sinh X khi và chỉ khi họ là chính X, là phụ huynh đã
+được nối với X, hoặc là quản trị. Ba trường hợp đó gói trong đúng một hàm:
 
-| Bản | Dùng khi | File |
+```sql
+xem_duoc(p_hoc_sinh uuid)
+  → p_hoc_sinh = auth.uid() or la_phu_huynh_cua(p_hoc_sinh) or la_quan_tri()
+```
+
+Mọi policy đọc đều gọi nó, nên muốn đổi luật thì sửa một chỗ.
+
+Cả ba hàm trợ giúp đều `security definer`. Nếu không, policy trên `nguoi_dung`
+lại phải đọc `nguoi_dung` để biết người gọi có phải quản trị không, và đệ quy
+vô hạn.
+
+## Bảng
+
+| Bảng | Giữ gì | Ai ghi |
 |---|---|---|
-| `MockRepository` | Xem thử giao diện, và chạy test không cần mạng | [mock_repository.dart](lib/data/repositories/mock_repository.dart) |
-| `FirebaseRepository` | Chạy thật trên Auth + Firestore + Storage | [firebase_repository.dart](lib/data/repositories/firebase_repository.dart) |
+| `nguoi_dung` | Hồ sơ, khóa 1–1 với `auth.users` | Chính chủ (trừ vai trò), quản trị |
+| `lien_ket` | Phụ huynh nào theo dõi học sinh nào | Chỉ hàm `dung_ma_moi()` và quản trị |
+| `tinh`, `truong` | Danh mục tỉnh và trường — đọc được cả khi chưa đăng nhập, vì màn đăng ký cần | Quản trị |
+| `mon_hoc` | Danh mục môn | Quản trị |
+| `giao_vien` | Thầy cô. Hàng `chu_id` null là danh mục chung; hàng có `chu_id` là thầy dạy thêm riêng của một học sinh | Quản trị; thầy riêng thì chính em đó và bố mẹ em đó |
+| `bai_hoc` | Danh mục bài học theo sách giáo khoa: môn, khối lớp, học kì, chương, thứ tự trong sách, tên, tóm tắt và câu hỏi cho phụ huynh. Nạp từ `09_bai_hoc_lop*.sql` (sinh bởi `tools/bai_hoc/tao_sql.py`); cờ `sua_tay` bật khi quản trị sửa trong app để lần nạp lại không ghi đè | Quản trị |
+| `tiet_hoc` | Thời khóa biểu | Học sinh và phụ huynh của em đó |
+| `bao_cao` | Báo cáo học tập từng ngày; `bai_hoc_id` trỏ tới bài trong danh mục, null khi không chọn | Học sinh viết, phụ huynh chỉ ghi nhận xét |
+| `nhac_nho` | Lời nhắc | Phụ huynh gửi, học sinh đánh dấu đã đọc |
+| `ma_moi` | Mã sáu số nối phụ huynh với con | Qua hàm `tao_ma_moi()` |
+| `thiet_bi` | Token FCM của từng máy, gắn với người đăng nhập | Chính chủ |
+| `thong_bao` | Hàng đợi thông báo đẩy: gửi cho ai, tiêu đề, nội dung, đã gửi chưa | Chỉ trigger; người dùng đọc phần của mình |
+| `cau_hinh` | Địa chỉ Edge Function và mã bí mật webhook | Chỉ SQL Editor — không vai trò API nào đọc được |
 
-[`main.dart`](lib/main.dart) tự chọn: `Firebase.initializeApp()` chạy được thì
-dùng Firebase, không thì rơi về dữ liệu mẫu. Nhờ vậy người mới clone repo mở
-app được ngay, còn khi đã cấu hình xong thì tự chuyển sang dữ liệu thật.
+`thu` đánh số 2..8 đúng cách người Việt gọi, 8 là Chủ nhật.
 
-## Sơ đồ Firestore
+### Thầy cô gắn với trường thế nào
 
-```
-nguoiDung/{uid}
-    hoTen, vaiTro, email, soDienThoai, lop, truong, conIds[], hoatDong
-    maMoiDaDung          ← bằng chứng nối tài khoản, xem phần Mã mời
+`giao_vien` có ba cột quyết định ai thấy một hàng — app lọc, còn DB chỉ chặn
+phần riêng tư:
 
-monHoc/{id}              ten, vietTat
-giaoVien/{id}            hoTen, monId, loai, noiDay, soDienThoai
+- `loai = 'trenLop'` → `truong_id` là trường của thầy. Học sinh khai trường nào
+  (`nguoi_dung.truong_id`) thì app chỉ đưa ra thầy cô trường đó. Hàng chưa gắn
+  trường (dữ liệu nhập trước khi có danh mục) hiện cho mọi người.
+- `loai = 'hocThem'`, `chu_id` null → thầy dạy thêm dùng chung, theo môn.
+  `tinh_id` chỉ để lọc: app đưa ra thầy cùng tỉnh với trường của em, hoặc
+  không ghi tỉnh.
+- `chu_id` có giá trị → thầy dạy thêm riêng của học sinh đó. Policy `gv_doc`
+  chỉ cho `xem_duoc(chu_id)` đọc; `gv_ghi` cho quản trị ghi tất cả, còn học
+  sinh và bố mẹ chỉ ghi được hàng `hocThem` có `chu_id` là người mình xem được
+  — nên không có đường nào tự biến thầy riêng thành thầy chung, hay gán thầy
+  cho nhà khác.
 
-hocSinh/{hsId}/tietHoc/{id}
-    thu (2..8), tiet, buoi, monId, giaoVienId, loai, phong, batDau, ketThuc
+`nguoi_dung.truong` (chữ) là cột cũ từ hồi gõ tay tên trường; giữ lại cho tài
+khoản cũ và làm chỗ ghi tên để mở bảng ra vẫn đọc được. Trigger đăng ký điền
+cả hai: tra `truong_id` trong danh mục (id lạ thì coi như chưa chọn, không làm
+hỏng lượt đăng ký) rồi chép tên trường sang cột chữ.
 
-hocSinh/{hsId}/baoCao/{id}
-    ngay, khoaNgay, loai, monId, giaoVienId, noiDung, trangThai,
-    anh[], soPhut, nhanXetPhuHuynh, phuHuynhDaXem, taoLuc
+### Thông báo đẩy đi đường nào
 
-hocSinh/{hsId}/nhacNho/{id}
-    tuId, denId, noiDung, taoLuc, hanLuc, daDoc, baoCaoId
+Không có gì trong app tự gửi thông báo. Ba trigger `security definer` xếp
+hàng vào `thong_bao` — `tb_bao_cao_moi` (con gửi bài → mỗi phụ huynh trong
+`lien_ket`), `tb_nhan_xet_moi` (nhận xét đổi và người sửa không phải chính
+em → em), `tb_nhac_nho_moi` (lời nhắc → em). Hàm `nhac_toi_chua_viet_bao_cao()`
+do pg_cron gọi 20:00 giờ Việt Nam, xếp hàng cho em nào có máy đăng ký mà hôm
+đó chưa có báo cáo; `tong_ket_tuan()` chạy 20:00 Chủ nhật, mỗi phụ huynh có
+máy nhận một dòng cho từng đứa con (thứ Hai → Chủ nhật: xong bao nhiêu bài,
+mấy ngày có báo cáo, tổng giờ học). Người dùng qua API không gọi được hai hàm
+này.
 
-maMoi/{ma}               hocSinhId, hetHan, daDung
-```
+Mỗi hàng mới trong `thong_bao` làm trigger `tb_goi_edge_function` (file 07)
+gọi Edge Function qua `pg_net`, kèm mã bí mật lấy từ `cau_hinh`. Edge Function
+tra `thiet_bi` của `den_id`, gửi qua FCM, rồi ghi `da_gui_luc` và `loi`. Token
+hỏng (máy gỡ app) bị xóa ngay lúc đó.
 
-Storage: `baiLam/{hocSinhId}/{tên tệp}.jpg`
+Vì sao có `thiet_bi` mà không nhét token vào `nguoi_dung`: một người nhiều
+máy, và policy "chỉ chính chủ ghi" trên bảng riêng chặn được chuyện đăng ký
+máy mình dưới tên người khác — đường duy nhất để nhận trộm thông báo (kèm nội
+dung báo cáo) của nhà khác.
 
-**Vì sao dữ liệu học tập nằm dưới `hocSinh/{hsId}`:** để luật bảo mật chỉ cần
-một phép kiểm tra ở cấp thư mục — người đọc phải là chính học sinh đó, hoặc là
-phụ huynh có `hsId` trong `conIds`, hoặc là quản trị. Nếu để phẳng ở một
-collection chung thì mỗi lần đọc phải kiểm tra từng bản ghi.
+## Ba chỗ RLS không đủ, phải dùng trigger
 
-**`khoaNgay`** là chuỗi `"2026-09-10"` lưu song song với `ngay`. Truy vấn "báo
-cáo của ngày X" nhờ vậy chỉ là một phép so sánh bằng, không phải dựng chỉ mục
-cho khoảng thời gian.
+RLS so được hàng cũ ở `using` và hàng mới ở `with check`, nhưng **không so được
+hai bên với nhau** trong cùng một biểu thức. Ba luật dưới đây cần đúng phép so đó:
 
-## Nối phụ huynh với con — mã mời
+- `chan_tu_nang_quyen` — không ai tự đổi `vai_tro` của mình, cũng không tự mở
+  lại tài khoản bị khóa. Quản trị thì được.
+- `chan_phu_huynh_sua_bao_cao` — phụ huynh qua được policy `bc_sua`, nhưng
+  trigger chặn lại nếu họ đụng vào bất cứ cột nào ngoài `nhan_xet_phu_huynh` và
+  `phu_huynh_da_xem`. Như dòng chữ đỏ thầy cô ghi cuối trang vở: ghi được lời
+  phê, không sửa được bài.
+- `chan_sua_noi_dung_nhac_nho` — học sinh đánh dấu đã đọc được, nhưng không sửa
+  lại nội dung bố mẹ nhắc, cũng không dời hạn.
 
-Học sinh bấm **Tạo mã mời** ở trang Tài khoản, được một mã sáu số sống 15 phút
-và chỉ dùng được một lần. Đọc mã cho bố mẹ nhập vào app của họ.
+Thêm một trigger tiện dụng chứ không phải luật: `danh_dau_bai_hoc_sua_tay` bật
+cờ `sua_tay` khi ai đó (không phải SQL Editor) đổi tóm tắt hay câu hỏi của một
+bài, để file `09_bai_hoc_lop*.sql` chạy lại chỉ cập nhật những bài chưa ai đụng.
 
-Điểm nhạy cảm: nếu chỉ để client tự ghi `conIds`, bất kỳ ai cũng thêm được id
-học sinh lạ vào danh sách của mình và đọc trọn dữ liệu của đứa trẻ đó.
+Cả ba đều mở đường cho `la_phia_may_chu()` — `auth.uid() is null`. Trigger chạy
+với mọi kết nối, kể cả `postgres`: không có lối thoát này thì chính người quản
+trị cũng không phong nổi quản trị đầu tiên từ SQL Editor, vì lúc đó chưa có ai
+là quản trị để `la_quan_tri()` đúng. Khách chưa đăng nhập cũng có `auth.uid()`
+null, nhưng vai trò `anon` đã bị thu hồi sạch quyền ghi trên mọi bảng ở file 01
+(chỉ còn đọc được `tinh` và `truong`) nên không tới được chỗ trigger nổ — `supabase/test/02_nguoi_dung.sql` kiểm đúng điều
+này.
 
-Cách bịt, không cần Cloud Function (tức là chạy được trên gói Spark miễn phí):
-khi nối, client ghi kèm `maMoiDaDung` vào chính hồ sơ của mình. Luật bảo mật
-tự đối chiếu — xem hàm `themConHopLe` trong [firestore.rules](firestore.rules):
+Trigger thứ tư, `tao_ho_so_sau_dang_ky` trên `auth.users`, dựng hồ sơ ngay khi
+đăng ký và **kẹp vai trò** về `hocSinh` nếu client gửi lên thứ gì khác
+`phuHuynh`/`hocSinh`. Nhờ vậy không ai tự nhận là quản trị lúc đăng ký, và hồ sơ
+vẫn có kể cả khi bật xác thực email (lúc đó `signUp` chưa trả về phiên nên
+client không ghi được gì).
 
-- có đúng một id được thêm vào `conIds`
-- id đó phải bằng `maMoi/{maMoiDaDung}.hocSinhId`
-- mã đó phải chưa dùng và chưa hết hạn
+## Mã mời
 
-Server không tin lời client nói "tôi là phụ huynh của em này"; nó tự kiểm tra
-người gửi có thật sự cầm mã do con sinh ra hay không.
+Học sinh đọc cho bố mẹ một mã sáu số, sống 15 phút, dùng một lần.
 
-Quản trị vẫn gán tay được qua màn **Người dùng → Liên kết con**, vì luật cho
-quản trị ghi thẳng.
+Cả hai đầu đều là hàm `security definer`, client không ghi thẳng bảng:
 
-## Ai được đọc gì
+- `tao_ma_moi()` — vô hiệu mã cũ trước, rồi bốc số mới; trùng thì thử lại tới
+  tám lần. Mỗi học sinh chỉ có đúng một mã sống, để lỡ đọc nhầm mã cũ cho bố mẹ
+  thì cũng không nối vào được.
+- `dung_ma_moi(p_ma)` — `select … for update` khóa hàng trong lúc kiểm tra, nên
+  hai người cùng nhập một mã thì chỉ người đầu tiên nối được.
 
-| Dữ liệu | Học sinh | Phụ huynh đã nối | Quản trị |
-|---|---|---|---|
-| Hồ sơ của mình | đọc, sửa | đọc, sửa | đọc, sửa tất cả |
-| Hồ sơ học sinh | — | đọc | đọc |
-| Thời khóa biểu | đọc, sửa | đọc, sửa | đọc, sửa |
-| Báo cáo | đọc, viết, xóa | đọc, chỉ sửa `nhanXetPhuHuynh` và `phuHuynhDaXem` | tất cả |
-| Nhắc nhở | đọc, chỉ sửa `daDoc` | đọc, tạo, xóa lời mình gửi | tất cả |
-| Môn học, thầy cô | đọc | đọc | ghi |
-| Ảnh bài làm | đọc, tải lên, xóa | đọc | đọc, xóa |
-
-Vài chi tiết cố ý:
-
-- **Báo cáo là lời của học sinh.** Phụ huynh không sửa được nội dung, không đổi
-  được trạng thái. Họ chỉ viết nhận xét — đúng như dòng chữ đỏ thầy cô ghi cuối
-  trang vở.
-- **`daDoc` chỉ học sinh đặt được.** Phụ huynh không tự đánh dấu hộ, nếu không
-  cái dấu "con đã đọc" chẳng còn nghĩa gì.
-- **Không ai tự phong quản trị.** Luật chặn `vaiTro == 'quanTri'` lúc đăng ký;
-  tài khoản quản trị tạo tay trong Firebase Console rồi sửa `vaiTro` trong
-  Firestore.
-- **Không ai tự mở khóa cho mình.** `hoatDong` nằm ngoài danh sách trường mà
-  người dùng được sửa.
+Phụ huynh **không có quyền SELECT** trên `ma_moi` và **không có quyền INSERT**
+trên `lien_ket`. Đường duy nhất trở thành phụ huynh của một đứa trẻ là gọi hàm
+trên với đúng mã, hoặc được quản trị gán tay.
 
 ## Ảnh bài làm
 
-Ảnh chụp xong nằm ở máy dưới dạng đường dẫn cục bộ. Lúc lưu báo cáo,
-`AppState.luuBaoCao` đưa những tấm chưa có đường dẫn mạng lên Storage rồi thay
-bằng URL tải về. Sửa lại một báo cáo cũ không tải lên lần nữa những tấm đã nằm
-sẵn trên kho.
+Bucket `bai-lam` để **riêng tư**, đường dẫn `{hoc_sinh_id}/{tên tệp}`. Thư mục
+đầu tiên chính là id học sinh, nên policy dùng lại đúng `xem_duoc()`.
 
-Xóa báo cáo thì xóa ảnh trước rồi mới xóa bản ghi — làm ngược lại mà nửa chừng
-hỏng thì ảnh nằm lại trong kho không còn ai biết đường dẫn để dọn.
+Supabase chặn `DELETE` thẳng vào `storage.objects` bằng trigger, nổ trước cả
+RLS. Đường duy nhất để xóa là Storage API — app vẫn đi đường đó và vẫn bị policy
+`anh_xoa` soi, nhưng bộ kiểm thử SQL thì không với tới được, nên phần xóa ảnh
+không có phép thử nào.
 
-## Lỗi
+Bucket riêng tư thì không có URL vĩnh viễn như Firebase. App gọi
+`urlAnh()` → `createSignedUrl` mỗi lần hiển thị. Đổi lại, link ảnh vở của con
+không rò ra ngoài được.
 
-`FirebaseRepository` bắt `FirebaseAuthException` và dịch sang câu người dùng
-đọc được, gói trong `LoiHocTap`. Màn hình chỉ việc hiện `loi.thongDiep`, không
-phải đoán mã lỗi tiếng Anh. Thêm một mã lỗi mới thì sửa đúng một chỗ:
-hàm `_dichLoiAuth`.
+## Tầng repository
 
-## Dữ liệu cũ
+UI không biết gì về Supabase. Nó chỉ thấy `HocTapRepository`:
 
-`enumTu` cho giá trị enum lạ rơi về mặc định thay vì ném lỗi, và `ngayTu` đọc
-được cả `Timestamp`, `DateTime`, chuỗi ISO lẫn số mili-giây. Nghĩa là đổi tên
-một hạng mục về sau sẽ không làm sập app của người chưa cập nhật.
-
-## Kiểm chứng
-
-Luật bảo mật không được tin vì nó "trông có vẻ đúng". [test_rules/](test_rules/)
-chạy chúng trên Firestore Emulator với ba nhân vật — phụ huynh đã nối, phụ huynh
-lạ, và quản trị — rồi kiểm tra từng đường: đọc báo cáo, sửa nhận xét, đánh dấu
-đã đọc, nối tài khoản bằng mã mời, tự nâng quyền.
-
-```bash
-cd test_rules && npm install && npm test
 ```
+HocTapRepository (interface)
+├── SupabaseRepository   ← khi có SUPABASE_URL + khóa
+└── MockRepository       ← dữ liệu mẫu trong bộ nhớ, và toàn bộ test Dart
+```
+
+`AppState` giữ một `_repo` đổi được, nên chế độ dùng thử chỉ là tráo cài đặt chứ
+không phải nhánh `if` rải khắp màn hình.
+
+Model chuyển đổi qua extension `…Pg` với khóa snake_case. Hai hàm riêng —
+`NguoiDungPg.toMapCaNhan()` và `BaoCaoPg.toMapNhanXet()` — chỉ gửi lên đúng
+những cột được phép ghi, để lệnh ghi hạn chế không vô tình đụng vào cột bảo vệ
+và làm trigger ném lỗi.
+
+## Kiểm thử
+
+`supabase/test/` — 93 phép thử phân quyền, chạy thẳng trên dự án
+thật và không để lại dấu vết. Xem
+[supabase/test/README.md](supabase/test/README.md).
+
+Phía Dart: `flutter test` chạy trên `MockRepository`.

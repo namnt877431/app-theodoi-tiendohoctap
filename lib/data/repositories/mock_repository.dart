@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import '../mock/seed.dart';
@@ -13,15 +14,36 @@ import 'hoc_tap_repository.dart';
 class MockRepository implements HocTapRepository {
   MockRepository()
       : _nguoiDung = [...Seed.nguoiDung],
+        _tinh = [...Seed.tinh],
+        _truong = [...Seed.truong],
+        _monHoc = [...Seed.monHoc],
+        _giaoVien = [...Seed.giaoVien],
+        _baiHoc = [...Seed.baiHoc],
         _tietHoc = [...Seed.tietHoc],
         _baoCao = [...Seed.baoCao],
         _nhacNho = [...Seed.nhacNho];
 
   final List<NguoiDung> _nguoiDung;
+  final List<Tinh> _tinh;
+  final List<Truong> _truong;
+  final List<MonHoc> _monHoc;
+  final List<GiaoVien> _giaoVien;
+  final List<BaiHoc> _baiHoc;
   final List<TietHoc> _tietHoc;
   final List<BaoCao> _baoCao;
   final List<NhacNho> _nhacNho;
   final List<MaMoi> _maMoi = [];
+
+  /// Token → id người dùng. Để test kiểm được app lưu và xóa đúng lúc.
+  final Map<String, String> thietBi = {};
+
+  /// Giả lập mất mạng: mọi lượt ghi báo cáo và tải ảnh đều hỏng như khi
+  /// điện thoại không có sóng.
+  bool matMang = false;
+
+  void _kiemMang() {
+    if (matMang) throw const SocketException('Không có mạng');
+  }
 
   final _phien = StreamController<NguoiDung?>.broadcast();
   NguoiDung? _dangNhap;
@@ -79,7 +101,7 @@ class MockRepository implements HocTapRepository {
     required String matKhau,
     required VaiTro vaiTro,
     String? lop,
-    String? truong,
+    String? truongId,
     String? soDienThoai,
   }) async {
     await _tre(null);
@@ -99,7 +121,7 @@ class MockRepository implements HocTapRepository {
       email: email.trim(),
       soDienThoai: soDienThoai,
       lop: lop,
-      truong: truong,
+      truongId: _truong.where((t) => t.id == truongId).firstOrNull?.id,
     );
     _nguoiDung.add(nd);
     _dangNhap = nd;
@@ -118,10 +140,99 @@ class MockRepository implements HocTapRepository {
   // ------------------------------------------------------------------ danh mục
 
   @override
-  Future<List<MonHoc>> taiMonHoc() => _tre(Seed.monHoc);
+  Future<List<Tinh>> taiTinh() => _tre([..._tinh]);
 
   @override
-  Future<List<GiaoVien>> taiGiaoVien() => _tre(Seed.giaoVien);
+  Future<List<Truong>> taiTruong() => _tre([..._truong]);
+
+  @override
+  Future<List<MonHoc>> taiMonHoc() => _tre([..._monHoc]);
+
+  /// Bắt chước RLS: hàng riêng chỉ hiện cho chính chủ, bố mẹ chính chủ, và
+  /// quản trị. Nhờ vậy test kiểm được đúng luật mà không cần Postgres.
+  @override
+  Future<List<GiaoVien>> taiGiaoVien() {
+    final toi = _dangNhap;
+    bool thay(GiaoVien g) {
+      if (g.chuId == null || toi == null) return g.chuId == null;
+      return toi.vaiTro == VaiTro.quanTri ||
+          g.chuId == toi.id ||
+          toi.conIds.contains(g.chuId);
+    }
+
+    return _tre(_giaoVien.where(thay).toList());
+  }
+
+  void _ghi<T>(List<T> ds, T moi, String Function(T) id) {
+    final i = ds.indexWhere((e) => id(e) == id(moi));
+    if (i >= 0) {
+      ds[i] = moi;
+    } else {
+      ds.add(moi);
+    }
+  }
+
+  @override
+  Future<void> luuTinh(Tinh t) async => _ghi(_tinh, t, (e) => e.id);
+  @override
+  Future<void> xoaTinh(String id) async => _tinh.removeWhere((e) => e.id == id);
+  @override
+  Future<void> luuTruong(Truong t) async => _ghi(_truong, t, (e) => e.id);
+  @override
+  Future<void> xoaTruong(String id) async => _truong.removeWhere((e) => e.id == id);
+  @override
+  Future<void> luuMonHoc(MonHoc m) async => _ghi(_monHoc, m, (e) => e.id);
+  @override
+  Future<void> xoaMonHoc(String id) async => _monHoc.removeWhere((e) => e.id == id);
+
+  @override
+  Future<List<BaiHoc>> taiBaiHoc(int lop) => _tre(
+        _baiHoc.where((b) => b.lop == lop).toList()
+          ..sort((a, b) => a.monId != b.monId
+              ? a.monId.compareTo(b.monId)
+              : a.thuTu.compareTo(b.thuTu)),
+      );
+
+  @override
+  Future<void> luuBaiHoc(BaiHoc bh) async {
+    if (_dangNhap?.vaiTro != VaiTro.quanTri) {
+      throw const LoiHocTap('Bạn không có quyền sửa danh mục bài học');
+    }
+    _ghi(_baiHoc, bh, (e) => e.id);
+  }
+
+  @override
+  Future<void> xoaBaiHoc(String id) async {
+    if (_dangNhap?.vaiTro != VaiTro.quanTri) {
+      throw const LoiHocTap('Bạn không có quyền sửa danh mục bài học');
+    }
+    _baiHoc.removeWhere((e) => e.id == id);
+  }
+
+  @override
+  Future<void> luuGiaoVien(GiaoVien gv) async {
+    final toi = _dangNhap;
+    // Cùng luật với policy gv_ghi: không phải quản trị thì chỉ được đụng vào
+    // thầy dạy thêm riêng của nhà mình.
+    final duoc = toi == null ||
+        toi.vaiTro == VaiTro.quanTri ||
+        (gv.chuId != null &&
+            gv.loai == LoaiBaiTap.hocThem &&
+            (gv.chuId == toi.id || toi.conIds.contains(gv.chuId)));
+    if (!duoc) throw const LoiHocTap('Bạn không có quyền thực hiện việc này.');
+    _ghi(_giaoVien, gv, (e) => e.id);
+  }
+
+  @override
+  Future<void> xoaGiaoVien(String id) async {
+    final toi = _dangNhap;
+    _giaoVien.removeWhere((g) =>
+        g.id == id &&
+        (toi == null ||
+            toi.vaiTro == VaiTro.quanTri ||
+            g.chuId == toi.id ||
+            toi.conIds.contains(g.chuId)));
+  }
 
   // ---------------------------------------------------------------- người dùng
 
@@ -247,6 +358,7 @@ class MockRepository implements HocTapRepository {
 
   @override
   Future<List<BaoCao>> baoCao(String hocSinhId, {DateTime? ngay}) {
+    _kiemMang();
     var ds = _baoCao.where((b) => b.hocSinhId == hocSinhId);
     if (ngay != null) {
       ds = ds.where((b) =>
@@ -260,6 +372,7 @@ class MockRepository implements HocTapRepository {
 
   @override
   Future<void> luuBaoCao(BaoCao bc) async {
+    _kiemMang();
     final i = _baoCao.indexWhere((b) => b.id == bc.id);
     if (i >= 0) {
       _baoCao[i] = bc;
@@ -290,13 +403,31 @@ class MockRepository implements HocTapRepository {
     if (i >= 0) _nhacNho[i] = _nhacNho[i].copyWith(daDoc: true);
   }
 
+  // ----------------------------------------------------------------- thiết bị
+
+  @override
+  Future<void> luuThietBi(String token) async {
+    final toi = _dangNhap;
+    if (toi != null) thietBi[token] = toi.id;
+  }
+
+  @override
+  Future<void> xoaThietBi(String token) async => thietBi.remove(token);
+
   // ---------------------------------------------------------------------- ảnh
 
   /// Bản mock giữ nguyên đường dẫn ảnh trên máy — không có kho nào để tải lên.
   @override
-  Future<String> taiAnhLen(String hocSinhId, String duongDanCucBo) =>
-      _tre(duongDanCucBo);
+  Future<String> taiAnhLen(String hocSinhId, String duongDanCucBo) {
+    _kiemMang();
+    return _tre(duongDanCucBo);
+  }
 
   @override
   Future<void> xoaAnh(String duongDan) async {}
+
+  /// Không có kho nào để ký URL — trả lại chính đường dẫn trên máy.
+  @override
+  Future<String?> urlAnh(String duongDan) async =>
+      duongDan.startsWith('demo:') ? null : duongDan;
 }

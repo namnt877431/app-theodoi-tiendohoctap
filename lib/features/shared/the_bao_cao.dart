@@ -22,6 +22,7 @@ class TheBaoCao extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.read<AppState>();
     final gv = s.tenGv(bc.giaoVienId);
+    final bh = s.baiHocTheoId(bc.baiHocId);
 
     return TrangVo(
       mauLe: bc.trangThai.mau,
@@ -48,6 +49,23 @@ class TheBaoCao extends StatelessWidget {
               ),
             ],
           ),
+          if (bh != null) ...[
+            const SizedBox(height: 2),
+            Row(
+              children: [
+                const Icon(Icons.menu_book_rounded, size: 13, color: AppColor.muc),
+                const SizedBox(width: 5),
+                Expanded(
+                  child: Text(
+                    bh.ten,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppType.ui(12.5, color: AppColor.muc, w: FontWeight.w600),
+                  ),
+                ),
+              ],
+            ),
+          ],
           const SizedBox(height: 5),
           Row(
             children: [
@@ -75,6 +93,10 @@ class TheBaoCao extends StatelessWidget {
           Row(
             children: [
               NhanTrangThai(bc.trangThai, nhoGon: true),
+              if (s.laNhap(bc.id)) ...[
+                const SizedBox(width: Gap.sm),
+                const _NhanChoMang(),
+              ],
               const Spacer(),
               if (bc.soPhut != null) ...[
                 const Icon(Icons.schedule_rounded, size: 13, color: AppColor.mucNhat),
@@ -99,6 +121,32 @@ class TheBaoCao extends StatelessWidget {
               ],
             ],
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Bài viết lúc mất mạng, còn nằm trên máy. Nhãn hổ phách như "đang làm":
+/// việc chưa xong, nhưng không phải lỗi của ai.
+class _NhanChoMang extends StatelessWidget {
+  const _NhanChoMang();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+      decoration: BoxDecoration(
+        color: AppColor.dangLamNhat,
+        borderRadius: BorderRadius.circular(R.sm),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.cloud_off_rounded, size: 11, color: AppColor.dangLam),
+          const SizedBox(width: 4),
+          Text('Chờ mạng',
+              style: AppType.ui(10.5, w: FontWeight.w600, color: AppColor.dangLam)),
         ],
       ),
     );

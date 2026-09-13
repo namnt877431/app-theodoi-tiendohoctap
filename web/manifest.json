@@ -1,11 +1,11 @@
 {
-    "name": "theodoi_hoctap",
-    "short_name": "theodoi_hoctap",
+    "name": "Sổ liên lạc",
+    "short_name": "Sổ liên lạc",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "Theo doi tien do hoc tap",
+    "background_color": "#FBFCFE",
+    "theme_color": "#1D5FA8",
+    "description": "Theo dõi việc học của con mỗi ngày",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
@@ -31,5 +31,6 @@
             "type": "image/png",
             "purpose": "maskable"
         }
-    ]
+    ],
+    "lang": "vi"
 }

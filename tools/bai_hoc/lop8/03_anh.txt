@@ -1,0 +1,81 @@
+mon: m_anh
+lop: 8
+hk: 1
+
+# Tiếng Anh 8 Global Success — Học kì I
+- Unit 1: Leisure time [unit]
+> Chủ đề hoạt động lúc rảnh (DIY, làm đồ thủ công, lướt mạng, chơi thể thao). Từ vựng về sở thích; phát âm cụm phụ âm /br/ và /kl/.
+! động từ chỉ sở thích (like, love, enjoy, hate, prefer, fancy…) đi với V-ing hoặc to V
+? Con thích làm gì lúc rảnh? Nói bằng tiếng Anh: "I enjoy…", "I love… ing".
+? Sau "enjoy" dùng V-ing hay to V? → V-ing
+- Unit 2: Life in the countryside [unit]
+> Chủ đề cuộc sống nông thôn (harvest, herd buffaloes, paddy field, cattle). Từ vựng về việc đồng áng; phát âm /ə/ và /ɪ/ trong từ nhiều âm tiết.
+! so sánh hơn của trạng từ (faster, more slowly, better, worse)
+? So sánh hơn của "carefully" là gì? → more carefully
+? Kể ba từ tiếng Anh về nông thôn.
+- Unit 3: Teenagers [unit]
+> Chủ đề tuổi teen: áp lực học tập, bạn bè, mạng xã hội, hoạt động ngoại khóa. Từ vựng về stress và cách giải tỏa; phát âm /ʊ/ và /uː/.
+! câu đơn và câu ghép nối bằng and, but, or, so
+? Nối "I was tired" và "I finished my homework" bằng "but".
+? Từ nào dùng để nối hai vế câu ghép? → and, but, or, so
+- Review 1
+> Ôn tập Units 1–3: từ vựng, phát âm, ngữ pháp (V-ing/to V, so sánh hơn của trạng từ, câu ghép) và bốn kĩ năng.
+? Con làm phần Language được bao nhiêu câu đúng?
+- Unit 4: Ethnic groups of Viet Nam [unit]
+> Chủ đề các dân tộc Việt Nam (Tày, Thái, Mường, Khmer…; trang phục, lễ hội, nhà sàn). Từ vựng về văn hóa dân tộc; phát âm /k/ /g/.
+! câu hỏi Yes/No và Wh-; danh từ đếm được và không đếm được với some/any, much/many, a little/a few
+? "Rice" đếm được hay không đếm được? → không đếm được
+? Đặt một câu hỏi Wh- về nơi sinh sống của người Thái.
+- Unit 5: Our customs and traditions [unit]
+> Chủ đề phong tục, truyền thống (Tết, thờ cúng tổ tiên, phép tắc trên bàn ăn). Từ vựng về phong tục; phát âm /spr/ /str/.
+! mạo từ a, an, the và trường hợp không dùng mạo từ
+? Khi nào dùng "an"? → trước từ bắt đầu bằng nguyên âm, ví dụ an apple
+? Kể một phong tục ngày Tết bằng tiếng Anh.
+- Unit 6: Lifestyles [unit]
+> Chủ đề lối sống (lành mạnh, thời gian dùng màn hình, lối sống tương lai). Từ vựng về thói quen; phát âm /brɪ/ /brəʊ/.
+! thì tương lai đơn will/won't và câu điều kiện loại 1 (If + hiện tại đơn, will)
+? "If it rains, I ___ stay home." → will
+? Mười năm nữa lối sống sẽ thay đổi thế nào? Nói một câu với "will".
+- Review 2
+> Ôn tập Units 4–6: từ vựng, phát âm, ngữ pháp (câu hỏi, danh từ đếm được, mạo từ, will, điều kiện loại 1) và bốn kĩ năng.
+? Con còn nhầm phần ngữ pháp nào nhất?
+
+hk: 2
+
+# Tiếng Anh 8 Global Success — Học kì II
+- Unit 7: Environmental protection [unit]
+> Chủ đề bảo vệ môi trường (ô nhiễm, 3R: reduce – reuse – recycle, tiết kiệm năng lượng). Từ vựng về môi trường; phát âm trọng âm từ hai âm tiết.
+! câu phức với mệnh đề trạng ngữ chỉ thời gian (when, while, before, after, as soon as)
+? Đặt một câu với "when": "When I finish my homework, …".
+? 3R là gì? → reduce, reuse, recycle
+- Unit 8: Shopping [unit]
+> Chủ đề mua sắm (trung tâm thương mại, chợ, mua hàng online, mặc cả). Từ vựng về mua sắm; phát âm trọng âm từ ba âm tiết.
+! trạng từ chỉ tần suất (always, usually, often, sometimes, rarely, never) và vị trí trong câu
+? "Always" đặt trước hay sau động từ thường? → trước động từ thường, sau "be"
+? Con thích mua ở chợ hay online? Nói bằng tiếng Anh.
+- Unit 9: Natural disasters [unit]
+> Chủ đề thiên tai (earthquake, flood, typhoon, drought, landslide) và cách ứng phó. Từ vựng về thiên tai; ngữ điệu câu.
+! thì quá khứ tiếp diễn; quá khứ đơn kết hợp quá khứ tiếp diễn với when/while
+? "I ___ (watch) TV when the earthquake happened." → was watching
+? Kể ba loại thiên tai bằng tiếng Anh.
+- Review 3
+> Ôn tập Units 7–9: từ vựng, phát âm, ngữ pháp (mệnh đề thời gian, trạng từ tần suất, quá khứ tiếp diễn) và bốn kĩ năng.
+? Con phân biệt được quá khứ đơn và quá khứ tiếp diễn chưa? Cho ví dụ.
+- Unit 10: Communication in the future [unit]
+> Chủ đề giao tiếp trong tương lai (video call, hologram, telepathy, ngôn ngữ cơ thể). Từ vựng về phương tiện giao tiếp; phát âm trọng âm câu.
+! giới từ chỉ nơi chốn và thời gian (in, on, at, in front of, opposite, under…)
+? "___ Monday" dùng giới từ gì? → on
+? "___ 7 o'clock" dùng giới từ gì? → at
+- Unit 11: Science and technology [unit]
+> Chủ đề khoa học và công nghệ (robot, AI, phát minh, cuộc sống thông minh). Từ vựng về công nghệ; ngữ điệu câu hỏi.
+! câu tường thuật với câu kể (He said (that) + lùi thì)
+? Chuyển "I am tired" sang câu tường thuật. → He said (that) he was tired.
+? Kể một phát minh con thấy hữu ích và vì sao.
+- Unit 12: Life on other planets [unit]
+> Chủ đề sự sống ngoài hành tinh (alien, UFO, planet, galaxy, spaceship). Từ vựng về vũ trụ; ngữ điệu câu.
+! câu tường thuật với câu hỏi (asked if/whether; asked + từ để hỏi)
+? Chuyển "Do you like it?" sang tường thuật. → She asked me if I liked it.
+? Con có tin có người ngoài hành tinh không? Nói một câu tiếng Anh.
+- Review 4
+> Ôn tập Units 10–12: từ vựng, phát âm, ngữ pháp (giới từ, câu tường thuật) và bốn kĩ năng; ôn cuối năm.
+? Con tự thấy kĩ năng nào yếu nhất: nghe, nói, đọc hay viết?

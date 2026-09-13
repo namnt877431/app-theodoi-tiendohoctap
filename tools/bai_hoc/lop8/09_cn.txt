@@ -1,0 +1,95 @@
+mon: m_cn
+lop: 8
+hk: 1
+
+# Chương 1: Vẽ kĩ thuật
+- Bài 1: Một số tiêu chuẩn trình bày bản vẽ kĩ thuật
+> Khổ giấy (A4, A3…), tỉ lệ, các loại nét vẽ (liền đậm, liền mảnh, đứt mảnh, gạch chấm mảnh), cách ghi kích thước và chữ viết trên bản vẽ.
+? Nét đứt mảnh dùng để vẽ gì? → đường bao khuất, cạnh khuất
+? Tỉ lệ 1:2 nghĩa là gì? → hình vẽ nhỏ bằng một nửa vật thật
+- Bài 2: Hình chiếu vuông góc
+> Phép chiếu vuông góc; ba hình chiếu đứng, bằng, cạnh và vị trí của chúng trên bản vẽ; hình chiếu của khối đa diện và khối tròn xoay.
+? Hình chiếu bằng nằm ở đâu so với hình chiếu đứng? → ở phía dưới
+? Hình trụ đặt đứng có hình chiếu bằng là hình gì? → hình tròn
+- Bài 3: Bản vẽ chi tiết
+> Nội dung bản vẽ chi tiết: hình biểu diễn, kích thước, yêu cầu kĩ thuật, khung tên; trình tự đọc bản vẽ.
+? Bản vẽ chi tiết gồm mấy nội dung chính? → 4
+- Bài 4: Bản vẽ lắp
+> Bản vẽ lắp diễn tả hình dạng, vị trí tương quan của các chi tiết trong một sản phẩm; bảng kê; trình tự đọc.
+? Bản vẽ lắp khác bản vẽ chi tiết ở chỗ nào? → thể hiện nhiều chi tiết ghép với nhau, có bảng kê
+- Bài 5: Bản vẽ nhà
+> Mặt bằng, mặt đứng, mặt cắt của ngôi nhà; kí hiệu cửa đi, cửa sổ, cầu thang; cách đọc bản vẽ nhà.
+? Mặt bằng cho biết gì về ngôi nhà? → vị trí, kích thước các phòng, cửa
+- Ôn tập chương 1
+> Ôn tiêu chuẩn bản vẽ, hình chiếu, bản vẽ chi tiết, bản vẽ lắp, bản vẽ nhà.
+? Con thử đọc một bản vẽ nhà đơn giản cho bố mẹ nghe.
+
+# Chương 2: Cơ khí
+- Bài 6: Vật liệu cơ khí
+> Kim loại đen (gang, thép), kim loại màu (đồng, nhôm và hợp kim), phi kim loại (chất dẻo, cao su); tính chất và ứng dụng.
+? Gang và thép khác nhau ở điểm gì? → tỉ lệ carbon (gang nhiều carbon hơn)
+? Kể hai vật liệu phi kim loại dùng trong cơ khí. → chất dẻo, cao su
+- Bài 7: Truyền và biến đổi chuyển động
+> Truyền động ma sát (đai) và ăn khớp (bánh răng, xích); tỉ số truyền i = n₂/n₁ = Z₁/Z₂; biến đổi chuyển động quay thành tịnh tiến (tay quay – con trượt) và quay thành lắc.
+? Xe đạp dùng bộ truyền động gì? → truyền động xích
+? Đĩa 40 răng, líp 20 răng thì tỉ số truyền bằng? → 2 (líp quay nhanh gấp đôi đĩa)
+- Bài 8: Gia công cơ khí bằng tay
+> Dụng cụ đo (thước lá, thước cặp), vạch dấu, cưa, dũa, đục, khoan; kĩ thuật thao tác và an toàn lao động.
+? Khi cưa kim loại cần chú ý an toàn gì? → kẹp chặt phôi, không dùng cưa lỏng, đeo bảo hộ
+- Bài 9: Ngành nghề trong lĩnh vực cơ khí
+> Kĩ sư cơ khí, kĩ thuật viên, thợ cơ khí…; đặc điểm công việc, yêu cầu và cơ hội nghề nghiệp.
+? Con kể một nghề trong lĩnh vực cơ khí và công việc của nghề đó.
+- Bài 10: Dự án: Gia công chi tiết bằng dụng cụ cầm tay
+> Thiết kế, vạch dấu và gia công một chi tiết đơn giản (móc treo, ke góc…) bằng dụng cụ cầm tay.
+? Nhóm con làm sản phẩm gì? Khâu nào khó nhất?
+- Ôn tập chương 2
+> Ôn vật liệu cơ khí, truyền và biến đổi chuyển động, gia công bằng tay, nghề cơ khí.
+? Con nhắc lại công thức tỉ số truyền.
+
+hk: 2
+
+# Chương 3: An toàn điện
+- Bài 11: Tai nạn điện
+> Nguyên nhân tai nạn điện: chạm vào vật mang điện, vi phạm khoảng cách an toàn với đường dây cao áp, đến gần dây điện đứt rơi xuống đất; hậu quả.
+? Kể ba nguyên nhân gây tai nạn điện.
+- Bài 12: Biện pháp an toàn điện
+> Nguyên tắc an toàn: kiểm tra cách điện, dùng dụng cụ bảo vệ (găng, ủng cao su, bút thử điện), ngắt nguồn trước khi sửa chữa; aptomat, nối đất thiết bị.
+? Trước khi sửa đồ điện phải làm gì đầu tiên? → ngắt nguồn điện
+? Bút thử điện dùng để làm gì? → kiểm tra vật có điện hay không
+- Bài 13: Sơ cứu người bị tai nạn điện
+> Tách nạn nhân khỏi nguồn điện (ngắt điện, dùng vật cách điện), sơ cứu (hô hấp nhân tạo, ép tim ngoài lồng ngực) và gọi cấp cứu.
+? Thấy người bị điện giật, việc đầu tiên cần làm là gì? → ngắt nguồn điện, không chạm tay trần vào nạn nhân
+- Ôn tập chương 3
+> Ôn nguyên nhân tai nạn điện, biện pháp an toàn và sơ cứu.
+? Số điện thoại cấp cứu y tế là gì? → 115
+
+# Chương 4: Kĩ thuật điện
+- Bài 14: Khái quát về mạch điện
+> Thành phần mạch điện: nguồn điện, bộ phận truyền dẫn – đóng cắt – bảo vệ (dây dẫn, công tắc, cầu chì, aptomat), phụ tải; sơ đồ mạch điện.
+? Cầu chì và aptomat có nhiệm vụ gì? → bảo vệ mạch khi quá tải, ngắn mạch
+- Bài 15: Cảm biến và mô đun cảm biến
+> Cảm biến ánh sáng, nhiệt độ, độ ẩm, hồng ngoại…; mô đun cảm biến biến tín hiệu thành lệnh đóng, cắt mạch.
+? Đèn đường tự bật khi trời tối dùng cảm biến gì? → cảm biến ánh sáng
+- Bài 16: Mạch điện điều khiển sử dụng mô đun cảm biến
+> Lắp mạch nguồn – mô đun cảm biến – tải (đèn, quạt, máy bơm); ứng dụng bật đèn tự động, tưới cây tự động.
+? Mạch tưới cây tự động cần cảm biến gì? → cảm biến độ ẩm đất
+- Bài 17: Ngành nghề trong lĩnh vực kĩ thuật điện
+> Kĩ sư điện, kĩ thuật viên điện, thợ điện…; công việc, yêu cầu và an toàn nghề nghiệp.
+? Con kể một nghề trong lĩnh vực kĩ thuật điện.
+- Ôn tập chương 4
+> Ôn mạch điện, cảm biến, mạch điều khiển, nghề kĩ thuật điện.
+? Con vẽ sơ đồ một mạch điện có cảm biến.
+
+# Chương 5: Thiết kế kĩ thuật
+- Bài 18: Giới thiệu về thiết kế kĩ thuật
+> Thiết kế kĩ thuật là gì, vai trò trong đời sống và sản xuất; các ngành nghề liên quan đến thiết kế.
+? Thiết kế kĩ thuật nhằm mục đích gì? → tạo ra sản phẩm giải quyết nhu cầu thực tế
+- Bài 19: Các bước cơ bản trong thiết kế kĩ thuật
+> Quy trình: xác định vấn đề – tìm hiểu thông tin – đề xuất giải pháp – làm mẫu thử – đánh giá và hoàn thiện.
+? Kể năm bước thiết kế kĩ thuật.
+- Bài 20: Dự án: Thiết kế hệ thống tưới cây tự động
+> Áp dụng quy trình thiết kế với cảm biến độ ẩm, mô đun và máy bơm để tưới cây tự động.
+? Hệ thống của nhóm con hoạt động thế nào? Có gì cần cải tiến?
+- Ôn tập chương 5
+> Ôn quy trình thiết kế kĩ thuật.
+? Con nhắc lại các bước thiết kế và cho ví dụ.

@@ -1,20 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:theodoi_hoctap/data/models/models.dart';
 
-/// Giả lập kiểu Timestamp của Firestore: `ngayTu` đọc nó qua `dynamic` nên
-/// bất cứ thứ gì có `toDate()` cũng phải chạy được.
-class _TimestampGia {
-  const _TimestampGia(this._d);
-  final DateTime _d;
-  DateTime toDate() => _d;
-}
-
 void main() {
-  group('Đọc ngày từ Firestore', () {
+  group('Đọc ngày từ Postgres', () {
     final moc = DateTime(2026, 9, 10, 21, 30);
 
-    test('nhận được Timestamp, DateTime, chuỗi ISO và mili-giây', () {
-      expect(ngayTu(_TimestampGia(moc)), moc);
+    test('nhận được chuỗi ISO, DateTime và mili-giây', () {
       expect(ngayTu(moc), moc);
       expect(ngayTu(moc.toIso8601String()), moc);
       expect(ngayTu(moc.millisecondsSinceEpoch), moc);
@@ -39,7 +30,7 @@ void main() {
         taoLuc: DateTime(2026, 9, 10, 21, 0),
       );
 
-      final lai = BaoCaoFs.fromMap('bc_1', goc.toMap());
+      final lai = BaoCaoPg.fromMap(goc.toMap()..['tao_luc'] = goc.taoLuc.toIso8601String());
 
       expect(lai.hocSinhId, goc.hocSinhId);
       expect(lai.loai, goc.loai);
@@ -53,7 +44,7 @@ void main() {
       expect(lai.ngay, goc.ngay);
     });
 
-    test('khóa ngày dùng để lọc có dạng yyyy-MM-dd', () {
+    test('cột date gửi lên đúng dạng yyyy-MM-dd', () {
       final bc = BaoCao(
         id: 'x',
         hocSinhId: 'hs_01',
@@ -64,16 +55,16 @@ void main() {
         trangThai: TrangThai.xong,
         taoLuc: DateTime(2026, 3, 5),
       );
-      expect(bc.khoaNgay, '2026-03-05');
+      expect(bc.toMap()['ngay'], '2026-03-05');
     });
 
     test('giá trị enum lạ trong dữ liệu cũ rơi về mặc định thay vì làm sập app', () {
-      final lai = BaoCaoFs.fromMap('bc_2', {
-        'hocSinhId': 'hs_01',
+      final lai = BaoCaoPg.fromMap({
+        'hoc_sinh_id': 'hs_01',
         'loai': 'mot_loai_khong_con_ton_tai',
-        'trangThai': null,
-        'monId': 'm_toan',
-        'noiDung': 'x',
+        'trang_thai': null,
+        'mon_id': 'm_toan',
+        'noi_dung': 'x',
       });
 
       expect(lai.loai, LoaiBaiTap.trenLop);
@@ -90,7 +81,7 @@ void main() {
         email: 'hung@gmail.com',
         conIds: ['hs_01', 'hs_02'],
       );
-      final lai = NguoiDungFs.fromMap('ph_01', goc.toMap());
+      final lai = NguoiDungPg.fromMap(goc.toMap(), conIds: goc.conIds);
 
       expect(lai.vaiTro, VaiTro.phuHuynh);
       expect(lai.conIds, ['hs_01', 'hs_02']);

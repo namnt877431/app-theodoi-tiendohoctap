@@ -11,6 +11,7 @@ import '../../data/models/models.dart';
 import '../shared/chi_tiet_bao_cao_screen.dart';
 import '../shared/soan_bao_cao_screen.dart';
 import '../shared/the_bao_cao.dart';
+import 'huy_hieu_section.dart';
 
 /// Trang chủ học sinh mở ra là thấy hai thứ: bố mẹ đang nhắc gì, và
 /// hôm nay còn bài nào chưa báo cáo.
@@ -33,7 +34,7 @@ class TrangChuHsScreen extends StatelessWidget {
         bottom: false,
         child: RefreshIndicator(
           color: AppColor.muc,
-          onRefresh: s.taiLai,
+          onRefresh: s.lamMoi,
           child: ListView(
             padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.md, Gap.lg, 96),
             children: [
@@ -60,7 +61,13 @@ class TrangChuHsScreen extends StatelessWidget {
                 ],
                 const SizedBox(height: Gap.sm),
               ],
+              if (s.soNhap > 0) ...[
+                _ChoMang(so: s.soNhap),
+                const SizedBox(height: Gap.md),
+              ],
               _ViecHomNay(tongKet: tk, soTiet: tiet.length),
+              const SizedBox(height: Gap.xl),
+              const KeHuyHieu(),
               const SizedBox(height: Gap.xl),
               if (tiet.isNotEmpty) ...[
                 TieuDeMuc('Hôm nay học gì', eyebrow: '${tiet.length} tiết'),
@@ -100,6 +107,44 @@ class TrangChuHsScreen extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Bài viết lúc mất mạng đang nằm trên máy. Chạm để thử gửi ngay, còn không
+/// thì app tự gửi lúc quay lại hay kéo làm mới.
+class _ChoMang extends StatelessWidget {
+  const _ChoMang({required this.so});
+  final int so;
+
+  @override
+  Widget build(BuildContext context) {
+    return TrangVo(
+      mauLe: AppColor.dangLam,
+      keNgang: false,
+      vienNoiBat: true,
+      nen: AppColor.dangLamNhat.withValues(alpha: .5),
+      le: const Icon(Icons.cloud_off_rounded, size: 18, color: AppColor.dangLam),
+      onTap: () async {
+        final s = context.read<AppState>();
+        final tb = ScaffoldMessenger.of(context);
+        final daGui = await s.guiNhap();
+        tb.showSnackBar(SnackBar(
+          content: Text(daGui > 0
+              ? 'Đã gửi $daGui báo cáo cho bố mẹ'
+              : 'Vẫn chưa có mạng. App sẽ tự gửi khi có mạng lại.'),
+        ));
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('$so báo cáo đang chờ mạng',
+              style: AppType.ui(13.5, w: FontWeight.w700, color: AppColor.dangLam)),
+          const SizedBox(height: 3),
+          Text('Bố mẹ chưa thấy. Chạm để gửi ngay, hoặc để app tự gửi khi có mạng.',
+              style: AppType.ui(12, color: AppColor.mucNhat, w: FontWeight.w500, height: 1.4)),
+        ],
       ),
     );
   }

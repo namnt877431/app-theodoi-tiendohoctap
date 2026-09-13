@@ -1,0 +1,288 @@
+mon: m_toan
+lop: 8
+hk: 1
+
+# Chương 1: Đa thức
+- Bài 1: Đơn thức
+> Đơn thức là biểu thức chỉ gồm tích của một số với các biến (ví dụ 3x²y). Con học thu gọn đơn thức, tìm hệ số, bậc, và cộng trừ các đơn thức đồng dạng (cùng phần biến).
+? Đơn thức 5x²y³ có hệ số bao nhiêu, bậc mấy? → hệ số 5, bậc 5
+? 2x²y và −3x²y có đồng dạng không? Cộng lại được gì? → có; bằng −x²y
+- Bài 2: Đa thức
+> Đa thức là tổng của nhiều đơn thức. Con học thu gọn đa thức (gộp các hạng tử đồng dạng), tìm bậc và tính giá trị của đa thức tại một giá trị cho trước.
+? Thu gọn x² + 2xy − 3x² + xy được gì? → −2x² + 3xy
+? Bậc của đa thức x³y + x² là mấy? → 4
+- Bài 3: Phép cộng và phép trừ đa thức
+> Cộng, trừ hai đa thức: bỏ dấu ngoặc (có dấu trừ đằng trước thì đổi dấu mọi hạng tử bên trong) rồi gộp các hạng tử đồng dạng.
+? (x² + y) − (x² − y) bằng gì? → 2y
+? Bỏ ngoặc có dấu trừ đằng trước thì hạng tử bên trong thay đổi thế nào? → đổi dấu
+- Luyện tập chung (trang 17)
+> Ôn tổng hợp Bài 1–3: thu gọn đơn thức, đa thức; cộng trừ đa thức.
+? Con làm hết bài luyện tập chưa? Bài nào còn vướng?
+- Bài 4: Phép nhân đa thức
+> Nhân đơn thức với đa thức (nhân vào từng hạng tử) và nhân đa thức với đa thức (mỗi hạng tử của đa thức này nhân với từng hạng tử của đa thức kia rồi cộng lại).
+? 2x(x + 3) bằng gì? → 2x² + 6x
+? (x + 1)(x + 2) bằng gì? → x² + 3x + 2
+- Bài 5: Phép chia đa thức cho đơn thức
+> Chia đơn thức cho đơn thức (chia hệ số, trừ số mũ của từng biến) và chia đa thức cho đơn thức (chia từng hạng tử rồi cộng lại).
+? 6x³y : 2x bằng gì? → 3x²y
+? (4x² + 2x) : 2x bằng gì? → 2x + 1
+- Luyện tập chung (trang 25)
+> Ôn tổng hợp Bài 4–5: nhân và chia đa thức.
+? Con nhắc lại cách nhân hai đa thức cho bố mẹ nghe.
+- Bài tập cuối chương 1
+> Tổng ôn chương Đa thức: thu gọn, cộng trừ, nhân chia đa thức.
+? Trong chương này con thấy phần nào khó nhất?
+
+# Chương 2: Hằng đẳng thức đáng nhớ và ứng dụng
+- Bài 6: Hiệu hai bình phương. Bình phương của một tổng hay một hiệu
+> Ba hằng đẳng thức đầu tiên: a² − b² = (a − b)(a + b); (a + b)² = a² + 2ab + b²; (a − b)² = a² − 2ab + b². Dùng để khai triển, rút gọn và tính nhanh.
+? (x + 3)² khai triển ra gì? → x² + 6x + 9
+? x² − 9 viết thành tích? → (x − 3)(x + 3)
+? Tính nhanh 101² bằng hằng đẳng thức? → (100 + 1)² = 10201
+- Bài 7: Lập phương của một tổng. Lập phương của một hiệu
+> Hai hằng đẳng thức tiếp theo: (a + b)³ = a³ + 3a²b + 3ab² + b³ và (a − b)³ = a³ − 3a²b + 3ab² − b³.
+? (x + 1)³ khai triển ra gì? → x³ + 3x² + 3x + 1
+? Con đọc thuộc công thức lập phương của một hiệu.
+- Bài 8: Tổng và hiệu hai lập phương
+> Hai hằng đẳng thức cuối: a³ + b³ = (a + b)(a² − ab + b²) và a³ − b³ = (a − b)(a² + ab + b²). Đến đây con đã học đủ 7 hằng đẳng thức đáng nhớ.
+? x³ + 8 phân tích thành tích? → (x + 2)(x² − 2x + 4)
+? Có tất cả bao nhiêu hằng đẳng thức đáng nhớ? Con đọc thuộc cả 7. → 7
+- Luyện tập chung (trang 40)
+> Ôn 7 hằng đẳng thức: khai triển, viết thành tích, tính nhanh.
+? Bố mẹ đọc một vế, con đọc vế kia của một hằng đẳng thức bất kì.
+- Bài 9: Phân tích đa thức thành nhân tử
+> Biến một đa thức thành tích bằng ba cách: đặt nhân tử chung, dùng hằng đẳng thức, nhóm các hạng tử. Kĩ năng này dùng suốt các lớp sau.
+? x² − 4x phân tích ra gì? → x(x − 4)
+? x² − 2x + 1 phân tích ra gì? → (x − 1)²
+? Ba cách phân tích đã học là gì? → đặt nhân tử chung, dùng hằng đẳng thức, nhóm hạng tử
+- Luyện tập chung (trang 45)
+> Ôn phân tích đa thức thành nhân tử, phối hợp nhiều cách.
+? Con làm được dạng bài nào, còn dạng nào chưa quen?
+- Bài tập cuối chương 2
+> Tổng ôn chương Hằng đẳng thức: khai triển, rút gọn, phân tích thành nhân tử.
+? Con tự chấm được bao nhiêu bài đúng trong phần ôn chương?
+
+# Chương 3: Tứ giác
+- Bài 10: Tứ giác
+> Tứ giác lồi, các yếu tố (đỉnh, cạnh, đường chéo, góc) và tính chất quan trọng nhất: tổng bốn góc của một tứ giác bằng 360°.
+? Tổng các góc trong một tứ giác bằng bao nhiêu độ? → 360°
+? Tứ giác có ba góc 90°, 80°, 100° thì góc còn lại bằng? → 90°
+- Bài 11: Hình thang cân
+> Hình thang là tứ giác có hai cạnh đối song song; hình thang cân có hai góc kề một đáy bằng nhau. Tính chất: hai cạnh bên bằng nhau, hai đường chéo bằng nhau; và dấu hiệu nhận biết.
+? Hai đường chéo của hình thang cân có tính chất gì? → bằng nhau
+? Hình thang có hai đường chéo bằng nhau là hình gì? → hình thang cân
+- Luyện tập chung (trang 56)
+> Ôn tứ giác và hình thang cân: tính góc, chứng minh hình thang cân.
+? Con vẽ một hình thang cân và chỉ ra hai góc bằng nhau.
+- Bài 12: Hình bình hành
+> Tứ giác có các cạnh đối song song. Tính chất: cạnh đối bằng nhau, góc đối bằng nhau, hai đường chéo cắt nhau tại trung điểm mỗi đường; cùng các dấu hiệu nhận biết.
+? Hai đường chéo của hình bình hành có tính chất gì? → cắt nhau tại trung điểm mỗi đường
+? Kể hai dấu hiệu nhận biết hình bình hành.
+- Luyện tập chung (trang 62)
+> Ôn hình bình hành: dùng tính chất và dấu hiệu để chứng minh.
+? Tứ giác có hai cạnh đối song song và bằng nhau là hình gì? → hình bình hành
+- Bài 13: Hình chữ nhật
+> Tứ giác có bốn góc vuông; là hình bình hành có hai đường chéo bằng nhau. Ứng dụng vào tam giác vuông: đường trung tuyến ứng với cạnh huyền bằng nửa cạnh huyền.
+? Hình bình hành có thêm điều kiện gì thì thành hình chữ nhật? → một góc vuông hoặc hai đường chéo bằng nhau
+? Trong tam giác vuông, trung tuyến ứng với cạnh huyền bằng bao nhiêu? → nửa cạnh huyền
+- Bài 14: Hình thoi và hình vuông
+> Hình thoi: bốn cạnh bằng nhau, hai đường chéo vuông góc và là phân giác của các góc. Hình vuông: vừa là hình chữ nhật vừa là hình thoi.
+? Hai đường chéo của hình thoi có gì đặc biệt? → vuông góc với nhau tại trung điểm mỗi đường
+? Hình chữ nhật có hai cạnh kề bằng nhau là hình gì? → hình vuông
+- Luyện tập chung (trang 73)
+> Ôn hình chữ nhật, hình thoi, hình vuông: nhận biết và chứng minh.
+? Con kể sơ đồ: hình bình hành thêm gì thành hình thoi, thêm gì thành hình vuông?
+- Bài tập cuối chương 3
+> Tổng ôn chương Tứ giác: các loại tứ giác đặc biệt, tính chất và dấu hiệu nhận biết.
+? Con vẽ sơ đồ quan hệ giữa các tứ giác đã học.
+
+# Chương 4: Định lí Thalès
+- Bài 15: Định lí Thalès trong tam giác
+> Tỉ số hai đoạn thẳng, đoạn thẳng tỉ lệ. Định lí Thalès: đường thẳng song song với một cạnh của tam giác định ra trên hai cạnh còn lại những đoạn thẳng tương ứng tỉ lệ; và định lí đảo.
+? Định lí Thalès nói gì? Con vẽ hình minh họa.
+? AB = 6, AC = 9, MN // BC với AM = 2 thì AN bằng? → 3
+- Bài 16: Đường trung bình của tam giác
+> Đường trung bình nối trung điểm hai cạnh của tam giác; nó song song với cạnh thứ ba và bằng nửa cạnh ấy.
+? Đường trung bình của tam giác dài bằng bao nhiêu so với cạnh thứ ba? → một nửa
+? BC = 10 cm thì đường trung bình song song với BC dài bao nhiêu? → 5 cm
+- Bài 17: Tính chất đường phân giác của tam giác
+> Đường phân giác của một góc chia cạnh đối diện thành hai đoạn tỉ lệ với hai cạnh kề của góc đó.
+? Phân giác góc A của tam giác ABC chia BC thành hai đoạn tỉ lệ với gì? → AB và AC
+- Luyện tập chung (trang 87)
+> Ôn Thalès, đường trung bình, đường phân giác: tính độ dài, chứng minh song song.
+? Con nói lại ba định lí của chương bằng lời của mình.
+- Bài tập cuối chương 4
+> Tổng ôn chương Định lí Thalès.
+? Chương này con làm được bao nhiêu bài trong phần ôn?
+
+# Chương 5: Dữ liệu và biểu đồ
+- Bài 18: Thu thập và phân loại dữ liệu
+> Cách thu thập dữ liệu (phỏng vấn, quan sát, tra cứu, khảo sát), phân loại dữ liệu định tính và định lượng, kiểm tra tính hợp lí của dữ liệu.
+? Dữ liệu "màu áo yêu thích" là định tính hay định lượng? → định tính
+? Kể hai cách thu thập dữ liệu.
+- Bài 19: Biểu diễn dữ liệu bằng bảng, biểu đồ
+> Chọn dạng biểu đồ phù hợp (cột, cột kép, đoạn thẳng, hình quạt tròn) với từng loại dữ liệu; đọc và vẽ biểu đồ.
+? Muốn thể hiện tỉ lệ phần trăm các phần thì dùng biểu đồ gì? → hình quạt tròn
+? Theo dõi sự thay đổi theo thời gian thì dùng biểu đồ gì? → đoạn thẳng
+- Bài 20: Phân tích số liệu thống kê dựa vào biểu đồ
+> Đọc biểu đồ để rút ra nhận xét, so sánh, phát hiện số liệu bất thường hoặc cách vẽ gây hiểu nhầm.
+? Lấy hóa đơn điện nhà mình, con thử nhận xét tháng nào cao nhất và vì sao.
+- Luyện tập chung (trang 106)
+> Ôn thu thập, biểu diễn và phân tích dữ liệu.
+? Con tự làm một bảng thống kê nhỏ (ví dụ giờ ngủ trong tuần) rồi vẽ biểu đồ.
+- Bài tập cuối chương 5
+> Tổng ôn chương Dữ liệu và biểu đồ.
+? Biểu đồ nào con thấy khó đọc nhất? Vì sao?
+
+# Hoạt động thực hành trải nghiệm (học kì 1)
+- Công thức lãi kép
+> Tính tiền gửi ngân hàng theo lãi kép: sau n kì, số tiền A = P(1 + r)ⁿ. Con thấy toán gắn với tiền tiết kiệm thật.
+? Gửi 100 triệu, lãi 6%/năm, sau 2 năm được bao nhiêu? → 112,36 triệu
+- Thực hiện tính toán trên đa thức với phần mềm GeoGebra
+> Dùng GeoGebra khai triển, rút gọn, phân tích đa thức để kiểm tra lại kết quả làm tay.
+? Con thử cho GeoGebra khai triển (x + 2)³ rồi so với tay tính.
+- Vẽ hình đơn giản với phần mềm GeoGebra
+> Vẽ điểm, đoạn thẳng, tam giác, tứ giác và đo góc, độ dài trên GeoGebra.
+? Con vẽ một hình bình hành trên GeoGebra và kiểm tra hai đường chéo cắt nhau ở trung điểm.
+- Phân tích đặc điểm khí hậu Việt Nam
+> Dùng số liệu nhiệt độ, lượng mưa thật để lập bảng, vẽ biểu đồ và nhận xét (liên môn với Địa lí).
+? Tháng nào ở địa phương mình mưa nhiều nhất theo số liệu con tra được?
+
+hk: 2
+
+# Chương 6: Phân thức đại số
+- Bài 21: Phân thức đại số
+> Phân thức có dạng A/B với A, B là đa thức và B khác 0. Con học điều kiện xác định (mẫu khác 0), giá trị của phân thức, và hai phân thức bằng nhau khi A·D = B·C.
+? Phân thức 1/(x − 2) xác định khi nào? → x ≠ 2
+? Giá trị của (x + 1)/x tại x = 2 là? → 3/2
+- Bài 22: Tính chất cơ bản của phân thức đại số
+> Nhân hoặc chia cả tử và mẫu với cùng một đa thức khác 0 thì được phân thức bằng nó. Từ đó rút gọn phân thức và quy đồng mẫu thức nhiều phân thức.
+? Rút gọn 2x/(4x²)? → 1/(2x)
+? Muốn quy đồng mẫu hai phân thức thì làm bước gì đầu tiên? → phân tích mẫu thành nhân tử để tìm mẫu chung
+- Luyện tập chung (trang 13)
+> Ôn khái niệm, rút gọn và quy đồng phân thức.
+? Con rút gọn (x² − 1)/(x + 1) cho bố mẹ xem. → x − 1
+- Bài 23: Phép cộng và phép trừ phân thức đại số
+> Cùng mẫu thì cộng, trừ tử và giữ nguyên mẫu; khác mẫu thì quy đồng trước rồi làm như cùng mẫu.
+? 1/x + 2/x bằng? → 3/x
+? 1/x + 1/y bằng? → (x + y)/(xy)
+- Bài 24: Phép nhân và phép chia phân thức đại số
+> Nhân: tử nhân tử, mẫu nhân mẫu. Chia: nhân với phân thức nghịch đảo. Rút gọn kết quả.
+? (x/2) : (x/4) bằng? → 2
+? Nghịch đảo của (x + 1)/x là gì? → x/(x + 1)
+- Luyện tập chung (trang 23)
+> Ôn bốn phép tính với phân thức và biểu thức phối hợp.
+? Thứ tự thực hiện phép tính với phân thức có giống với phân số không? → giống
+- Bài tập cuối chương 6
+> Tổng ôn chương Phân thức đại số.
+? Con kể lại các bước rút gọn một biểu thức phân thức.
+
+# Chương 7: Phương trình bậc nhất và hàm số bậc nhất
+- Bài 25: Phương trình bậc nhất một ẩn
+> Phương trình dạng ax + b = 0 (a ≠ 0) có nghiệm duy nhất x = −b/a. Giải bằng quy tắc chuyển vế và nhân, chia hai vế; nhiều phương trình đưa được về dạng này.
+? Giải 2x − 6 = 0. → x = 3
+? Giải 3x + 1 = x + 7. → x = 3
+- Bài 26: Giải bài toán bằng cách lập phương trình
+> Ba bước: chọn ẩn và đặt điều kiện, lập phương trình từ đề bài, giải rồi đối chiếu điều kiện và trả lời.
+? Tổng hai số là 30, số này hơn số kia 4 — con lập phương trình thế nào? → x + (x + 4) = 30, được 13 và 17
+- Luyện tập chung (trang 37)
+> Ôn giải phương trình và giải toán bằng cách lập phương trình (chuyển động, năng suất, số học).
+? Con kể một bài toán thực tế đã giải bằng phương trình.
+- Bài 27: Khái niệm hàm số và đồ thị của hàm số
+> Hàm số: mỗi giá trị x cho đúng một giá trị y, kí hiệu y = f(x). Mặt phẳng tọa độ Oxy, tọa độ điểm, đồ thị của hàm số.
+? Điểm (2; 3) có hoành độ và tung độ bằng bao nhiêu? → hoành độ 2, tung độ 3
+? f(x) = 2x + 1 thì f(3) bằng? → 7
+- Bài 28: Hàm số bậc nhất và đồ thị của hàm số bậc nhất
+> Hàm số bậc nhất y = ax + b (a ≠ 0); đồ thị là một đường thẳng, vẽ bằng cách lấy hai điểm (thường là giao với hai trục).
+? Đồ thị y = 2x + 1 cắt trục tung tại điểm nào? → (0; 1)
+? Cần mấy điểm để vẽ đồ thị hàm số bậc nhất? → 2
+- Bài 29: Hệ số góc của đường thẳng
+> a là hệ số góc: a > 0 đường thẳng đi lên, a < 0 đi xuống. Hai đường thẳng song song khi hệ số góc bằng nhau (và b khác nhau), cắt nhau khi hệ số góc khác nhau.
+? y = 3x − 1 và y = 3x + 5 song song hay cắt nhau? → song song
+? Hệ số góc của y = −2x + 4 là? → −2
+- Luyện tập chung (trang 55)
+> Ôn hàm số bậc nhất: tính giá trị, vẽ đồ thị, xét vị trí hai đường thẳng.
+? Con vẽ đồ thị y = x − 2 ra giấy.
+- Bài tập cuối chương 7
+> Tổng ôn chương Phương trình và hàm số bậc nhất.
+? Con nhắc lại điều kiện để hai đường thẳng song song.
+
+# Chương 8: Mở đầu về tính xác suất của biến cố
+- Bài 30: Kết quả có thể và kết quả thuận lợi
+> Liệt kê các kết quả có thể của một hành động (tung xúc xắc: 1 đến 6) và các kết quả thuận lợi cho một biến cố.
+? Tung một con xúc xắc, biến cố "ra số chẵn" có mấy kết quả thuận lợi? → 3 (mặt 2, 4, 6)
+- Bài 31: Cách tính xác suất của biến cố bằng tỉ số
+> Khi các kết quả đồng khả năng: xác suất = số kết quả thuận lợi / số kết quả có thể.
+? Xác suất tung xúc xắc được mặt 6 chấm? → 1/6
+? Rút một thẻ từ 10 thẻ đánh số 1–10, xác suất được số chia hết cho 5? → 2/10 = 1/5
+- Bài 32: Mối liên hệ giữa xác suất thực nghiệm với xác suất và ứng dụng
+> Xác suất thực nghiệm = số lần biến cố xảy ra / số lần thử; thử càng nhiều thì càng gần xác suất lí thuyết, nên dùng để ước lượng xác suất.
+? Tung đồng xu 100 lần được 48 lần sấp — xác suất thực nghiệm của mặt sấp là? → 0,48
+- Luyện tập chung (trang 74)
+> Ôn tính xác suất bằng tỉ số và xác suất thực nghiệm.
+? Con tung xúc xắc 20 lần, đếm số lần ra mặt 6 và tính xác suất thực nghiệm.
+- Bài tập cuối chương 8
+> Tổng ôn chương Xác suất.
+? Xác suất luôn nằm trong khoảng nào? → từ 0 đến 1
+
+# Chương 9: Tam giác đồng dạng
+- Bài 33: Hai tam giác đồng dạng
+> Hai tam giác đồng dạng khi các góc tương ứng bằng nhau và các cạnh tương ứng tỉ lệ; tỉ số đồng dạng. Đường thẳng song song với một cạnh tạo ra tam giác đồng dạng với tam giác đã cho.
+? Hai tam giác đồng dạng tỉ số 2 thì cạnh của tam giác lớn gấp mấy lần tam giác nhỏ? → 2
+? Kí hiệu đồng dạng viết thế nào? → ∽
+- Bài 34: Ba trường hợp đồng dạng của hai tam giác
+> Cạnh – cạnh – cạnh, cạnh – góc – cạnh, góc – góc. Chỉ cần hai cặp góc bằng nhau là hai tam giác đồng dạng.
+? Hai tam giác có hai cặp góc bằng nhau thì sao? → đồng dạng (trường hợp góc – góc)
+? Kể tên ba trường hợp đồng dạng.
+- Luyện tập chung (trang 91)
+> Ôn chứng minh tam giác đồng dạng và suy ra tỉ số, độ dài.
+? Con nêu một bài đã dùng trường hợp góc – góc.
+- Bài 35: Định lí Pythagore và ứng dụng
+> Trong tam giác vuông, bình phương cạnh huyền bằng tổng bình phương hai cạnh góc vuông (a² = b² + c²); định lí đảo dùng để nhận biết tam giác vuông.
+? Tam giác vuông có hai cạnh góc vuông 3 và 4 thì cạnh huyền bằng? → 5
+? Tam giác có ba cạnh 5, 12, 13 có vuông không? → có, vì 5² + 12² = 13²
+- Bài 36: Các trường hợp đồng dạng của hai tam giác vuông
+> Hai tam giác vuông đồng dạng khi có một góc nhọn bằng nhau, hoặc hai cạnh góc vuông tỉ lệ, hoặc cạnh huyền và một cạnh góc vuông tỉ lệ.
+? Hai tam giác vuông có một góc nhọn bằng nhau thì có đồng dạng không? → có
+- Bài 37: Hình đồng dạng
+> Hình đồng dạng phối cảnh (phóng to, thu nhỏ từ một tâm) và hình đồng dạng nói chung; nhận ra trong thực tế như ảnh phóng to, bản đồ.
+? Tấm ảnh phóng to gấp đôi có đồng dạng với ảnh gốc không? → có
+- Luyện tập chung (trang 108)
+> Ôn tam giác đồng dạng, Pythagore, ứng dụng tính khoảng cách.
+? Con giải thích vì sao dùng bóng nắng đo được chiều cao cột cờ.
+- Bài tập cuối chương 9
+> Tổng ôn chương Tam giác đồng dạng.
+? Con nhắc lại định lí Pythagore.
+
+# Chương 10: Một số hình khối trong thực tiễn
+- Bài 38: Hình chóp tam giác đều
+> Đáy là tam giác đều, các mặt bên là tam giác cân bằng nhau; trung đoạn. Diện tích xung quanh = ½ · chu vi đáy · trung đoạn; thể tích = ⅓ · diện tích đáy · chiều cao.
+? Hình chóp tam giác đều có mấy mặt? → 4
+? Công thức thể tích hình chóp? → V = ⅓ · S đáy · h
+- Bài 39: Hình chóp tứ giác đều
+> Đáy là hình vuông, bốn mặt bên là tam giác cân bằng nhau; cùng công thức diện tích xung quanh và thể tích như hình chóp tam giác đều.
+? Hình chóp tứ giác đều có mấy cạnh? → 8
+? Đáy hình vuông cạnh 6, chiều cao 5 thì thể tích bằng? → 60
+- Luyện tập chung (trang 121)
+> Ôn tính diện tích, thể tích hình chóp đều.
+? Con kể một đồ vật hình chóp ngoài đời.
+- Bài tập cuối chương 10
+> Tổng ôn chương Hình khối.
+? Kim tự tháp Ai Cập là hình chóp gì? → hình chóp tứ giác đều
+
+# Hoạt động thực hành trải nghiệm (học kì 2)
+- Một vài ứng dụng của hàm số bậc nhất trong tài chính
+> Tiền cước, tiền lương theo giờ, lãi đơn… đều là hàm số bậc nhất; lập công thức, vẽ đồ thị để so sánh các phương án.
+? Gói cước 50 nghìn/tháng + 1 nghìn/GB — con viết công thức tiền phải trả theo số GB. → y = 50 + x (nghìn đồng)
+- Ứng dụng định lí Thalès, định lí Pythagore và tam giác đồng dạng để đo chiều cao, khoảng cách
+> Đo chiều cao cây, cột cờ bằng bóng nắng hoặc cọc và tam giác đồng dạng; đo khoảng cách không tới được.
+? Con thử đo chiều cao một cái cây gần nhà bằng bóng nắng.
+- Thực hành tính toán trên phân thức đại số và vẽ đồ thị hàm số với phần mềm GeoGebra
+> Dùng GeoGebra rút gọn phân thức và vẽ đồ thị hàm số bậc nhất, kiểm tra kết quả làm tay.
+? Con vẽ y = 2x − 1 trên GeoGebra và chỉ giao điểm với trục tung.
+- Mô tả thí nghiệm ngẫu nhiên với phần mềm Excel
+> Dùng hàm RANDBETWEEN mô phỏng tung xúc xắc nhiều lần rồi tính xác suất thực nghiệm.
+? Mô phỏng 1000 lần thì tỉ lệ ra mặt 6 gần con số nào? → khoảng 1/6 ≈ 0,167
+- Bài tập ôn tập cuối năm
+> Ôn toàn bộ Toán 8: đa thức, hằng đẳng thức, tứ giác, Thalès, thống kê, phân thức, phương trình, hàm số, xác suất, tam giác đồng dạng, hình chóp.
+? Con liệt kê các chương đã học và tự đánh giá mỗi chương nắm được bao nhiêu phần trăm.

@@ -8,16 +8,21 @@ build/
 android/.gradle/
 android/local.properties
 
-# Cấu hình Firebase sinh ra theo từng project, không đưa lên repo
-android/app/google-services.json
-ios/Runner/GoogleService-Info.plist
-lib/firebase_options.dart
-.firebase/
+# Địa chỉ và khóa Supabase — gắn với đúng một dự án, mỗi người một bản
+.env.json
 
-# Emulator
+# Khóa ký APK. Mất file này là không ra được bản cập nhật cho máy đã cài.
+android/key.properties
+# Cấu hình Firebase cho thông báo đẩy — gắn với đúng một project, tự tải về.
+android/app/google-services.json
+*.jks
+*.keystore
+
 *-debug.log
-firebase-debug.log
-firestore-debug.log
-ui-debug.log
 
 node_modules/
+
+# Bản đã điền địa chỉ thật và mã bí mật webhook của dự án mình (xem README Phần 4)
+supabase/*.local.sql
+
+__pycache__/

@@ -1,5 +1,0 @@
-{
-  "_ghiChu": "Chưa cần chỉ mục ghép nào: mọi truy vấn chỉ lọc trên một trường (khoaNgay hoặc ngay) rồi sắp xếp ở phía client, nên chỉ mục một trường Firestore tự tạo là đủ.",
-  "indexes": [],
-  "fieldOverrides": []
-}

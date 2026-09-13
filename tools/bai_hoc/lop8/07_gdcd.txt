@@ -1,0 +1,40 @@
+mon: m_gdcd
+lop: 8
+hk: 1
+
+# Giáo dục công dân 8 — Học kì I
+- Bài 1: Tự hào về truyền thống dân tộc Việt Nam
+> Các truyền thống yêu nước, đoàn kết, nhân nghĩa, hiếu học, cần cù…; giá trị của truyền thống; biểu hiện của lòng tự hào và phê phán hành vi xúc phạm truyền thống.
+? Kể ba truyền thống tốt đẹp của dân tộc ta.
+? Con thể hiện lòng tự hào dân tộc bằng việc làm gì?
+- Bài 2: Tôn trọng sự đa dạng của các dân tộc
+> Mỗi dân tộc có nền văn hóa riêng đáng trân trọng; tôn trọng, học hỏi lẫn nhau; không kì thị, phân biệt đối xử.
+? Vì sao cần tôn trọng sự đa dạng văn hóa của các dân tộc?
+- Bài 3: Lao động cần cù, sáng tạo
+> Cần cù là chăm chỉ, kiên trì; sáng tạo là tìm cách làm mới, hiệu quả hơn; ý nghĩa và cách rèn luyện trong học tập, lao động.
+? Tuần này con đã làm việc gì một cách sáng tạo?
+- Bài 4: Bảo vệ lẽ phải
+> Lẽ phải là điều đúng đắn, phù hợp đạo lí và lợi ích chung; bảo vệ lẽ phải bằng lời nói, việc làm; dũng cảm, không a dua theo số đông.
+? Thấy bạn bị bắt nạt, con sẽ làm gì?
+- Bài 5: Bảo vệ môi trường và tài nguyên thiên nhiên
+> Sự cần thiết của việc bảo vệ; một số quy định pháp luật; trách nhiệm của học sinh: tiết kiệm, không xả rác, tố giác hành vi vi phạm.
+? Kể ba việc con làm để bảo vệ môi trường.
+
+hk: 2
+
+# Giáo dục công dân 8 — Học kì II
+- Bài 6: Xác định mục tiêu cá nhân
+> Mục tiêu ngắn hạn và dài hạn; đặt mục tiêu theo tiêu chí cụ thể, đo được, khả thi, thực tế, có thời hạn; lập kế hoạch thực hiện.
+? Mục tiêu học kì này của con là gì? Đo bằng gì?
+- Bài 7: Phòng, chống bạo lực gia đình
+> Các hình thức bạo lực gia đình (thể chất, tinh thần, kinh tế, tình dục), tác hại; quy định của pháp luật; cách ứng phó và tìm sự giúp đỡ.
+? Khi bị bạo lực gia đình có thể gọi số nào để được giúp? → 111 (trẻ em) hoặc 113 (công an)
+- Bài 8: Lập kế hoạch chi tiêu
+> Xác định thu nhập, phân biệt khoản chi cần thiết và không cần thiết, dành phần tiết kiệm; ghi chép và điều chỉnh kế hoạch.
+? Tiền tiêu vặt tháng này con chi vào những gì? Tiết kiệm được bao nhiêu?
+- Bài 9: Phòng ngừa tai nạn vũ khí, cháy, nổ và các chất độc hại
+> Nguy cơ và hậu quả của tai nạn cháy nổ, hóa chất; quy định pháp luật; kĩ năng phòng ngừa: không đốt pháo, kiểm tra điện, gas, cất hóa chất đúng chỗ.
+? Nhà mình để bình gas, ổ điện đã an toàn chưa? Có cháy thì gọi số nào? → 114
+- Bài 10: Quyền và nghĩa vụ lao động của công dân
+> Lao động vừa là quyền vừa là nghĩa vụ; quy định về lao động chưa thành niên (không làm việc nặng nhọc, độc hại; giới hạn giờ làm); hợp đồng lao động.
+? Người dưới 15 tuổi có được làm việc nặng nhọc, độc hại không? → không

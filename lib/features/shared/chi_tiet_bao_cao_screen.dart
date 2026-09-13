@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -11,7 +9,9 @@ import '../../core/widgets/trang_vo.dart';
 import '../../data/app_state.dart';
 import '../../data/models/models.dart';
 import '../parent/soan_nhac_nho.dart';
+import 'anh_bai_lam.dart';
 import 'soan_bao_cao_screen.dart';
+import 'the_bai_hoc.dart';
 
 class ChiTietBaoCaoScreen extends StatelessWidget {
   const ChiTietBaoCaoScreen({super.key, required this.baoCaoId});
@@ -29,6 +29,7 @@ class ChiTietBaoCaoScreen extends StatelessWidget {
 
     final laPhuHuynh = s.nguoiDung?.vaiTro == VaiTro.phuHuynh;
     final gv = s.tenGv(bc.giaoVienId);
+    final bh = s.baiHocTheoId(bc.baiHocId);
 
     return Scaffold(
       appBar: AppBar(
@@ -67,6 +68,13 @@ class ChiTietBaoCaoScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(s.tenMon(bc.monId), style: AppType.display(21)),
+                if (bh != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    bh.ten,
+                    style: AppType.ui(14, color: AppColor.muc, w: FontWeight.w600),
+                  ),
+                ],
                 if (gv != null) ...[
                   const SizedBox(height: 4),
                   Text(
@@ -82,6 +90,10 @@ class ChiTietBaoCaoScreen extends StatelessWidget {
               ],
             ),
           ),
+          if (bh != null) ...[
+            const SizedBox(height: Gap.lg),
+            TheBaiHoc(bh, laPhuHuynh: laPhuHuynh),
+          ],
           if (bc.anh.isNotEmpty) ...[
             const SizedBox(height: Gap.xl),
             TieuDeMuc('Ảnh bài làm', eyebrow: '${bc.anh.length} ảnh'),
@@ -157,102 +169,6 @@ class _LuoiAnh extends StatelessWidget {
       ),
     );
   }
-}
-
-class AnhBaiLam extends StatelessWidget {
-  const AnhBaiLam({super.key, required this.duongDan, this.canh = 132, this.onXoa});
-  final String duongDan;
-  final double canh;
-  final VoidCallback? onXoa;
-
-  @override
-  Widget build(BuildContext context) {
-    final laDemo = duongDan.startsWith('demo:');
-    final laMang = duongDan.startsWith('http');
-
-    return Stack(
-      children: [
-        Container(
-          width: canh,
-          height: canh,
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            color: AppColor.sky,
-            borderRadius: BorderRadius.circular(R.md),
-            border: Border.all(color: AppColor.dongKe),
-          ),
-          child: laDemo
-              ? CustomPaint(
-                  painter: _GiayNhap(),
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.image_rounded,
-                            size: 22, color: AppColor.muc.withValues(alpha: .45)),
-                        const SizedBox(height: 6),
-                        Text('Ảnh bài làm',
-                            style: AppType.ui(11, color: AppColor.mucNhat, w: FontWeight.w600)),
-                      ],
-                    ),
-                  ),
-                )
-              : laMang
-                  ? Image.network(
-                      duongDan,
-                      fit: BoxFit.cover,
-                      loadingBuilder: (_, con, tien) => tien == null
-                          ? con
-                          : const Center(
-                              child: SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(
-                                    strokeWidth: 2, color: AppColor.mucNhat),
-                              ),
-                            ),
-                      errorBuilder: (_, _, _) => const _AnhHong(),
-                    )
-                  : Image.file(
-                      File(duongDan),
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => const _AnhHong(),
-                    ),
-        ),
-        if (onXoa != null)
-          Positioned(
-            top: 5,
-            right: 5,
-            child: GestureDetector(
-              onTap: onXoa,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: AppColor.ink.withValues(alpha: .82),
-                  borderRadius: BorderRadius.circular(R.sm),
-                ),
-                child: const Icon(Icons.close_rounded, size: 14, color: Colors.white),
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class _GiayNhap extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final p = Paint()
-      ..color = AppColor.dongKeDam.withValues(alpha: .5)
-      ..strokeWidth = 1;
-    for (var y = 14.0; y < size.height; y += 14) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), p);
-    }
-  }
-
-  @override
-  bool shouldRepaint(_GiayNhap old) => false;
 }
 
 /// Nhận xét của phụ huynh — chỗ để bố mẹ viết một câu vào bài của con,
@@ -413,26 +329,6 @@ class _DoiTrangThai extends StatelessWidget {
           ],
         ),
       ],
-    );
-  }
-}
-
-/// Ảnh không tải được — nói thẳng là mất ảnh, đừng để một ô xám vô nghĩa.
-class _AnhHong extends StatelessWidget {
-  const _AnhHong();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.broken_image_outlined, size: 20, color: AppColor.mucNhat),
-          const SizedBox(height: 5),
-          Text('Không tải được ảnh',
-              style: AppType.ui(10.5, color: AppColor.mucNhat, w: FontWeight.w500)),
-        ],
-      ),
     );
   }
 }

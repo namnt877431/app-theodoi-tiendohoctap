@@ -180,7 +180,7 @@ class _TheNguoiDung extends StatelessWidget {
         : const <NguoiDung>[];
 
     final phu = switch (nd.vaiTro) {
-      VaiTro.hocSinh => 'Lớp ${nd.lop} · ${nd.truong}',
+      VaiTro.hocSinh => 'Lớp ${nd.lop} · ${context.read<AppState>().tenTruongCua(nd) ?? '—'}',
       VaiTro.phuHuynh => '${nd.conIds.length} con đang theo dõi',
       VaiTro.quanTri => nd.email ?? 'Quản trị viên',
     };

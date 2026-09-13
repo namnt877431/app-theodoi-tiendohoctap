@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/anh/nen_anh.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../core/utils/ngay.dart';
 import '../../core/widgets/common.dart';
 import '../../data/app_state.dart';
 import '../../data/models/models.dart';
-import 'chi_tiet_bao_cao_screen.dart';
+import 'chon_bai_hoc.dart';
+import 'chon_giao_vien.dart';
+import 'anh_bai_lam.dart';
 
 /// Học sinh viết báo cáo trong ngày. Ô nội dung được kẻ dòng đúng nhịp trang vở
 /// để việc gõ vào app giống viết vào vở hơn là điền biểu mẫu.
@@ -26,6 +29,7 @@ class _SoanBaoCaoScreenState extends State<SoanBaoCaoScreen> {
   late LoaiBaiTap _loai;
   late String _monId;
   String? _gvId;
+  String? _baiHocId;
   late DateTime _ngay;
   late TrangThai _trangThai;
   late final TextEditingController _noiDung;
@@ -42,6 +46,7 @@ class _SoanBaoCaoScreenState extends State<SoanBaoCaoScreen> {
     _loai = b?.loai ?? widget.loaiMacDinh ?? LoaiBaiTap.trenLop;
     _monId = b?.monId ?? context.read<AppState>().monMacDinh;
     _gvId = b?.giaoVienId;
+    _baiHocId = b?.baiHocId;
     _ngay = b?.ngay ?? Ngay.dauNgay(DateTime.now());
     _trangThai = b?.trangThai ?? TrangThai.xong;
     _noiDung = TextEditingController(text: b?.noiDung ?? '');
@@ -57,8 +62,18 @@ class _SoanBaoCaoScreenState extends State<SoanBaoCaoScreen> {
 
   Future<void> _themAnh(ImageSource nguon) async {
     try {
-      final f = await ImagePicker().pickImage(source: nguon, imageQuality: 70);
-      if (f != null) setState(() => _anh = [..._anh, f.path]);
+      // Thu về cạnh dài 1600 px ngay lúc chụp — trang vở ở cỡ đó vẫn đọc rõ
+      // chữ, còn ảnh 12 MP nguyên bản thì vừa nặng vừa tốn kho. Sau đó ép
+      // tiếp xuống dưới 500 KB.
+      final f = await ImagePicker().pickImage(
+        source: nguon,
+        maxWidth: 1600,
+        maxHeight: 1600,
+        imageQuality: 85,
+      );
+      if (f == null) return;
+      final duongDan = await nenAnhBaiLam(f.path);
+      if (mounted) setState(() => _anh = [..._anh, duongDan]);
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -88,6 +103,7 @@ class _SoanBaoCaoScreenState extends State<SoanBaoCaoScreen> {
       loai: _loai,
       monId: _monId,
       giaoVienId: _gvId,
+      baiHocId: _baiHocId,
       noiDung: _noiDung.text.trim(),
       trangThai: _trangThai,
       anh: _anh,
@@ -96,11 +112,27 @@ class _SoanBaoCaoScreenState extends State<SoanBaoCaoScreen> {
       phuHuynhDaXem: mau.phuHuynhDaXem,
       taoLuc: mau.taoLuc,
     );
-    await s.luuBaoCao(bc);
+    final KetQuaLuu ketQua;
+    try {
+      ketQua = await s.luuBaoCao(bc);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _dangLuu = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Không lưu được: $e')),
+      );
+      return;
+    }
     if (!mounted) return;
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(_suaCu ? 'Đã lưu báo cáo' : 'Đã gửi báo cáo cho bố mẹ')),
+      SnackBar(
+        duration: Duration(seconds: ketQua == KetQuaLuu.choMang ? 5 : 4),
+        content: Text(switch (ketQua) {
+          KetQuaLuu.choMang => 'Chưa có mạng — đã cất trên máy, sẽ tự gửi khi có mạng.',
+          KetQuaLuu.daGui => _suaCu ? 'Đã lưu báo cáo' : 'Đã gửi báo cáo cho bố mẹ',
+        }),
+      ),
     );
   }
 
@@ -112,7 +144,7 @@ class _SoanBaoCaoScreenState extends State<SoanBaoCaoScreen> {
   @override
   Widget build(BuildContext context) {
     final s = context.watch<AppState>();
-    final dsGv = s.gvTheoLoai(_loai);
+    final dsGv = s.gvChoHocSinh(_loai);
 
     // Chưa có môn nào thì không dựng biểu mẫu — một danh sách chọn rỗng chỉ
     // làm người dùng bối rối chứ không nói được vấn đề nằm ở đâu.
@@ -212,7 +244,10 @@ class _SoanBaoCaoScreenState extends State<SoanBaoCaoScreen> {
                         for (final m in s.monHoc)
                           DropdownMenuItem(value: m.id, child: Text(m.ten)),
                       ],
-                      onChanged: (v) => setState(() => _monId = v!),
+                      onChanged: (v) => setState(() {
+                        if (v != _monId) _baiHocId = null;
+                        _monId = v!;
+                      }),
                     ),
                   ],
                 ),
@@ -249,21 +284,24 @@ class _SoanBaoCaoScreenState extends State<SoanBaoCaoScreen> {
           ),
           const SizedBox(height: Gap.lg),
           _Nhan(_loai == LoaiBaiTap.hocThem ? 'Thầy cô dạy thêm' : 'Giáo viên bộ môn'),
-          DropdownButtonFormField<String?>(
-            initialValue: _gvId,
-            isExpanded: true,
-            style: AppType.ui(15, w: FontWeight.w500),
-            hint: const Text('Chưa chọn'),
-            items: [
-              const DropdownMenuItem<String?>(value: null, child: Text('Chưa chọn')),
-              for (final g in dsGv)
-                DropdownMenuItem<String?>(
-                  value: g.id,
-                  child: Text('${g.hoTen} · ${s.vietTatMon(g.monId)}'),
-                ),
-            ],
+          ChonGiaoVien(
+            loai: _loai,
+            giaTri: _gvId,
+            dsGv: dsGv,
+            monId: _monId,
             onChanged: (v) => setState(() => _gvId = v),
           ),
+          // Chỉ hiện khi khối lớp của em có danh mục cho môn này — không thì
+          // ô chọn rỗng chỉ làm người ta tưởng mình thiếu gì đó.
+          if (s.baiHocTheoMon(_monId).isNotEmpty) ...[
+            const SizedBox(height: Gap.lg),
+            _Nhan('Bài học trong sách'),
+            ChonBaiHoc(
+              monId: _monId,
+              giaTri: _baiHocId,
+              onChanged: (v) => setState(() => _baiHocId = v),
+            ),
+          ],
           const SizedBox(height: Gap.lg),
           _Nhan('Hôm nay con làm gì?'),
           _OViet(controller: _noiDung),

@@ -1,0 +1,23 @@
+# Kiểm tra mỗi lần đẩy mã: phân tích tĩnh và chạy bộ test Dart.
+# Bộ test phân quyền SQL (supabase/test) không chạy ở đây — cần Postgres,
+# xem supabase/test/README.md.
+name: Kiểm tra
+
+on:
+  push:
+    branches: [master, mobile, web]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.44.0
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test

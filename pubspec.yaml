@@ -1,7 +1,7 @@
 name: theodoi_hoctap
 description: "Theo doi tien do hoc tap - So lien lac so"
 publish_to: 'none'
-version: 0.1.0
+version: 0.3.0+5
 
 environment:
   sdk: ^3.9.0
@@ -14,11 +14,13 @@ dependencies:
   provider: ^6.1.2
   intl: ^0.20.2
   image_picker: ^1.1.2
+  supabase_flutter: ^2.17.2
+  uuid: ^4.6.0
   firebase_core: ^4.14.0
-  firebase_auth: ^6.6.1
-  cloud_firestore: ^6.9.0
-  firebase_storage: ^13.5.0
-
+  firebase_messaging: ^16.6.0
+  flutter_image_compress: ^2.5.1
+  path_provider: ^2.1.6
+  cross_file: ^0.3.5+5
 dev_dependencies:
   flutter_test:
     sdk: flutter

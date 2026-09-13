@@ -1,8 +1,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Khuôn mẫu của Flutter chỉ khai quyền này trong manifest của bản debug
+         và profile, không có ở đây. Nên app chạy `flutter run` thì vào mạng
+         bình thường, còn APK release thì mọi lời gọi Supabase đều hỏng với lý
+         do "không có mạng". Đừng gỡ dòng này. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Android 13+ phải xin quyền mới hiện được thông báo đẩy. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
-        android:label="theodoi_hoctap"
+        android:label="Sổ liên lạc"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round">
         <activity
             android:name=".MainActivity"
             android:exported="true"

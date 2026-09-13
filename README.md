@@ -1,289 +1,413 @@
-# Sổ liên lạc — app theo dõi tiến độ học tập
+# Sổ liên lạc
 
-App Android (Flutter) cho ba vai trò: **phụ huynh**, **học sinh**, **quản trị**.
+App Android theo dõi việc học của con, ba vai trò: phụ huynh, học sinh, quản trị.
+Học sinh ghi báo cáo học tập mỗi ngày — tách riêng **bài tập trên lớp** và **bài
+tập học thêm** theo từng thầy cô — kèm ảnh vở nếu muốn. Phụ huynh đọc, ghi nhận
+xét và nhắc con. Cả hai cùng xếp được thời khóa biểu.
 
-- **Phụ huynh** xem báo cáo học tập từng ngày của con, tách theo hạng mục *bài tập
-  trên lớp* và *bài tập học thêm* (gom tiếp theo từng thầy cô), nhập/sửa thời khóa
-  biểu, và gửi nhắc nhở lên app của con.
-- **Học sinh** nhập thời khóa biểu, viết báo cáo hằng ngày kèm ảnh bài làm (không
-  bắt buộc), cập nhật trạng thái, và đọc lời nhắc của bố mẹ.
-- **Quản trị** quản lý tài khoản, khóa/mở, liên kết phụ huynh với học sinh, và
-  xem danh mục môn học cùng thầy cô.
+Dữ liệu nằm trên **Supabase** (gói miễn phí là đủ). Đóng gói thành APK cài nội
+bộ trong nhà, không qua Play Store.
 
-Hướng thiết kế và lý do đằng sau từng quyết định: [DESIGN.md](DESIGN.md).
-Sơ đồ dữ liệu, phân quyền, cách mã mời hoạt động: [DATA.md](DATA.md).
-
-## Xem thử ngay, chưa cần Firebase
-
-```bash
-flutter pub get
-flutter run -d chrome    # xem nhanh trên trình duyệt
-flutter run              # cắm máy Android hoặc mở emulator
-```
-
-Chưa cấu hình Firebase thì app tự chạy bằng dữ liệu mẫu trong bộ nhớ. Ở màn
-đăng nhập, bấm **Xem thử với dữ liệu mẫu** rồi chọn vai trò là vào thẳng — dữ
-liệu lớp 9A2, hai tuần báo cáo, tám thầy cô trong đó ba người dạy thêm. Có dải
-nhắc "Đang xem thử" ở đầu màn hình, và mọi thay đổi mất khi tắt app.
-
-Lần chạy đầu cần mạng vì `google_fonts` tải font về máy.
-
-## Trạng thái
-
-Đã có design system, toàn bộ màn hình cho ba vai trò, và tầng dữ liệu chạy trên
-Firebase (Auth email/mật khẩu, Firestore, Storage cho ảnh bài làm).
-
-Chưa làm: thông báo đẩy khi phụ huynh gửi nhắc nhở — cần Cloud Function, xem
-phần [Chi phí](#chi-phí).
+Vài thứ nhỏ nhưng đáng kể: viết báo cáo lúc **mất mạng** vẫn được — bài cất
+trên máy, tự gửi khi có sóng; ảnh vở tự nén dưới 500 KB; và **con dấu khen**
+tính từ chính báo cáo của con (ba ngày liền xong bài, trọn một tuần, mười giờ
+học…), đóng lên màn hình đúng lúc con đạt. Từ bản 0.3, học sinh **chọn bài
+trong sách giáo khoa** thay vì gõ tên (app gợi ý sẵn bài kế tiếp), và phụ
+huynh đọc được **tóm tắt bài** kèm vài câu hỏi để kiểm tra con — hiện có đủ
+lớp 8, bộ "Kết nối tri thức".
 
 ---
 
-# Dựng Firebase từ đầu
+## Phần 1 — Dựng cơ sở dữ liệu
 
-Làm một lần, mất khoảng 20 phút. Cần một tài khoản Google và Node.js (máy đã có).
+Làm một lần, mất chừng mười phút. Không cần cài gì lên máy.
 
-> **Không tìm thấy mục nào trong Console?** Firebase đổi bố cục menu khá thường
-> xuyên, nên tên nhóm dưới đây có thể lệch. Đường đi không bao giờ hỏng là ô
-> **Search for products** ở góc trên bên trái: gõ `Firestore`, `Authentication`
-> hay `Storage` là tới thẳng.
+### Bước 1. Tạo dự án
 
-## Bước 0 — Cài hai công cụ dòng lệnh
+Vào [supabase.com](https://supabase.com) → **Start your project** → đăng nhập
+bằng GitHub hoặc email → **New project**.
 
-```bash
-npm install -g firebase-tools
-firebase login
-
-dart pub global activate flutterfire_cli
-```
-
-`firebase login` mở trình duyệt cho bạn đăng nhập Google. Nếu gõ `flutterfire`
-mà máy báo không tìm thấy lệnh, thêm đường dẫn này vào PATH:
-
-- Windows: `%LOCALAPPDATA%\Pub\Cache\bin`
-- macOS / Linux: `$HOME/.pub-cache/bin`
-
-Firebase CLI cần **JDK 21 trở lên** cho phần emulator. Máy đã cài Android Studio
-thì dùng JDK có sẵn trong đó:
-
-```bash
-export JAVA_HOME="/c/Program Files/Android/Android Studio/jbr"
-export PATH="$JAVA_HOME/bin:$PATH"
-```
-
-## Bước 1 — Tạo project
-
-1. Mở <https://console.firebase.google.com> → **Add project**.
-2. Đặt tên, ví dụ `so-lien-lac`. Console tự sinh một **Project ID** kiểu
-   `so-lien-lac-a1b2c` ở ngay dưới ô tên — **ghi lại chuỗi này**, các lệnh sau
-   dùng tới nó và về sau không đổi được.
-3. Trang Google Analytics: **tắt đi**. App này không dùng, bật vào chỉ thêm một
-   bước tạo tài khoản Analytics.
-4. Bấm **Create project**, đợi khoảng một phút.
-
-Tạo xong, Console lập tức mời bạn **"Add Firebase to your Android app"** với ô
-*Android package name*. **Bỏ qua màn này** — bấm dấu **X** góc trên bên trái.
-
-Đó là đường đăng ký app bằng tay. `flutterfire configure` ở bước 5 làm đúng
-việc đó giúp bạn, lại còn sinh thêm `firebase_options.dart` mà màn này không
-tạo. Làm tay ở đây chỉ tốn thêm công chứ không thay thế được lệnh kia.
-
-*(Nếu vẫn muốn đăng ký tay: package name là `vn.hoctap.theodoi_hoctap`.)*
-
-## Bước 2 — Tạo Firestore Database
-
-Đây là nơi chứa hồ sơ, thời khóa biểu, báo cáo và nhắc nhở.
-
-1. Menu trái → **Databases & Storage** → **Firestore** → **Create database**.
-2. **Chọn `Start in production mode`**, không chọn test mode.
-
-   Test mode mở toang cho cả thiên hạ đọc ghi trong 30 ngày. Đây là dữ liệu học
-   tập của trẻ con, và ở bước 5 mình sẽ đẩy bộ luật riêng lên thay thế.
-   Production mode chặn hết cho tới lúc đó, đúng như mong muốn.
-
-3. **Location: `asia-southeast1 (Singapore)`** — gần Việt Nam nhất nên độ trễ
-   thấp nhất. Chọn xong **không đổi được nữa**, muốn đổi phải tạo project mới.
-4. **Enable**.
-
-Xong bước này, vào tab **Data** sẽ thấy một database rỗng. Đừng tạo collection
-bằng tay — app tự tạo khi có người đăng ký tài khoản đầu tiên.
-
-## Bước 3 — Bật đăng nhập bằng email
-
-1. Menu trái → **Security** → **Authentication** → **Get started**.
-2. Tab **Sign-in method**. Console bày ra một lưới provider chia ba cột —
-   *Native providers*, *Additional providers*, *Custom providers*. Cái cần dùng
-   là ô **đầu tiên** của cột **Native providers**: **Email/Password**
-   (biểu tượng phong bì).
-3. Bấm vào ô đó, panel mở ra với hai công tắc:
-   - **Email/Password** → gạt sang **Enable** ✅
-   - **Email link (passwordless sign-in)** → **để nguyên tắt** ❌
-4. **Save**. Quay lại tab này sẽ thấy Email/Password nằm trong danh sách đã bật,
-   trạng thái *Enabled*.
-
-Đừng bật Google, Facebook hay Phone. App chỉ dùng email và mật khẩu; mỗi
-provider bật thừa là một đường vào phải lo bảo mật mà chẳng ai dùng.
-
-## Bước 4 — Tạo Storage cho ảnh bài làm
-
-1. Menu trái → **Databases & Storage** → **Storage** → **Get started**.
-2. Chọn **production mode**, và **cùng location `asia-southeast1`** với Firestore.
-
-**Nếu Console bắt nâng lên gói Blaze mới cho tạo bucket:** Firebase đã đổi chính
-sách này với project mới, nên khả năng cao bạn sẽ gặp. Hai đường đi:
-
-- **Nâng Blaze.** Vẫn miễn phí trong hạn mức Spark cũ, nhưng phải gắn thẻ. Vào
-  **Usage and billing → Budgets & alerts** đặt ngưỡng cảnh báo để khỏi giật mình.
-- **Bỏ qua Storage.** App chạy bình thường, chỉ riêng chức năng chụp ảnh bài làm
-  là không dùng được — nó vốn đã là tuỳ chọn. Khi ấy bước 5 bỏ phần `storage`
-  trong lệnh deploy.
-
-## Bước 5 — Nối app với project
-
-Chạy ở thư mục gốc dự án:
-
-```bash
-flutterfire configure
-```
-
-Nó hỏi ba thứ:
-
-| Câu hỏi | Chọn |
+| Ô | Điền |
 |---|---|
-| Select a Firebase project | project vừa tạo ở bước 1 |
-| Which platforms | `android` (thêm `web` nếu muốn chạy trên trình duyệt) |
-| Android application id | để nguyên `vn.hoctap.theodoi_hoctap` |
+| Name | `so-lien-lac` |
+| Database Password | Bấm **Generate a password** rồi **lưu lại chỗ nào đó**. Mật khẩu này không xem lại được, và cần tới nếu sau này muốn nối trực tiếp vào database. |
+| Region | **Southeast Asia (Singapore)** — gần Việt Nam nhất, app chạy nhẹ hơn hẳn. |
+| Plan | **Free** |
 
-Lệnh này sinh ra `lib/firebase_options.dart`, `android/app/google-services.json`
-và tự thêm plugin Google Services vào Gradle. Cả ba đều nằm trong `.gitignore`
-vì chúng gắn với project riêng của bạn.
+Bấm **Create new project** rồi đợi khoảng hai phút cho Supabase dựng xong.
 
-Không phải sửa dòng code nào: [main.dart](lib/main.dart) gọi
-`Firebase.initializeApp()` trong một khối `try` — cấu hình chạy được thì nó dùng
-Firebase, không thì rơi về dữ liệu mẫu.
+### Bước 2. Chạy các file SQL
 
-## Bước 6 — Đẩy luật bảo mật lên
+Cột trái → **SQL Editor** (biểu tượng terminal) → **New query**.
 
-```bash
-firebase use --add          # chọn project, đặt bí danh "default"
-firebase deploy --only firestore:rules,firestore:indexes,storage
+Mở lần lượt các file dưới đây trong thư mục `supabase/`, mỗi lần dán **toàn bộ**
+nội dung một file vào khung soạn thảo rồi bấm **Run** (hoặc `Ctrl+Enter`). Chạy
+đúng thứ tự này:
+
+| Thứ tự | File | Dựng gì |
+|---|---|---|
+| 1 | `01_bang.sql` | Mười bảng: người dùng, liên kết, tỉnh, trường, môn, thầy cô, tiết học, báo cáo, nhắc nhở, mã mời |
+| 2 | `02_bao_mat.sql` | Phân quyền — ai đọc được dữ liệu của ai |
+| 3 | `03_ma_moi.sql` | Hai hàm sinh và dùng mã mời sáu số |
+| 4 | `04_storage.sql` | Kho ảnh bài làm, để riêng tư |
+| 5 | `05_danh_muc.sql` | Danh mục mẫu: 1 tỉnh, 1 trường, 12 môn, 8 thầy cô — không bắt buộc, nhập tay trong app cũng được |
+| 6 | `06_thong_bao.sql` | Hàng đợi thông báo và luật "ai nhận gì" — chạy luôn dù chưa bật thông báo đẩy |
+| — | `07_thong_bao_may_chu.sql` | Chỉ chạy khi bật thông báo đẩy, xem Phần 4 |
+| 7 | `08_tinh_thanh.sql` | 34 tỉnh, thành phố theo sắp xếp từ 1/7/2025 — để học sinh chọn lúc đăng ký |
+| 8 | `09_bai_hoc_lop8.sql` | Danh mục bài học lớp 8 (421 mục, 9 sách) kèm tóm tắt và câu hỏi cho phụ huynh — cần `05_danh_muc.sql` chạy trước vì tham chiếu mã môn `m_toan`, `m_van`… |
+
+Mỗi lần chạy xong phải thấy **Success. No rows returned**. Nếu thấy chữ đỏ thì
+dừng lại, đừng chạy file tiếp theo — xem bảng lỗi ở cuối trang này.
+
+Cả chín file đều chạy lại được nhiều lần mà không hỏng gì, nên lỡ chạy trùng
+cũng không sao.
+
+### Bước 3. Tắt xác nhận email
+
+**Đừng bỏ qua bước này.** Mặc định Supabase bắt bấm vào link trong email trước
+khi đăng nhập được — và SMTP tích hợp của gói miễn phí chỉ gửi **2 thư mỗi
+giờ**. Đăng ký tới người thứ ba là kẹt, báo `Email rate limit exceeded`, đợi cả
+tiếng mới thử lại được.
+
+Tắt đi thì đăng ký không gửi email nữa, hết luôn giới hạn đó.
+
+**Authentication** → **Sign In / Providers** → **Email** → tắt **Confirm email**
+→ **Save**.
+
+### Bước 4. Kiểm tra phân quyền
+
+Bước này không bắt buộc nhưng nên làm, vì đây là thứ duy nhất ngăn người lạ đọc
+được bài vở của con.
+
+**SQL Editor** → **New query** → dán toàn bộ `supabase/test/KIEM_THU.sql` →
+**Run**.
+
+Kết quả hiện ra trong một **khung đỏ** — đó là bình thường, đọc chữ chứ đừng
+nhìn màu:
+
+```
+KIỂM THỬ PHÂN QUYỀN — tất cả 93 phép thử đều ĐẠT.
 ```
 
-Không có Storage thì bỏ phần `,storage` ở cuối.
+Còn nếu có chỗ hỏng thì nó liệt kê ra từng cái. Khung đỏ vì bộ test cố ý ném
+ngoại lệ ở dòng cuối; đó là cách nó hoàn tác sạch dữ liệu thử, nên chạy trên dự
+án thật cũng không để lại một dòng nào.
 
-**Đừng bỏ qua bước này.** Production mode ở bước 2 đang chặn *tất cả*, kể cả app
-của bạn — chưa deploy rules thì đăng nhập xong sẽ báo `permission-denied`. Bộ
-luật trong [firestore.rules](firestore.rules) mới là thứ mở đúng những cánh cửa
-cần mở. Ai đọc được gì: xem bảng trong [DATA.md](DATA.md).
+Chi tiết xem [supabase/test/README.md](supabase/test/README.md).
 
-## Bước 7 — Chạy thử
+### Bước 5. Lấy địa chỉ và khóa
 
-```bash
-flutter run
+Hai giá trị này nằm ở hai trang khác nhau — Supabase mới tách ra.
+
+**Project URL** — **Settings** (bánh răng, dưới cùng cột trái) → **Data API**.
+Dạng `https://abcdefgh.supabase.co`. Không cần vào đâu cũng đoán được: phần
+`abcdefgh` chính là đoạn mã trong thanh địa chỉ lúc đang mở dự án.
+
+**Publishable key** — **Settings** → **API Keys** → mục **Publishable key**,
+dòng `default`, bấm nút copy. Chuỗi bắt đầu bằng `sb_publishable_…` (dự án cũ
+thì nằm ở tab **Legacy anon, service_role API keys** và bắt đầu bằng `eyJ…` —
+cùng một thứ, Supabase đang đổi tên).
+
+Đừng lấy nhầm **Secret keys** ở ngay bên dưới (`sb_secret_…`, tên cũ là
+`service_role`). Khóa đó bỏ qua toàn bộ phân quyền — lọt vào APK là ai gỡ file
+ra cũng đọc được dữ liệu của mọi nhà.
+
+Tạo file `.env.json` ở thư mục gốc dự án:
+
+```json
+{
+  "SUPABASE_URL": "https://abcdefgh.supabase.co",
+  "SUPABASE_PUBLISHABLE_KEY": "eyJhbGciOi..."
+}
 ```
 
-Giờ màn đầu tiên là **Đăng nhập** thật, không còn dải "Đang xem thử". Bấm
-**Tạo tài khoản mới**, chọn vai trò **Phụ huynh**, điền email và mật khẩu.
+File này đã nằm trong `.gitignore`.
 
-Vào lại Console kiểm tra: **Authentication → Users** có một dòng, và
-**Firestore → Data** có collection `nguoiDung` với đúng một tài liệu. Nếu cả hai
-đều có, tầng dữ liệu đã thông.
+---
 
-## Bước 8 — Tạo tài khoản quản trị
+## Phần 2 — Chạy thử
 
-Luật bảo mật cố tình không cho ai tự đăng ký làm quản trị, nên người đầu tiên
-phải phong bằng tay:
+```bash
+flutter pub get
+flutter run --dart-define-from-file=.env.json
+```
 
-1. Console → **Firestore Database** → **Data** → mở `nguoiDung` → chọn tài liệu
-   vừa tạo ở bước 7 (id của nó là UID bên tab Authentication).
-2. Sửa trường `vaiTro` từ `phuHuynh` thành `quanTri`.
-3. Trong app: đăng xuất rồi đăng nhập lại — sẽ vào giao diện quản trị.
+Không truyền `.env.json` thì app vẫn chạy được bằng **dữ liệu mẫu** trong bộ
+nhớ — tiện để xem giao diện, nhưng thoát ra là mất hết.
 
-## Bước 9 — Nạp danh mục môn học
+### Tạo tài khoản quản trị
 
-Firestore đang trống nên chưa có môn nào, mà không có môn thì học sinh không
-viết nổi báo cáo đầu tiên.
+App chỉ cho đăng ký phụ huynh và học sinh; vai trò quản trị phải phong bằng tay.
+Đó là cố ý — nếu không thì ai đăng ký cũng tự nhận là quản trị và đọc được dữ
+liệu cả trường.
 
-Đăng nhập bằng tài khoản quản trị → tab **Môn & thầy cô** → **Nạp danh mục mẫu**.
-Bộ chuẩn gồm 12 môn cấp hai và 8 thầy cô mẫu; sửa lại cho khớp trường mình.
+1. Trong app, đăng ký một tài khoản bình thường bằng email của bạn.
+2. Supabase → **SQL Editor** → chạy:
 
-## Bước 10 — Nối phụ huynh với con
+```sql
+update nguoi_dung set vai_tro = 'quanTri' where email = 'email-cua-ban@gmail.com';
+```
 
-1. Học sinh đăng ký tài khoản riêng (vai trò **Học sinh**), vào **Tài khoản** →
-   **Tạo mã mời** → đọc sáu số cho bố mẹ.
-2. Phụ huynh vào **Tài khoản** → **Thêm con** → nhập mã.
+3. Trong app đăng xuất rồi đăng nhập lại. Giờ sẽ thấy ba thẻ quản trị.
 
-Mã sống 15 phút và chỉ dùng được một lần. Quản trị cũng gán tay được trong
-**Người dùng → Liên kết con**.
+### Nhập danh mục: trường, môn, thầy cô
 
-## Gặp lỗi thì tra ở đây
+Vai trò quản trị → thẻ **Danh mục**. Ba tab, nút **Thêm** ở góc đổi theo tab
+đang mở; chạm vào một mục để sửa hoặc xóa.
 
-| Triệu chứng | Nguyên nhân thường gặp |
+- **Trường** — học sinh chọn trường lúc đăng ký (hoặc sau, ở **Tài khoản** →
+  chạm dòng *Trường*). Nút bản đồ góc trên quản lý **tỉnh**: tỉnh chỉ để lọc
+  danh sách cho gọn khi có nhiều trường, không phải một tầng phân quyền —
+  quản trị nào cũng thấy hết.
+- **Môn** — không có môn thì học sinh không viết nổi báo cáo đầu tiên. Danh
+  mục trống thì có nút *Nạp danh mục mẫu* (12 môn cấp hai).
+- **Thầy cô** — hai loại:
+  - *Trên lớp*: gắn với **trường** và môn. Học sinh chỉ thấy thầy cô của
+    trường mình khi viết báo cáo hay xếp tiết.
+  - *Dạy thêm*: chỉ cần môn, có thể ghi tỉnh để lọc. Đây là thầy dùng chung;
+    còn thầy dạy thêm riêng của từng nhà thì **học sinh (hoặc bố mẹ) tự
+    thêm** — ngay trong ô chọn thầy cô lúc viết báo cáo, hoặc ở **Tài khoản**
+    → *Thầy cô dạy thêm*. Thầy riêng chỉ nhà đó và quản trị thấy.
+
+Tài khoản đăng ký từ trước khi có danh mục vẫn hiện tên trường gõ tay; vào
+**Tài khoản** chọn lại trường một lần là xong.
+
+### Danh mục bài học theo sách giáo khoa
+
+Từ năm học 2026–2027 cả nước dùng chung bộ **Kết nối tri thức với cuộc sống**,
+nên danh mục chỉ có một bộ sách. Khối lớp của học sinh suy từ tên lớp em khai
+("8A4" → lớp 8); khối nào có dữ liệu thì khi viết báo cáo, dưới ô môn học hiện
+thêm ô **Bài học trong sách**: chạm để tìm (gõ "bài 6", "phân số"…), hoặc bấm
+gợi ý *Bài kế tiếp* — bài đứng ngay sau bài gần nhất em đã ghi cho môn đó.
+Không chọn cũng được, báo cáo vẫn gửi bình thường.
+
+Phụ huynh mở báo cáo thấy tấm **bài học**: tên bài, vài dòng tóm tắt và mấy
+câu *Hỏi con thử* — đáp án giấu sau một cái chạm.
+
+Dữ liệu nằm ở `tools/bai_hoc/lop8/*.txt` (mỗi sách một file, dạng chữ dễ
+sửa), sinh thành `supabase/09_bai_hoc_lop8.sql` bằng:
+
+```
+python tools/bai_hoc/tao_sql.py
+```
+
+Tên bài lấy theo mục lục sách; tóm tắt và câu hỏi do tôi viết từ mục lục và
+yêu cầu cần đạt của Chương trình GDPT 2018 (Thông tư 32/2018) — chưa phải
+lời sách, nên chỗ nào thấy chưa ổn thì quản trị sửa ngay trong app: thẻ
+**Danh mục** → tab **Bài học** → chọn lớp, môn → chạm vào bài. Bài đã sửa
+tay được đánh dấu, chạy lại file SQL không ghi đè. Muốn thêm khối khác: tạo
+thư mục `tools/bai_hoc/lop9/`, viết theo cùng dạng, chạy script rồi chạy
+file SQL sinh ra.
+
+### Nối phụ huynh với con
+
+Hai đường, dùng đường nào cũng được:
+
+- **Mã mời** — máy con: **Hồ sơ** → **Tạo mã mời**, hiện ra sáu số, sống 15 phút.
+  Máy bố mẹ: **Hồ sơ** → **Nhập mã mời**. Mỗi mã dùng đúng một lần.
+- **Quản trị gán tay** — vai trò quản trị → **Người dùng** → chọn phụ huynh →
+  **Nối với học sinh**.
+
+---
+
+## Phần 3 — Đóng gói APK cài nội bộ
+
+### Tạo khóa ký
+
+Android không cho cài APK chưa ký. Tự ký là đủ, chỉ cần làm một lần:
+
+```bash
+keytool -genkey -v -keystore android/so-lien-lac.jks \
+  -keyalg RSA -keysize 2048 -validity 10000 -alias so-lien-lac
+```
+
+Nó hỏi mật khẩu và vài dòng thông tin — điền gì cũng được, nhưng **giữ lại file
+`.jks` và mật khẩu**. Mất thì các máy đã cài sẽ không nhận được bản cập nhật
+nữa, phải gỡ ra cài lại từ đầu và mất hết dữ liệu cục bộ.
+
+Tạo `android/key.properties`:
+
+```properties
+storePassword=mật-khẩu-vừa-đặt
+keyPassword=mật-khẩu-vừa-đặt
+keyAlias=so-lien-lac
+storeFile=../so-lien-lac.jks
+```
+
+Cả hai file đều đã nằm trong `.gitignore`.
+
+### Build
+
+```bash
+python tools/dong_goi.py
+```
+
+Script build ba file rồi **tự kiểm từng file** — số mục trong zip, manifest,
+quyền INTERNET, chữ ký — và từ chối nếu có file hỏng. Đừng build tay bằng
+`flutter build apk --split-per-abi`: AGP 9 có lỗi làm APK arm64 ra thiếu toàn
+bộ tài nguyên nhưng vẫn được ký, nhìn ngoài không biết.
+
+| File | Cỡ | Gửi cho ai |
+|---|---|---|
+| `app-release.apk` | ~54 MB | Không rõ máy gì — cài đâu cũng chạy |
+| `app-arm64-v8a-release.apk` | ~19 MB | Máy từ 2017 trở đi |
+| `app-armeabi-v7a-release.apk` | ~17 MB | Máy cũ 32-bit |
+
+Đều ở `build/app/outputs/flutter-apk/`. Gửi qua Zalo hay chép bằng USB sang máy
+cần cài.
+
+Mỗi máy chỉ dùng **một loại file** từ đầu đến cuối. Bản tách kiến trúc mang mã
+phiên bản lớn hơn bản gộp (Flutter cộng thêm 1000 hoặc 2000), nên máy đã cài
+bản tách mà sau đó cài bản gộp thì Android coi là hạ cấp và từ chối.
+
+Trên máy nhận, lần đầu Android sẽ hỏi cho phép cài ứng dụng từ nguồn này —
+**Cài đặt** → **Vẫn cài**.
+
+> Lần build đầu Gradle phải tải vài trăm MB thư viện. Mạng chậm thì việc này lâu
+> hơn cả phần còn lại cộng lại; cứ để chạy nền.
+
+---
+
+## Phần 4 — Thông báo đẩy (không bắt buộc)
+
+Con gửi báo cáo → máy bố mẹ rung. Bố mẹ nhắc nhở hay ghi nhận xét → máy con
+rung. 20:00 con chưa viết báo cáo → nhắc con. 20:00 Chủ nhật → bố mẹ nhận một
+dòng tổng kết tuần của từng đứa (*"Xong 18/21 bài · có báo cáo 6/7 ngày"*).
+Không bật thì app vẫn chạy đủ, chỉ là phải mở app mới thấy.
+
+Dữ liệu vẫn nằm hết trên Supabase. Firebase ở đây chỉ làm đúng một việc: đưa
+tin xuống điện thoại — trên Android không có đường nào khác để đánh thức một
+app đã tắt. Cả hai bên đều trong gói miễn phí.
+
+```
+bao_cao / nhac_nho có hàng mới ──trigger──▶ hàng đợi `thong_bao`
+pg_cron 20:00 (HS chưa viết bài) ──────────▶ (den_id, tiêu đề, nội dung)
+                                                   │ webhook (pg_net)
+                                                   ▼
+                                      Edge Function gui-thong-bao
+                                      đọc token của den_id → FCM → máy
+```
+
+### Bước 1. Tạo project Firebase — 5 phút
+
+1. [console.firebase.google.com](https://console.firebase.google.com) →
+   **Add project** → đặt tên tùy ý → tắt Google Analytics (không cần) → tạo.
+2. Trong project: **Add app** → biểu tượng Android → *Android package name*
+   nhập đúng `vn.hoctap.theodoi_hoctap` → **Register app**.
+3. **Download google-services.json** → đặt vào `android/app/google-services.json`.
+   File này đã nằm trong `.gitignore`; thiếu nó app vẫn build, chỉ không có
+   thông báo đẩy.
+4. Bánh răng → **Project settings** → tab **Service accounts** →
+   **Generate new private key** → tải file JSON về. Đây là khóa để máy chủ
+   gửi tin, **không** đưa vào app, không commit.
+
+### Bước 2. Tạo Edge Function trên Supabase
+
+1. Supabase → **Edge Functions** → **Deploy a new function** → *Via Editor*
+   → tên `gui-thong-bao` → dán toàn bộ
+   [`supabase/functions/gui-thong-bao/index.ts`](supabase/functions/gui-thong-bao/index.ts)
+   → **Deploy**.
+2. Mở function vừa tạo → **Details** → **tắt "Verify JWT"**. Trigger trong
+   Postgres gọi thẳng, không có JWT; xác thực bằng mã bí mật ở bước sau.
+3. **Edge Functions** → **Secrets** → thêm hai secret:
+   - `FCM_SERVICE_ACCOUNT` — dán **nguyên nội dung** file JSON tải ở bước 1.4.
+   - `MA_BI_MAT_WEBHOOK` — một chuỗi ngẫu nhiên dài, tự nghĩ (ví dụ 32 ký tự
+     lẫn chữ và số). Nhớ lại để dùng ở bước 3.
+
+Có Supabase CLI thì thay bằng
+`supabase functions deploy gui-thong-bao --no-verify-jwt` và
+`supabase secrets set FCM_SERVICE_ACCOUNT="$(cat khoa.json)" MA_BI_MAT_WEBHOOK=...`.
+
+### Bước 3. Nối Postgres với Edge Function
+
+Mở `supabase/07_thong_bao_may_chu.sql`, sửa hai dòng đầu:
+
+```sql
+('url_gui_thong_bao', 'https://<project-ref>.supabase.co/functions/v1/gui-thong-bao'),
+('ma_bi_mat_webhook', '<chuỗi bí mật ở bước 2.3>')
+```
+
+`<project-ref>` là đoạn trong địa chỉ dự án (`https://xxxx.supabase.co` →
+`xxxx`). Rồi dán cả file vào **SQL Editor** → **Run**. File này bật hai
+extension `pg_net` và `pg_cron`, đặt lịch nhắc 20:00 mỗi tối và tổng kết tuần
+20:00 Chủ nhật (13:00 UTC).
+
+### Bước 4. Build lại app
+
+`google-services.json` chỉ được đọc lúc build, nên build lại APK (Phần 3) và
+cài đè. Mở app, đăng nhập — Android 13 trở lên sẽ hỏi quyền hiện thông báo,
+bấm **Cho phép**. Máy nào đăng nhập rồi là tự đăng ký nhận; đăng xuất thì tự
+gỡ.
+
+### Thử
+
+Máy con viết một báo cáo → máy bố mẹ phải rung trong vài giây. Không thấy gì
+thì vào **SQL Editor**:
+
+```sql
+select tao_luc, tieu_de, da_gui_luc, loi from thong_bao order by tao_luc desc limit 10;
+```
+
+| Thấy gì | Nghĩa là | Làm gì |
+|---|---|---|
+| Không có hàng nào | Trigger chưa có | Chạy lại `06_thong_bao.sql` |
+| Có hàng, `da_gui_luc` trống | Edge Function chưa được gọi | Kiểm tra `url_gui_thong_bao` trong bảng `cau_hinh`; xem **Edge Functions → Logs** |
+| `loi` = `người nhận chưa có máy nào đăng ký` | Máy bố mẹ chưa đăng nhập lại sau khi cài bản mới | Đăng xuất, đăng nhập lại; từ chối quyền thông báo thì cũng vào đây |
+| `loi` = `401 …` | Mã bí mật hai bên khác nhau | So `MA_BI_MAT_WEBHOOK` với hàng `ma_bi_mat_webhook` |
+| `loi` = `403 …` hoặc `PERMISSION_DENIED` | Service account chưa có quyền gửi | Firebase → Project settings → Cloud Messaging → bật **Firebase Cloud Messaging API (V1)** |
+| Máy Xiaomi/Oppo/Vivo không rung dù `loi` trống | Hãng chặn app chạy nền | Cài đặt → Ứng dụng → Sổ liên lạc → bật *Tự khởi động*, tắt *Tối ưu pin* |
+
+Gửi lại những hàng chưa đi: `select tb_goi_lai(id) from thong_bao where da_gui_luc is null;`
+
+---
+
+## Phần 5 — Bản web trên GitHub Pages
+
+Cùng mã nguồn, chạy được trong trình duyệt (máy tính hoặc điện thoại, thêm
+vào màn hình chính như một app). Khác bản cài: chưa có thông báo đẩy, và bài
+viết lúc mất mạng chỉ giữ trong phiên đang mở chứ không cất xuống máy.
+
+Nhánh trên GitHub:
+
+| Nhánh | Dùng cho |
 |---|---|
-| App vẫn hiện dải **"Đang xem thử"** sau khi cấu hình xong | `Firebase.initializeApp()` ném lỗi nên app rơi về dữ liệu mẫu. Xem log chạy, [main.dart](lib/main.dart) in ra lý do cụ thể. Hay gặp nhất là chưa chạy lại `flutter run` sau `flutterfire configure` — bước đó đổi file Gradle nên phải build lại, hot reload không đủ. |
-| `No Firebase App '[DEFAULT]' has been created` | Chưa chạy `flutterfire configure`, hoặc thiếu `android/app/google-services.json`. |
-| Đăng nhập báo **"Cách đăng nhập này chưa được bật"** | Quên bước 3 — chưa bật Email/Password trong Authentication. |
-| `permission-denied` ngay sau khi đăng nhập | Chưa deploy rules (bước 6). Production mode chặn tất cả cho tới khi bộ luật riêng được đẩy lên. |
-| Đăng nhập báo **"Tài khoản này chưa có hồ sơ"** | Đăng ký lúc rules chưa deploy: người dùng được tạo bên Authentication nhưng hồ sơ Firestore bị chặn. Deploy rules xong, xóa user đó trong **Authentication → Users**, rồi đăng ký lại. |
-| Quản trị vẫn thấy giao diện phụ huynh | Sửa `vaiTro` xong phải đăng xuất rồi đăng nhập lại; vai trò đọc một lần lúc mở phiên. |
-| Nhập mã mời báo **"Mã mời không đúng"** dù vừa tạo | Mã cũ bị vô hiệu khi học sinh bấm tạo mã lần nữa. Đọc lại mã đang hiện trên màn hình con. |
-| Tải ảnh lên thất bại | Chưa tạo Storage, hoặc chưa deploy `storage.rules`. |
-| `flutterfire: command not found` | Thiếu thư mục pub-cache trong PATH, xem bước 0. |
-| Build Android tải Gradle rất chậm | Lần build đầu Gradle tự tải bản phân phối ~130 MB từ `services.gradle.org`, cộng thêm SDK Firebase cho Android từ Maven. Đây là chi phí một lần, các lần sau lấy từ cache trong `~/.gradle`. |
+| `master` | Mã nguồn chung — mọi thay đổi làm ở đây |
+| `mobile` | Bản cài điện thoại: mỗi lần phát hành APK thì gộp `master` vào đây rồi chạy `python tools/dong_goi.py` |
+| `web` | Bản web: đẩy lên nhánh này là GitHub tự build và đưa lên Pages (`.github/workflows/web.yml`) |
 
-## Chi phí
-
-Không dùng Cloud Functions — việc kiểm tra mã mời làm bằng luật bảo mật chứ
-không bằng code chạy trên server, nên phần Firestore và Auth nằm gọn trong hạn
-mức miễn phí. Ảnh nén còn 70% chất lượng trước khi tải lên và chặn ở 8 MB mỗi tấm.
-
-Hai chỗ có thể phải lên gói Blaze:
-
-- **Storage** cho ảnh bài làm — xem ghi chú ở bước 4.
-- **Thông báo đẩy** khi phụ huynh gửi nhắc nhở. Hiện nhắc nhở chỉ hiện trong
-  app; muốn đẩy ra ngoài thì thêm `firebase_messaging` và một Cloud Function.
-
-## Cấu trúc
-
-```
-lib/
-  core/
-    theme/      tokens.dart (màu, nhịp, bán kính) · typography.dart · app_theme.dart
-    widgets/    trang_vo.dart (trang vở có lề mang nghĩa) · common.dart
-    utils/      ngay.dart (định dạng ngày giờ tiếng Việt)
-  data/
-    models/     NguoiDung · MonHoc · GiaoVien · TietHoc · BaoCao · NhacNho · MaMoi
-                cùng phần chuyển đổi sang/từ Firestore
-    repositories/
-                hoc_tap_repository.dart   ← hợp đồng dữ liệu
-                firebase_repository.dart  ← Auth + Firestore + Storage
-                mock_repository.dart      ← in-memory, cho xem thử và cho test
-    mock/       seed.dart
-    app_state.dart   ChangeNotifier: phiên đăng nhập + bộ nhớ đệm
-  features/
-    auth/       cổng phân luồng · đăng nhập · đăng ký · mã mời · xem thử
-    parent/     trang chủ · báo cáo · nhắc nhở · soạn nhắc nhở
-    student/    trang chủ · lịch sử báo cáo
-    shared/     thời khóa biểu · soạn/sửa tiết · soạn báo cáo · chi tiết báo cáo · hồ sơ
-    admin/      tổng quan · người dùng · liên kết · môn & thầy cô
-
-firestore.rules · storage.rules · firestore.indexes.json · firebase.json
-test_rules/     kiểm thử luật bảo mật trên emulator
-```
-
-## Kiểm thử
+Phát hành bản web mới:
 
 ```bash
-flutter analyze
-flutter test
+git checkout web
+git merge master
+git push
 ```
 
-Luật bảo mật có bộ kiểm thử riêng, chạy trên Firestore Emulator để chứng minh
-bằng hành vi rằng phụ huynh lạ không đọc được dữ liệu của con nhà khác, và
-không ai nối được tài khoản nếu không cầm mã mời hợp lệ:
+Vài phút sau trang ở `https://<tài-khoản>.github.io/<tên-repo>/` đổi theo.
+Lần đầu cần ba việc trong Settings của repo trên GitHub:
 
-```bash
-cd test_rules && npm install && npm test
-```
+1. **Pages** → Source chọn **GitHub Actions**.
+2. **Secrets and variables → Actions** → thêm `SUPABASE_URL` và
+   `SUPABASE_PUBLISHABLE_KEY` (đúng hai giá trị trong `.env.json`). Thiếu thì
+   bản web vẫn lên nhưng chạy bằng dữ liệu mẫu.
+3. Repo phải **public** — tài khoản GitHub miễn phí không bật được Pages cho
+   repo private.
 
-Chạy hoàn toàn cục bộ trên project ảo `demo-solienlac`, không đụng tới dữ liệu
-thật và không cần tài khoản Firebase. Chi tiết: [test_rules/README.md](test_rules/README.md).
+Chạy web tại máy để xem trước: `flutter run -d chrome --dart-define-from-file=.env.json`.
+
+## Khi có lỗi
+
+| Hiện tượng | Nguyên nhân | Cách xử lý |
+|---|---|---|
+| `relation "nguoi_dung" does not exist` | Chạy `02_bao_mat.sql` trước `01_bang.sql` | Chạy lại từ file 01 theo đúng thứ tự |
+| `permission denied for schema auth` | Đang dùng công cụ nối ngoài chứ không phải SQL Editor | Dán vào SQL Editor trên trang Supabase |
+| Đăng ký xong không đăng nhập được | Chưa tắt **Confirm email** | Bước 3 |
+| `Email rate limit exceeded` | Chưa tắt **Confirm email**, đã hết 2 thư/giờ | Bước 3, rồi đăng ký lại ngay |
+| `Email address … is invalid` | Tên miền mail tạm bị chặn | Dùng tên miền thật; `ten+hs1@gmail.com` cũng được |
+| Đăng nhập xong màn hình trắng | Hồ sơ chưa được tạo | Kiểm tra `02_bao_mat.sql` đã chạy chưa — trigger tạo hồ sơ nằm ở cuối file đó |
+| App vẫn hiện dữ liệu mẫu | Thiếu `--dart-define-from-file` | Kiểm tra `.env.json` và câu lệnh chạy |
+| `Mã mời không đúng hoặc đã hết hạn` | Mã sống 15 phút và dùng một lần | Bảo con tạo mã mới |
+| Phụ huynh không thấy gì | Chưa nối với con | Nhập mã mời, hoặc quản trị gán tay |
+| `INSTALL_FAILED_UPDATE_INCOMPATIBLE` | Máy đang có bản ký bằng khóa khác | Gỡ bản cũ rồi cài lại |
+
+Xem thêm [DESIGN.md](DESIGN.md) về giao diện và [DATA.md](DATA.md) về dữ liệu.

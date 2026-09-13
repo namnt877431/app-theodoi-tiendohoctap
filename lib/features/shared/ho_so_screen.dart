@@ -8,6 +8,8 @@ import '../../core/widgets/common.dart';
 import '../../data/app_state.dart';
 import '../../data/models/models.dart';
 import '../auth/ma_moi.dart';
+import 'chon_truong_sheet.dart';
+import 'sua_giao_vien_sheet.dart';
 
 /// Trang tài khoản. Cùng một khung cho cả ba vai trò, chỉ khác phần thông tin
 /// riêng: phụ huynh thấy danh sách con, học sinh thấy lớp và trường.
@@ -52,7 +54,7 @@ class HoSoScreen extends StatelessWidget {
                         const SizedBox(height: 3),
                         Text(
                           nd.vaiTro == VaiTro.hocSinh
-                              ? 'Lớp ${nd.lop} · ${nd.truong}'
+                              ? 'Lớp ${nd.lop} · ${s.tenTruongCua(nd) ?? 'chưa chọn trường'}'
                               : nd.vaiTro.nhan,
                           style: AppType.ui(12.5,
                               color: Colors.white.withValues(alpha: .7), w: FontWeight.w500),
@@ -89,7 +91,17 @@ class HoSoScreen extends StatelessWidget {
                     const Divider(),
                     DongThongTin(Icons.class_outlined, 'Lớp', nd.lop ?? '—'),
                     const Divider(),
-                    DongThongTin(Icons.school_outlined, 'Trường', nd.truong ?? '—'),
+                    // Chạm để đổi trường — tài khoản đăng ký trước khi có danh
+                    // mục, hay chuyển trường, đều sửa được ở đây.
+                    InkWell(
+                      onTap: () => moChonTruong(context),
+                      child: DongThongTin(
+                        Icons.school_outlined,
+                        'Trường',
+                        s.tenTruongCua(nd) ?? 'Chạm để chọn',
+                        mau: s.tenTruongCua(nd) == null ? AppColor.muc : null,
+                      ),
+                    ),
                   ],
                 ],
               ),
@@ -120,6 +132,8 @@ class HoSoScreen extends StatelessWidget {
               const SizedBox(height: Gap.xl),
               const TaoMaMoiThe(),
               const SizedBox(height: Gap.xl),
+              const _GvRieng(),
+              const SizedBox(height: Gap.xl),
               const _ThongKeHs(),
             ],
             const SizedBox(height: Gap.xl),
@@ -136,12 +150,102 @@ class HoSoScreen extends StatelessWidget {
             ),
             const SizedBox(height: Gap.lg),
             Center(
-              child: Text('Sổ liên lạc · bản 0.1.0',
+              child: Text('Sổ liên lạc · bản 0.3.0',
                   style: AppType.ui(11.5, color: AppColor.mucNhat, w: FontWeight.w400)),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Thầy dạy thêm riêng của học sinh — chỉ nhà mình thấy, thêm bớt tùy ý mà
+/// không phải nhờ quản trị.
+class _GvRieng extends StatelessWidget {
+  const _GvRieng();
+
+  @override
+  Widget build(BuildContext context) {
+    final s = context.watch<AppState>();
+    final hs = s.hocSinhHienTai;
+    if (hs == null) return const SizedBox.shrink();
+    final ds = s.gvRiengCuaHs;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TieuDeMuc(
+          'Thầy cô dạy thêm',
+          eyebrow: ds.isEmpty ? 'Chưa thêm ai' : '${ds.length} thầy cô',
+          hanhDong: TextButton.icon(
+            onPressed: () => moSuaGiaoVien(context, chuId: hs.id),
+            icon: const Icon(Icons.add_rounded, size: 17),
+            label: const Text('Thêm'),
+            style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+          ),
+        ),
+        const SizedBox(height: Gap.md),
+        if (ds.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(Gap.md),
+            decoration: BoxDecoration(
+              color: AppColor.hocThemNhat,
+              borderRadius: BorderRadius.circular(R.md),
+            ),
+            child: Text(
+              'Thầy cô con học thêm ở ngoài chỉ nhà mình thấy. Thêm vào đây rồi chọn khi viết báo cáo học thêm.',
+              style: AppType.ui(12.5, color: AppColor.hocThem, w: FontWeight.w500, height: 1.45),
+            ),
+          )
+        else
+          for (final g in ds)
+            Padding(
+              padding: const EdgeInsets.only(bottom: Gap.sm),
+              child: Material(
+                color: AppColor.giayTrang,
+                borderRadius: BorderRadius.circular(R.md),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(R.md),
+                  onTap: () => moSuaGiaoVien(context, giaoVien: g),
+                  child: Ink(
+                    padding: const EdgeInsets.all(Gap.md),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(R.md),
+                      border: Border.all(color: AppColor.dongKe),
+                    ),
+                    child: Row(
+                      children: [
+                        AvatarChu(
+                          g.hoTen.replaceFirst(RegExp(r'^(Thầy|Cô) '), ''),
+                          kichThuoc: 38,
+                          mau: AppColor.hocThem,
+                          mauNen: AppColor.hocThemNhat,
+                        ),
+                        const SizedBox(width: Gap.md),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(g.hoTen, style: AppType.ui(14, w: FontWeight.w700)),
+                              const SizedBox(height: 2),
+                              Text(
+                                [s.tenMon(g.monId), g.noiDay].whereType<String>().join(' · '),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppType.ui(11.5, color: AppColor.mucNhat, w: FontWeight.w500),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.chevron_right_rounded, size: 18, color: AppColor.dongKeDam),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+      ],
     );
   }
 }
@@ -178,7 +282,7 @@ class _TheCon extends StatelessWidget {
                   children: [
                     Text(con.hoTen, style: AppType.ui(14.5, w: FontWeight.w700)),
                     const SizedBox(height: 2),
-                    Text('Lớp ${con.lop} · ${con.truong}',
+                    Text('Lớp ${con.lop} · ${context.read<AppState>().tenTruongCua(con) ?? '—'}',
                         style: AppType.ui(12, color: AppColor.mucNhat, w: FontWeight.w500)),
                   ],
                 ),

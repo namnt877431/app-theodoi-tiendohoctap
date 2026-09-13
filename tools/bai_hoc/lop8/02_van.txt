@@ -1,0 +1,377 @@
+mon: m_van
+lop: 8
+hk: 1
+
+# Bài 1: Câu chuyện của lịch sử
+- Tri thức ngữ văn trang 9
+> Học về truyện lịch sử: truyện lấy đề tài từ sự kiện, nhân vật có thật trong quá khứ; bối cảnh, cốt truyện, nhân vật và ngôn ngữ mang dấu ấn thời đại.
+? Truyện lịch sử khác truyện thường ở chỗ nào? → dựa trên sự kiện, nhân vật lịch sử có thật
+- Lá cờ thêu sáu chữ vàng
+> Trích tiểu thuyết của Nguyễn Huy Tưởng về Trần Quốc Toản: chàng thiếu niên bóp nát quả cam vì không được dự hội nghị Bình Than, quyết chiêu binh đánh giặc Nguyên dưới lá cờ "Phá cường địch, báo hoàng ân".
+? Sáu chữ vàng trên lá cờ là gì? → Phá cường địch, báo hoàng ân
+? Vì sao Trần Quốc Toản bóp nát quả cam?
+- Thực hành tiếng Việt trang 16
+> Biệt ngữ xã hội: từ ngữ chỉ dùng trong một nhóm người (học sinh, người buôn bán…). Nhận biết và biết dùng đúng chỗ, tránh lạm dụng trong văn viết.
+? Con kể vài biệt ngữ của học sinh bây giờ. Dùng trong bài văn có được không? → không nên, chỉ dùng trong nhóm hoặc để tả nhân vật
+- Quang Trung đại phá quân Thanh
+> Trích "Hoàng Lê nhất thống chí" (Ngô gia văn phái): Nguyễn Huệ lên ngôi, hành quân thần tốc, đại phá 29 vạn quân Thanh Tết Kỷ Dậu 1789. Hình ảnh vua anh hùng đối lập với Lê Chiêu Thống hèn nhát.
+? Quang Trung đánh tan quân Thanh vào dịp nào? → Tết Kỷ Dậu 1789
+? Qua đoạn trích con thấy Quang Trung là người thế nào?
+- Thực hành tiếng Việt trang 24
+> Từ ngữ địa phương: từ chỉ dùng ở một vùng (má, tía, bắp, mô, tê…). Tác dụng trong văn chương và lưu ý khi dùng trong giao tiếp chung.
+? "Má", "u", "bầm" đều chỉ ai? Mỗi từ ở vùng nào? → mẹ; Nam Bộ, Bắc Bộ, trung du Bắc Bộ
+- Ta đi tới
+> Thơ Tố Hữu (1954): niềm vui chiến thắng và hành trình "ta đi tới" khắp mọi miền đất nước sau chiến thắng Điện Biên Phủ, niềm tin thống nhất.
+? Bài thơ viết trong hoàn cảnh nào? → sau chiến thắng Điện Biên Phủ 1954
+? Con nhớ câu thơ nào trong bài?
+- Viết bài văn kể lại một chuyến đi (tham quan một di tích lịch sử, văn hóa)
+> Bài văn tự sự có mở – thân – kết, kể theo trình tự, kết hợp miêu tả và biểu cảm, nêu ý nghĩa chuyến đi.
+? Con định kể chuyến đi nào? Dàn ý ba phần có gì?
+- Trình bày bài giới thiệu ngắn về một cuốn sách (cuốn truyện lịch sử)
+> Nói trước lớp: tên sách, tác giả, nội dung chính, điều thích nhất; nói rõ ràng, có mở đầu và kết thúc.
+? Con chọn cuốn nào? Nói thử cho bố mẹ nghe trong một phút.
+- Củng cố, mở rộng trang 34
+> Ôn lại đặc điểm truyện lịch sử qua hai văn bản đã học; gợi ý đọc thêm.
+? Hai văn bản truyện lịch sử đã học có điểm gì giống nhau?
+- Thực hành đọc: Minh sư
+> Trích tiểu thuyết của Thái Bá Lợi về Nguyễn Hoàng — người mở cõi phương Nam; suy ngẫm rằng "người thầy" có thể là chính kẻ đối nghịch với mình.
+? Nhân vật chính của đoạn trích là ai? → Nguyễn Hoàng
+
+# Bài 2: Vẻ đẹp cổ điển
+- Tri thức ngữ văn trang 39
+> Thơ Đường luật: thất ngôn bát cú và tứ tuyệt; luật bằng trắc, niêm, vần, đối; bố cục đề – thực – luận – kết.
+? Bài thất ngôn bát cú có mấy câu, mỗi câu mấy chữ? → 8 câu, 7 chữ
+- Thu điếu
+> Nguyễn Khuyến — "Câu cá mùa thu": bức tranh thu làng quê Bắc Bộ trong trẻo, tĩnh lặng (ao thu, thuyền câu, lá vàng, trời xanh) và tâm sự u hoài của nhà thơ.
+? Bài thơ tả cảnh gì, ở đâu? → mùa thu ở ao làng quê Bắc Bộ
+? Câu cuối "Cá đâu đớp động dưới chân bèo" gợi cảm giác gì?
+- Thực hành tiếng Việt trang 42
+> Từ tượng hình (gợi dáng vẻ: lom khom, lấp lánh) và từ tượng thanh (gợi âm thanh: róc rách, ầm ầm); tác dụng gợi hình, gợi cảm trong thơ văn.
+? "Lộp độp" và "lênh khênh" — từ nào tượng thanh, từ nào tượng hình? → lộp độp: tượng thanh; lênh khênh: tượng hình
+- Thiên Trường vãn vọng
+> Trần Nhân Tông — "Buổi chiều đứng ở phủ Thiên Trường trông ra": cảnh chiều quê thanh bình với mục đồng, cò trắng; tâm hồn gắn bó với dân của vị vua.
+? Tác giả bài thơ là ai? → vua Trần Nhân Tông
+? Cảnh trong bài có những hình ảnh gì?
+- Thực hành tiếng Việt trang 45
+> Biện pháp tu từ đảo ngữ (đổi trật tự từ để nhấn mạnh) và câu hỏi tu từ (hỏi để bộc lộ cảm xúc, không cần trả lời).
+? Câu hỏi tu từ có cần trả lời không? → không, dùng để nhấn mạnh hoặc bộc lộ cảm xúc
+- Ca Huế trên sông Hương
+> Văn bản thuyết minh (Hà Ánh Minh) về sinh hoạt ca Huế: nguồn gốc từ nhạc dân gian và nhạc cung đình, các làn điệu, nhạc cụ và không gian đêm sông Hương.
+? Ca Huế bắt nguồn từ đâu? → nhạc dân gian và nhạc cung đình
+- Viết bài văn phân tích một tác phẩm văn học (bài thơ thất ngôn bát cú hoặc tứ tuyệt Đường luật)
+> Phân tích nội dung (đề tài, cảm xúc) và nghệ thuật (thể thơ, hình ảnh, biện pháp tu từ) của một bài thơ Đường luật theo bố cục ba phần.
+? Con chọn phân tích bài thơ nào? Ý chính mỗi phần là gì?
+- Trình bày ý kiến về một vấn đề xã hội (một sản phẩm văn hóa truyền thống trong cuộc sống hiện tại)
+> Nói – nghe: chọn một sản phẩm (áo dài, tranh Đông Hồ, ca Huế…), nêu ý kiến về chỗ đứng của nó hôm nay với lí lẽ, dẫn chứng.
+? Con chọn sản phẩm văn hóa nào? Vì sao?
+- Củng cố, mở rộng trang 55
+> Ôn đặc điểm thơ Đường luật qua các bài đã học; đọc thêm.
+? Hai bài thơ Đường luật đã học có gì khác nhau về cảm xúc?
+- Thực hành đọc: Qua Đèo Ngang
+> Bà Huyện Thanh Quan: cảnh đèo hoang sơ lúc chiều tà và nỗi nhớ nước thương nhà, cô đơn "một mảnh tình riêng ta với ta".
+? Câu kết của bài thơ là gì? → Một mảnh tình riêng, ta với ta
+
+# Bài 3: Lời sông núi
+- Tri thức ngữ văn trang 58
+> Văn nghị luận: luận đề, luận điểm, lí lẽ, bằng chứng; các thể văn nghị luận trung đại như hịch, chiếu, cáo.
+? Luận điểm là gì? → ý kiến chính người viết nêu ra để làm rõ luận đề
+- Hịch tướng sĩ
+> Trần Quốc Tuấn viết trước kháng chiến chống Nguyên lần hai: vạch tội giặc, bày tỏ lòng căm thù, phê phán thái độ thờ ơ của tướng sĩ và kêu gọi học "Binh thư yếu lược".
+? Ai viết Hịch tướng sĩ, nhằm mục đích gì? → Trần Quốc Tuấn, khích lệ tướng sĩ đánh giặc
+? Câu nào thể hiện lòng căm thù giặc? → "Ta thường tới bữa quên ăn, nửa đêm vỗ gối…"
+- Thực hành tiếng Việt trang 64
+> Đoạn văn diễn dịch (câu chủ đề ở đầu đoạn) và đoạn văn quy nạp (câu chủ đề ở cuối đoạn).
+? Đoạn diễn dịch có câu chủ đề ở đâu? → đầu đoạn
+- Tinh thần yêu nước của nhân dân ta
+> Hồ Chí Minh (1951): dân ta có một lòng nồng nàn yêu nước, chứng minh qua lịch sử và hiện tại; nhiệm vụ là làm cho tinh thần ấy được thực hành vào công việc kháng chiến.
+? Tác giả so sánh lòng yêu nước với hình ảnh gì? → làn sóng mạnh mẽ; các thứ của quý
+- Thực hành tiếng Việt trang 68
+> Đoạn văn song song (các câu ngang hàng, không có câu chủ đề) và đoạn văn phối hợp (câu chủ đề ở cả đầu và cuối).
+? Đoạn phối hợp có câu chủ đề ở đâu? → cả đầu và cuối đoạn
+- Nam quốc sơn hà
+> Bài thơ thần thời Lý, được coi là bản tuyên ngôn độc lập đầu tiên: nước Nam là của vua Nam, sách trời đã định, giặc xâm phạm ắt chuốc bại.
+? Vì sao bài thơ được coi là bản tuyên ngôn độc lập đầu tiên?
+? Con đọc thuộc bài thơ.
+- Viết bài văn nghị luận về một vấn đề đời sống (con người trong mối quan hệ với cộng đồng, đất nước)
+> Nêu vấn đề, trình bày ý kiến với lí lẽ và bằng chứng, phản bác ý kiến trái chiều, kết luận.
+? Con chọn vấn đề gì? Bằng chứng con định dùng là gì?
+- Thảo luận về một vấn đề trong đời sống phù hợp với lứa tuổi (ý thức trách nhiệm với cộng đồng của học sinh)
+> Nói – nghe: trình bày ý kiến, lắng nghe bạn, phản hồi lịch sự và có lí lẽ.
+? Theo con, học sinh có trách nhiệm gì với cộng đồng?
+- Củng cố, mở rộng trang 77
+> Ôn đặc điểm văn nghị luận qua ba văn bản đã học.
+? Ba văn bản đã học cùng nói về điều gì? → lòng yêu nước
+- Thực hành đọc: Chiếu dời đô
+> Lý Công Uẩn (1010) nêu lí do dời đô từ Hoa Lư về Đại La (Thăng Long): thế đất rồng cuộn hổ ngồi, thuận lợi muôn đời.
+? Dời đô từ đâu về đâu? → Hoa Lư về Đại La (Thăng Long)
+- Đọc mở rộng trang 79
+> Tự chọn đọc truyện lịch sử, thơ Đường luật, văn nghị luận và ghi nhật kí đọc.
+? Con đang đọc cuốn gì? Kể một điều thú vị.
+
+# Bài 4: Tiếng cười trào phúng trong thơ
+- Tri thức ngữ văn trang 81
+> Thơ trào phúng dùng tiếng cười để phê phán, châm biếm; các giọng điệu hài hước, mỉa mai, đả kích; nghĩa của từ Hán Việt.
+? Thơ trào phúng nhằm mục đích gì? → phê phán, châm biếm bằng tiếng cười
+- Lễ xướng danh khoa Đinh Dậu
+> Trần Tế Xương (Tú Xương): cảnh trường thi Nam Định 1897 nhốn nháo, sĩ tử "lôi thôi", quan trường "ậm ọe", có mặt quan Tây và "mụ đầm" — nỗi nhục mất nước.
+? Bài thơ tả cảnh gì? → lễ xướng danh kì thi Hương năm 1897
+? Tác giả chua xót về điều gì?
+- Thực hành tiếng Việt trang 84
+> Nghĩa của một số từ, thành ngữ Hán Việt (sĩ tử, nhân tài, tang thương…); cách tra và dùng đúng.
+? "Thiên" trong "thiên tử" và "thiên niên kỉ" nghĩa khác nhau thế nào? → trời / nghìn
+- Lai Tân
+> Hồ Chí Minh ("Nhật kí trong tù"): ba câu kể ban trưởng đánh bạc, cảnh trưởng ăn hối lộ, huyện trưởng hút thuốc phiện — câu kết "Trời đất Lai Tân vẫn thái bình" mỉa mai sâu cay.
+? Câu cuối bài thơ có ý mỉa mai gì?
+- Thực hành tiếng Việt trang 86
+> Sắc thái nghĩa của từ ngữ (trang trọng, thân mật, khen, chê…) và việc lựa chọn từ cho phù hợp hoàn cảnh.
+? "Chết", "hi sinh", "toi" — sắc thái khác nhau ra sao? → trung tính / trang trọng, kính trọng / suồng sã, coi thường
+- Một số giọng điệu của tiếng cười trong thơ trào phúng
+> Văn bản nghị luận (Trần Thị Hoa Lê): hài hước, mỉa mai – châm biếm, đả kích là các giọng điệu chính, minh họa bằng thơ Tú Xương, Nguyễn Khuyến.
+? Kể ba giọng điệu của tiếng cười trào phúng. → hài hước; mỉa mai – châm biếm; đả kích
+- Viết bài văn phân tích một tác phẩm văn học (thơ trào phúng)
+> Phân tích đối tượng bị cười, giọng điệu, nghệ thuật gây cười và thái độ của tác giả.
+? Con phân tích bài thơ nào? Đối tượng bị cười là ai?
+- Trình bày ý kiến về một vấn đề xã hội (ý nghĩa của tiếng cười trong đời sống)
+> Nói – nghe: tiếng cười giúp gì cho cuộc sống, khi nào cười là không phù hợp.
+? Theo con, tiếng cười có ý nghĩa gì?
+- Củng cố, mở rộng trang 97
+> Ôn thơ trào phúng qua các bài đã học.
+? Hai bài thơ trào phúng đã học cười ai, cười cái gì?
+- Thực hành đọc: Vịnh cây vông
+> Nguyễn Công Trứ mượn cây vông (to mà rỗng, gỗ không dùng được) để châm biếm kẻ có danh mà bất tài.
+? Cây vông trong bài tượng trưng cho hạng người nào? → kẻ có danh mà bất tài
+
+# Bài 5: Những câu chuyện hài
+- Tri thức ngữ văn trang 100
+> Hài kịch (xung đột, nhân vật, hành động, thủ pháp gây cười) và truyện cười dân gian (ngắn, kết bất ngờ); nghĩa tường minh và nghĩa hàm ẩn.
+? Truyện cười thường gây cười bằng cách nào? → tình huống bất ngờ, phóng đại, nói ngược
+- Trưởng giả học làm sang
+> Trích hài kịch của Mô-li-e (Pháp): ông Giuốc-đanh giàu mà ngu ngốc, đòi học làm quý tộc, bị thợ may và bọn thợ phụ lợi dụng bằng những lời tâng bốc "ông lớn, cụ lớn, đức ông".
+? Ông Giuốc-đanh bị lừa như thế nào?
+? Tác giả Mô-li-e là người nước nào? → Pháp
+- Thực hành tiếng Việt trang 107
+> Câu hỏi tu từ: hỏi không để lấy thông tin mà để khẳng định, phủ định hay bộc lộ cảm xúc; tác dụng trong văn bản.
+? Con đặt một câu hỏi tu từ.
+- Chùm truyện cười dân gian Việt Nam
+> "Lợn cưới, áo mới", "Treo biển", "Nói dóc gặp nhau": cười thói khoe khoang, thiếu chủ kiến, nói khoác.
+? Truyện "Treo biển" cười thói gì? → thiếu chủ kiến, ai nói gì cũng nghe theo
+- Chùm ca dao trào phúng
+> Ca dao châm biếm thầy bói, thầy cúng, kẻ lười biếng… bằng lối nói ngược, phóng đại.
+? Bài ca dao "Số cô chẳng giàu thì nghèo…" cười ai? → thầy bói
+- Thực hành tiếng Việt trang 113
+> Nghĩa tường minh (nói thẳng) và nghĩa hàm ẩn (ý ngầm phải suy ra); nghĩa hàm ẩn trong truyện cười, tục ngữ.
+? "Trời nóng quá" nói với người đang ngồi cạnh quạt có hàm ẩn gì? → nhờ bật quạt
+- Viết bài văn nghị luận về một vấn đề đời sống (một thói xấu của con người trong xã hội hiện đại)
+> Chọn một thói xấu (nói dối, lười biếng, nghiện điện thoại…), nêu biểu hiện, tác hại, cách khắc phục với lí lẽ, bằng chứng.
+? Con chọn thói xấu nào? Tác hại lớn nhất là gì?
+- Trình bày ý kiến về một vấn đề xã hội (một thói xấu của con người trong xã hội hiện đại)
+> Nói – nghe: trình bày ý kiến về một thói xấu, lắng nghe và phản hồi.
+? Con nói thử một phút về thói xấu đã chọn.
+- Củng cố, mở rộng trang 120
+> Ôn hài kịch và truyện cười.
+? Tiếng cười trong hài kịch và trong truyện cười dân gian khác nhau ở đâu?
+- Thực hành đọc: Giá không có ruồi
+> Truyện cười của A-dít Nê-xin (Thổ Nhĩ Kì): nhà văn đổ lỗi cho con ruồi để trì hoãn viết — châm biếm thói lười biếng, hay viện cớ.
+? Nhân vật viện cớ gì để không viết? → con ruồi
+- Đọc mở rộng trang 123
+> Tự chọn đọc thơ trào phúng, hài kịch, truyện cười và ghi nhật kí đọc.
+? Con đọc thêm được truyện cười nào? Kể lại cho cả nhà.
+
+# Ôn tập học kì I
+- Ôn tập học kì I
+> Hệ thống các thể loại đã học (truyện lịch sử, thơ Đường luật, văn nghị luận, thơ trào phúng, hài kịch – truyện cười), kiến thức tiếng Việt và các kiểu bài viết.
+? Con kể tên năm thể loại đã học trong học kì I.
+- A. Ôn tập kiến thức (Ôn tập học kì 1)
+> Bảng tổng kết: văn bản – thể loại – đặc điểm; tiếng Việt: biệt ngữ, từ địa phương, từ tượng hình – tượng thanh, đoạn văn, từ Hán Việt, nghĩa hàm ẩn.
+? Con nhắc lại một kiến thức tiếng Việt học kì này và cho ví dụ.
+- Soạn bài Phiếu học tập số 1
+> Luyện đọc hiểu một văn bản mới và viết theo đề tương tự đề kiểm tra học kì.
+? Con làm phiếu này mất bao lâu? Câu nào khó nhất?
+- Soạn bài Phiếu học tập số 2
+> Luyện đọc hiểu và viết, đề số 2, theo cấu trúc đề kiểm tra học kì.
+? Con tự chấm được bao nhiêu điểm phần đọc hiểu?
+
+hk: 2
+
+# Bài 6: Chân dung cuộc sống
+- Tri thức ngữ văn trang 5
+> Truyện: cốt truyện đa tuyến, nhân vật, người kể chuyện, ngôi kể; trợ từ và thán từ.
+? Cốt truyện đa tuyến là gì? → có nhiều tuyến truyện đan xen
+- Mắt sói
+> Trích tiểu thuyết của Đa-ni-en Pen-nắc: cậu bé Phi Châu và con Sói Lam nhìn vào mắt nhau, thấy lại quá khứ đau thương của nhau — tình bạn và lòng trắc ẩn giữa người và loài vật.
+? Hai nhân vật chính là ai? → Phi Châu và Sói Lam
+? Vì sao Sói Lam chỉ còn một mắt?
+- Thực hành tiếng Việt trang 14
+> Trợ từ: từ đi kèm để nhấn mạnh hoặc bày tỏ thái độ (những, có, chính, ngay, đến, cả…).
+? Trong "Nó ăn những ba bát cơm", từ nào là trợ từ? → những
+- Lặng lẽ Sa Pa
+> Nguyễn Thành Long: anh thanh niên làm khí tượng một mình trên đỉnh Yên Sơn, yêu nghề, khiêm tốn, hiếu khách — vẻ đẹp của người lao động thầm lặng.
+? Anh thanh niên làm công việc gì? → đo gió, mưa, nắng… (khí tượng kiêm vật lí địa cầu)
+? Điều gì ở anh thanh niên khiến con thích?
+- Thực hành tiếng Việt trang 23
+> Thán từ: từ bộc lộ cảm xúc (ôi, chao, a…) hoặc dùng để gọi đáp (này, vâng, dạ, ơi).
+? "Ôi" và "vâng" — từ nào bộc lộ cảm xúc, từ nào gọi đáp? → ôi: cảm xúc; vâng: gọi đáp
+- Bếp lửa
+> Bằng Việt: kỉ niệm tuổi thơ bên bà và bếp lửa những năm đói khổ, chiến tranh; lòng biết ơn bà và tình yêu quê hương, đất nước.
+? Bài thơ nói về ai? → người bà
+? Hình ảnh bếp lửa tượng trưng cho điều gì? → tình bà cháu, sự ấm áp, sức sống bền bỉ
+- Viết bài văn phân tích một tác phẩm (truyện)
+> Phân tích cốt truyện, nhân vật, chủ đề và nghệ thuật kể chuyện của một truyện đã học hoặc tự chọn.
+? Con phân tích truyện nào? Nhân vật chính có nét gì nổi bật?
+- Giới thiệu về một cuốn sách (truyện)
+> Nói – nghe: giới thiệu cuốn truyện yêu thích — tác giả, nội dung, điều tâm đắc.
+? Con giới thiệu cuốn nào? Nói thử cho bố mẹ nghe.
+- Củng cố, mở rộng trang 32
+> Ôn truyện và thơ đã học trong bài 6.
+? Ba văn bản của bài 6 cùng nói về điều gì trong cuộc sống?
+- Thực hành đọc: Chiếc lá cuối cùng
+> O. Hen-ri: cụ Bơ-men vẽ chiếc lá thường xuân trong đêm bão để cứu Giôn-xi, rồi mất vì viêm phổi — kiệt tác của tình thương.
+? Ai đã vẽ chiếc lá cuối cùng? → cụ Bơ-men
+
+# Bài 7: Tin yêu và ước vọng
+- Tri thức ngữ văn trang 36
+> Thơ tự do: không cố định số chữ, số câu; nhịp, vần linh hoạt; hình ảnh và biện pháp tu từ; thành ngữ.
+? Thơ tự do khác thơ Đường luật ở chỗ nào? → không bị ràng buộc số câu, số chữ, niêm luật
+- Đồng chí
+> Chính Hữu (1948): tình đồng chí của người lính chống Pháp — cùng cảnh nghèo, cùng chia sẻ gian khổ, sát cánh bên nhau; hình ảnh "Đầu súng trăng treo".
+? Câu thơ cuối bài là gì? → Đầu súng trăng treo
+? Tình đồng chí bắt nguồn từ đâu? → cùng cảnh ngộ nghèo khó, cùng lí tưởng
+- Thực hành tiếng Việt trang 40
+> Biện pháp tu từ (so sánh, ẩn dụ, hoán dụ…) và nghĩa của từ, thành ngữ trong thơ.
+? "Nước mặn đồng chua" là thành ngữ chỉ gì? → vùng đất nghèo, khó canh tác
+- Lá đỏ
+> Nguyễn Đình Thi (1974): cuộc gặp trên đường Trường Sơn với "em gái tiền phương" giữa rừng lá đỏ, đoàn quân ra trận, lời hẹn "gặp nhé giữa Sài Gòn".
+? Bài thơ viết ở đâu, năm nào? → Trường Sơn, 1974
+- Những ngôi sao xa xôi
+> Lê Minh Khuê: ba cô gái thanh niên xung phong (Phương Định, Nho, chị Thao) phá bom trên tuyến đường Trường Sơn — dũng cảm, hồn nhiên, giàu mơ mộng.
+? Ba nhân vật nữ tên gì? → Phương Định, Nho, Thao
+? Công việc của họ nguy hiểm thế nào?
+- Thực hành tiếng Việt trang 48
+> Biện pháp tu từ điệp ngữ, đảo ngữ, so sánh trong thơ và tác dụng nhấn mạnh, gợi cảm.
+? Điệp ngữ là gì? → lặp lại từ ngữ để nhấn mạnh
+- Tập làm một bài thơ tự do
+> Viết vài câu thơ tự do về một hình ảnh, cảm xúc của chính mình.
+? Con đọc bài thơ con làm cho cả nhà nghe.
+- Viết đoạn văn ghi lại cảm nghĩ về một bài thơ tự do
+> Đoạn văn nêu cảm xúc về nội dung và nghệ thuật của một bài thơ tự do đã đọc.
+? Con viết về bài thơ nào? Điều gì làm con xúc động?
+- Thảo luận ý kiến về một vấn đề đời sống phù hợp với lứa tuổi (được gợi ra từ tác phẩm văn học đã học)
+> Nói – nghe: từ tác phẩm đã học, nêu và bàn một vấn đề đời sống (tình bạn, lí tưởng, lòng dũng cảm…).
+? Nhóm con thảo luận vấn đề gì? Ý kiến của con ra sao?
+- Củng cố, mở rộng trang 56
+> Ôn thơ tự do và truyện đã học trong bài 7.
+? Các tác phẩm bài 7 cùng nói về ai? → người lính, thanh niên xung phong thời chiến
+- Thực hành đọc: Bài thơ về tiểu đội xe không kính
+> Phạm Tiến Duật: người lính lái xe Trường Sơn lạc quan, ngang tàng trong những chiếc xe không kính vì bom đạn — "chỉ cần trong xe có một trái tim".
+? Vì sao xe không có kính? → bom giật, bom rung làm kính vỡ
+- Đọc mở rộng trang 58
+> Tự chọn đọc thơ tự do, truyện và ghi nhật kí đọc.
+? Con đọc thêm bài thơ nào? Thích câu nào nhất?
+
+# Bài 8: Nhà văn và trang viết
+- Tri thức ngữ văn trang 60
+> Văn bản nghị luận văn học: luận đề, luận điểm, lí lẽ và bằng chứng lấy từ tác phẩm; thành phần biệt lập trong câu.
+? Bằng chứng trong nghị luận văn học lấy từ đâu? → từ chính tác phẩm
+- Nhà thơ của quê hương làng cảnh Việt Nam
+> Xuân Diệu viết về Nguyễn Khuyến qua chùm ba bài thơ thu (Thu điếu, Thu vịnh, Thu ẩm) — nhà thơ của làng quê Việt Nam.
+? Xuân Diệu gọi Nguyễn Khuyến là gì? → nhà thơ của quê hương làng cảnh Việt Nam
+? Ba bài thơ thu của Nguyễn Khuyến là gì? → Thu điếu, Thu vịnh, Thu ẩm
+- Thực hành tiếng Việt trang 66
+> Thành phần biệt lập: tình thái (có lẽ, chắc chắn, hình như) và cảm thán (ôi, trời ơi) — không tham gia vào nghĩa sự việc của câu.
+? "Có lẽ trời sắp mưa" — "có lẽ" là thành phần gì? → tình thái
+- Đọc văn – cuộc chơi tìm ý nghĩa
+> Trần Đình Sử: đọc văn là quá trình người đọc tự tìm ra ý nghĩa; tác phẩm có nhiều cách hiểu; việc đọc gắn với trải nghiệm của mỗi người.
+? Theo tác giả, ý nghĩa của tác phẩm do ai tạo ra? → cả người viết lẫn người đọc
+- Thực hành tiếng Việt trang 69
+> Thành phần biệt lập: gọi – đáp (này, thưa, ơi) và chêm xen (phần phụ chú đặt trong ngoặc đơn hoặc giữa hai dấu gạch ngang).
+? Phần chêm xen thường đặt trong dấu gì? → ngoặc đơn hoặc hai dấu gạch ngang
+- Xe đêm
+> Truyện của Pau-xtốp-xki về nhà văn An-đéc-xen trên chuyến xe đêm: ông tưởng tượng và kể về tương lai hạnh phúc của những cô gái — sức mạnh của trí tưởng tượng và lòng nhân hậu.
+? Nhân vật nhà văn trong truyện là ai? → An-đéc-xen
+- Viết bài văn phân tích một tác phẩm (truyện)
+> Phân tích một truyện: chủ đề, nhân vật, cốt truyện, nghệ thuật; lập luận có bằng chứng.
+? Con chọn truyện nào? Luận điểm chính là gì?
+- Trình bày ý kiến về một vấn đề xã hội (văn học trong đời sống hiện nay)
+> Nói – nghe: văn học còn cần thiết trong thời đại số không, vì sao.
+? Theo con, đọc văn học có ích gì cho cuộc sống bây giờ?
+- Củng cố, mở rộng trang 82
+> Ôn văn bản nghị luận văn học.
+? Hai bài nghị luận văn học đã học bàn về điều gì?
+- Thực hành đọc: Nắng mới – sự thành thực của một tâm hồn giàu mơ mộng
+> Bài phê bình (Lê Quang Hưng) về bài thơ "Nắng mới" của Lưu Trọng Lư: nỗi nhớ mẹ chân thành, mơ mộng.
+? Bài thơ "Nắng mới" nói về ai? → người mẹ
+
+# Bài 9: Hôm nay và ngày mai
+- Tri thức ngữ văn trang 87
+> Văn bản thông tin giải thích một hiện tượng tự nhiên; văn bản kiến nghị; các kiểu câu theo mục đích nói; câu phủ định và câu khẳng định.
+? Văn bản thông tin khác văn bản nghị luận ở chỗ nào? → cung cấp thông tin khách quan, không nhằm thuyết phục
+- Miền châu thổ sông Cửu Long cần chuyển đổi từ sống chung sang chào đón lũ
+> Lê Anh Tuấn: lũ ở đồng bằng sông Cửu Long mang phù sa, tôm cá, rửa phèn mặn — là nguồn lợi chứ không chỉ là tai họa, nên cần "chào đón" thay vì chỉ "sống chung".
+? Lũ mang lại lợi ích gì cho đồng bằng? → phù sa, thủy sản, rửa phèn mặn
+- Thực hành tiếng Việt trang 93
+> Các kiểu câu phân loại theo mục đích nói: câu kể, câu hỏi, câu cảm, câu khiến và dấu hiệu nhận biết.
+? "Con làm bài đi!" là kiểu câu gì? → câu khiến
+- Choáng ngợp và đau đớn những cảnh báo từ loạt phim Hành tinh của chúng ta
+> Bài giới thiệu (Lâm Lê) về loạt phim tài liệu "Our Planet": vẻ đẹp choáng ngợp của thiên nhiên và lời cảnh báo đau đớn về sự tàn phá của con người.
+? Loạt phim cảnh báo điều gì? → thiên nhiên đang bị con người tàn phá
+- Diễn từ ứng khẩu của thủ lĩnh da đỏ Xi-át-tơn
+> Bài nói của thủ lĩnh Xi-át-tơn (1854) đáp lại đề nghị mua đất: đất là mẹ, mọi vật đều thiêng liêng; con người thuộc về đất chứ đất không thuộc về con người.
+? Người da đỏ coi đất là gì? → người mẹ, thiêng liêng
+- Thực hành tiếng Việt trang 101
+> Câu phủ định (có không, chưa, chẳng…) và câu khẳng định; phủ định miêu tả và phủ định bác bỏ; phủ định của phủ định.
+? "Không phải nó không học" nghĩa là gì? → nó có học (phủ định của phủ định thành khẳng định)
+- Viết văn bản thuyết minh giải thích một hiện tượng tự nhiên
+> Giới thiệu hiện tượng (mưa, cầu vồng, thủy triều…), giải thích nguyên nhân, diễn biến, tác động; dùng số liệu, hình ảnh.
+? Con chọn hiện tượng gì? Nguyên nhân của nó là gì?
+- Viết văn bản kiến nghị về một vấn đề của đời sống
+> Viết đúng thể thức: quốc hiệu, tên văn bản, nơi nhận, nội dung kiến nghị, đề xuất, ngày tháng, chữ kí.
+? Con kiến nghị vấn đề gì, gửi ai?
+- Thảo luận về một vấn đề trong đời sống phù hợp với lứa tuổi (tổ chức hợp lí nề nếp sinh hoạt của bản thân)
+> Nói – nghe: bàn về giờ giấc học, ngủ, chơi, dùng điện thoại sao cho hợp lí.
+? Con định sắp xếp lại nề nếp sinh hoạt của mình thế nào?
+- Củng cố, mở rộng trang 111
+> Ôn văn bản thông tin.
+? Ba văn bản của bài 9 cùng nhắc con người điều gì? → sống hài hòa với thiên nhiên
+- Thực hành đọc: "Dấu chân sinh thái" của mỗi người và thông điệp từ Trái Đất
+> Văn bản thông tin: dấu chân sinh thái đo mức tiêu thụ tài nguyên của mỗi người; cần giảm để Trái Đất kịp phục hồi.
+? Dấu chân sinh thái là gì? → thước đo lượng tài nguyên một người tiêu thụ
+- Đọc mở rộng trang 114
+> Tự chọn đọc văn bản thông tin, nghị luận và ghi nhật kí đọc.
+? Con đọc được thông tin gì mới về môi trường?
+
+# Bài 10: Sách – người bạn đồng hành
+- Tri thức ngữ văn trang 116
+> Đọc sách có mục tiêu và phương pháp; giới thiệu sách; nhan đề và ý nghĩa của nhan đề.
+? Con đặt mục tiêu đọc bao nhiêu cuốn trong dự án này?
+- Đọc như một hành trình
+> Lập kế hoạch đọc, chọn sách theo chủ đề, ghi chép trong quá trình đọc.
+? Con chọn chủ đề đọc gì? Danh sách sách gồm những cuốn nào?
+- Đọc như một cuộc thám hiểm
+> Khám phá sách bằng những câu hỏi mới: đọc thơ, truyện, văn bản thông tin từ góc nhìn khác.
+? Con phát hiện điều gì bất ngờ trong cuốn đang đọc?
+- Đọc để đồng hành và chia sẻ
+> Chia sẻ điều tâm đắc, trao đổi với bạn về sách đã đọc.
+? Con chia sẻ cuốn sách với ai? Bạn nói gì?
+- Viết bài thuyết minh giới thiệu cuốn sách yêu thích
+> Bài thuyết minh: tác giả, nội dung, giá trị, vì sao nên đọc.
+? Con giới thiệu cuốn gì? Lí do nên đọc là gì?
+- Viết một nhan đề và sáng tạo một tác phẩm mới
+> Từ ý tưởng của sách đã đọc, thử sáng tác truyện hoặc thơ ngắn và đặt nhan đề.
+? Nhan đề tác phẩm của con là gì? Đọc cho bố mẹ nghe.
+- Về đích: Ngày hội với sách
+> Trình bày sản phẩm của dự án đọc sách trước lớp (giới thiệu sách, sáng tác, poster…).
+? Con trình bày sản phẩm gì trong ngày hội?
+
+# Ôn tập học kì II
+- Ôn tập học kì 2
+> Hệ thống các thể loại học kì II (truyện, thơ tự do, nghị luận văn học, văn bản thông tin), kiến thức tiếng Việt và các kiểu bài viết.
+? Con kể tên các thể loại đã học trong học kì II.
+- A. Ôn tập kiến thức (Ôn tập học kì 2)
+> Bảng tổng kết văn bản – thể loại; tiếng Việt: trợ từ, thán từ, thành phần biệt lập, kiểu câu, câu phủ định.
+? Con cho ví dụ về thành phần biệt lập.
+- Soạn bài Phiếu học tập số 1
+> Luyện đọc hiểu văn bản mới và viết theo đề tương tự đề kiểm tra cuối năm.
+? Con làm phiếu này mất bao lâu? Câu nào khó nhất?
+- Soạn bài Phiếu học tập số 2
+> Luyện đọc hiểu và viết, đề số 2, theo cấu trúc đề kiểm tra cuối năm.
+? Con tự chấm được bao nhiêu điểm phần đọc hiểu?

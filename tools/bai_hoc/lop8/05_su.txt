@@ -1,0 +1,99 @@
+mon: m_su
+lop: 8
+hk: 1
+
+# Chương 1: Châu Âu và Bắc Mỹ từ nửa sau thế kỉ XVI đến thế kỉ XVIII
+- Bài 1: Cách mạng tư sản Anh và chiến tranh giành độc lập của 13 thuộc địa Anh ở Bắc Mỹ
+> Cách mạng tư sản Anh (1642–1688) lật đổ chế độ quân chủ chuyên chế, lập nền quân chủ lập hiến. 13 thuộc địa Anh ở Bắc Mỹ giành độc lập (1775–1783), công bố Tuyên ngôn Độc lập 4/7/1776, lập ra Hợp chúng quốc Hoa Kỳ.
+? Tuyên ngôn Độc lập của Mỹ công bố ngày nào? → 4/7/1776
+? Kết quả của Cách mạng tư sản Anh là gì? → lập chế độ quân chủ lập hiến
+- Bài 2: Cách mạng tư sản Pháp cuối thế kỉ XVIII
+> Nguyên nhân (mâu thuẫn ba đẳng cấp, khủng hoảng tài chính, tư tưởng Khai sáng); mở đầu 14/7/1789 phá ngục Ba-xti, phát triển qua các giai đoạn tới đỉnh cao chuyên chính Gia-cô-banh; ý nghĩa: lật đổ phong kiến, cuộc cách mạng tư sản triệt để nhất.
+? Ngày 14/7/1789 diễn ra sự kiện gì? → quần chúng phá ngục Ba-xti
+? Khẩu hiệu nổi tiếng của Cách mạng Pháp là gì? → Tự do – Bình đẳng – Bác ái
+- Bài 3: Cách mạng công nghiệp
+> Bắt đầu ở Anh nửa sau thế kỉ XVIII với máy kéo sợi Gien-ni, máy hơi nước của Giêm Oát, đầu máy xe lửa; lan sang Pháp, Đức, Mỹ. Tác động: sản xuất tăng vọt, đô thị hóa, hình thành giai cấp tư sản và vô sản, ô nhiễm môi trường.
+? Ai phát minh ra máy hơi nước? → Giêm Oát
+? Cách mạng công nghiệp bắt đầu ở nước nào? → Anh
+
+# Chương 2: Đông Nam Á từ nửa sau thế kỉ XVI đến giữa thế kỉ XIX
+- Bài 4: Đông Nam Á từ nửa sau thế kỉ XVI đến giữa thế kỉ XIX
+> Các nước phương Tây (Bồ Đào Nha, Tây Ban Nha, Hà Lan, Anh, Pháp) xâm nhập rồi xâm lược Đông Nam Á; tình hình chính trị, kinh tế, văn hóa các nước; cuộc đấu tranh của nhân dân In-đô-nê-xi-a, Phi-líp-pin.
+? Nước nào chiếm Phi-líp-pin, nước nào chiếm In-đô-nê-xi-a? → Tây Ban Nha; Hà Lan
+
+# Chương 3: Việt Nam từ đầu thế kỉ XVI đến thế kỉ XVIII
+- Bài 5: Cuộc xung đột Nam – Bắc triều và Trịnh – Nguyễn
+> Mạc Đăng Dung lập nhà Mạc (1527) dẫn tới xung đột Nam – Bắc triều (1533–1592); rồi Trịnh – Nguyễn phân tranh (1627–1672), đất nước chia cắt Đàng Ngoài – Đàng Trong lấy sông Gianh làm ranh giới; hậu quả với nhân dân.
+? Ranh giới Đàng Trong – Đàng Ngoài là sông nào? → sông Gianh
+? Ai lập ra nhà Mạc? → Mạc Đăng Dung
+- Bài 6: Công cuộc khai phá vùng đất phía Nam từ thế kỉ XVI đến thế kỉ XVIII
+> Các chúa Nguyễn mở rộng lãnh thổ về phía Nam từ Phú Yên tới Hà Tiên, lập phủ Gia Định năm 1698 (Nguyễn Hữu Cảnh); khai phá và xác lập chủ quyền ở Hoàng Sa, Trường Sa qua đội Hoàng Sa, đội Bắc Hải.
+? Phủ Gia Định được lập năm nào, do ai? → 1698, Nguyễn Hữu Cảnh
+? Đội Hoàng Sa làm nhiệm vụ gì? → khai thác sản vật, thực thi chủ quyền ở Hoàng Sa, Trường Sa
+- Bài 7: Khởi nghĩa nông dân ở Đàng Ngoài thế kỉ XVIII
+> Chính quyền Lê – Trịnh mục nát, nông dân cực khổ dẫn tới các cuộc khởi nghĩa của Nguyễn Hữu Cầu, Hoàng Công Chất, Nguyễn Danh Phương, Lê Duy Mật…; tuy thất bại nhưng làm lung lay chính quyền.
+? Kể tên hai cuộc khởi nghĩa nông dân ở Đàng Ngoài thế kỉ XVIII. → Nguyễn Hữu Cầu, Hoàng Công Chất…
+- Bài 8: Phong trào Tây Sơn
+> Ba anh em Nguyễn Nhạc, Nguyễn Huệ, Nguyễn Lữ khởi nghĩa năm 1771; lật đổ chúa Nguyễn, đánh tan quân Xiêm ở Rạch Gầm – Xoài Mút (1785), lật đổ Lê – Trịnh, đại phá quân Thanh ở Ngọc Hồi – Đống Đa (1789). Vai trò của Quang Trung.
+? Trận đánh quân Xiêm diễn ra ở đâu? → Rạch Gầm – Xoài Mút
+? Quang Trung đại phá quân Thanh năm nào? → 1789
+- Bài 9: Tình hình kinh tế, văn hóa, tôn giáo trong các thế kỉ XVI – XVIII
+> Nông nghiệp Đàng Trong phát triển; thủ công nghiệp, thương nghiệp với các đô thị Thăng Long, Phố Hiến, Hội An; chữ Quốc ngữ ra đời, Thiên Chúa giáo du nhập; văn học chữ Nôm và nghệ thuật dân gian nở rộ.
+? Chữ Quốc ngữ ra đời vào thế kỉ nào, gắn với ai? → thế kỉ XVII, các giáo sĩ phương Tây như A-lếch-xăng đờ Rốt
+? Kể hai đô thị lớn của nước ta thời này. → Thăng Long, Phố Hiến, Hội An
+
+# Chương 4: Châu Âu và nước Mỹ từ cuối thế kỉ XVIII đến đầu thế kỉ XX
+- Bài 10: Sự hình thành chủ nghĩa đế quốc ở các nước Âu – Mỹ (cuối thế kỉ XIX – đầu thế kỉ XX)
+> Công ty độc quyền, tư bản tài chính, xuất khẩu tư bản và xâm chiếm thuộc địa đưa chủ nghĩa tư bản sang giai đoạn đế quốc; đặc điểm của Anh, Pháp, Đức, Mỹ.
+? Đặc điểm nổi bật của chủ nghĩa đế quốc là gì? → độc quyền, xâm chiếm thuộc địa
+- Bài 11: Phong trào công nhân từ cuối thế kỉ XVIII đến đầu thế kỉ XX và sự ra đời của chủ nghĩa xã hội khoa học
+> Công nhân đấu tranh từ đập phá máy móc đến bãi công, đấu tranh chính trị; C. Mác và Ph. Ăng-ghen với "Tuyên ngôn của Đảng Cộng sản" (1848); Quốc tế thứ nhất, Công xã Pa-ri (1871), Quốc tế thứ hai.
+? "Tuyên ngôn của Đảng Cộng sản" ra đời năm nào? → 1848
+? Công xã Pa-ri thành lập năm nào? → 1871
+- Bài 12: Chiến tranh thế giới thứ nhất (1914 – 1918) và Cách mạng tháng Mười Nga năm 1917
+> Nguyên nhân từ mâu thuẫn đế quốc về thuộc địa, hai khối Liên minh – Hiệp ước; diễn biến và hậu quả nặng nề. Cách mạng tháng Mười Nga do Lê-nin lãnh đạo lập ra nhà nước Xô viết.
+? Chiến tranh thế giới thứ nhất kéo dài từ năm nào đến năm nào? → 1914–1918
+? Ai lãnh đạo Cách mạng tháng Mười Nga? → Lê-nin
+
+# Chương 5: Sự phát triển của khoa học, kĩ thuật, văn học, nghệ thuật trong các thế kỉ XVIII – XIX
+- Bài 13: Sự phát triển của khoa học, kĩ thuật, văn học, nghệ thuật trong các thế kỉ XVIII – XIX
+> Thành tựu khoa học (Niu-tơn, Đác-uyn với thuyết tiến hóa, Men-đê-lê-ép), kĩ thuật (luyện kim, điện, ô tô, máy bay), văn học (Ban-dắc, Vích-to Huy-gô, Lép Tôn-xtôi), âm nhạc (Mô-da, Bét-tô-ven) và hội họa.
+? Ai nêu ra thuyết tiến hóa? → Đác-uyn
+? Kể tên một nhà văn lớn thế kỉ XIX. → Vích-to Huy-gô, Ban-dắc, Lép Tôn-xtôi…
+
+hk: 2
+
+# Chương 6: Châu Á từ nửa sau thế kỉ XIX đến đầu thế kỉ XX
+- Bài 14: Trung Quốc và Nhật Bản từ nửa sau thế kỉ XIX đến đầu thế kỉ XX
+> Trung Quốc bị các nước đế quốc xâu xé; phong trào Thái bình Thiên quốc, Duy tân Mậu Tuất và Cách mạng Tân Hợi 1911 (Tôn Trung Sơn). Nhật Bản cải cách Duy tân Minh Trị (1868) trở thành nước đế quốc.
+? Cách mạng Tân Hợi nổ ra năm nào, ai lãnh đạo? → 1911, Tôn Trung Sơn
+? Cuộc Duy tân Minh Trị bắt đầu năm nào? → 1868
+- Bài 15: Ấn Độ và Đông Nam Á từ nửa sau thế kỉ XIX đến đầu thế kỉ XX
+> Thực dân Anh cai trị Ấn Độ, khởi nghĩa Xi-pay, Đảng Quốc đại; các nước Đông Nam Á lần lượt thành thuộc địa (trừ Xiêm) và phong trào chống thực dân.
+? Nước Đông Nam Á nào giữ được độc lập tương đối? → Xiêm (Thái Lan)
+
+# Chương 7: Việt Nam từ thế kỉ XIX đến đầu thế kỉ XX
+- Bài 16: Việt Nam dưới thời Nguyễn (nửa đầu thế kỉ XIX)
+> Nguyễn Ánh lập nhà Nguyễn năm 1802; bộ máy tập quyền, luật Gia Long, chia tỉnh thời Minh Mạng; kinh tế, xã hội và các cuộc khởi nghĩa nông dân; văn hóa với Truyện Kiều, quốc sử; thực thi chủ quyền ở Hoàng Sa, Trường Sa.
+? Nhà Nguyễn thành lập năm nào, vua đầu tiên là ai? → 1802, Gia Long
+? Vua nào chia cả nước thành 30 tỉnh và 1 phủ? → Minh Mạng
+- Bài 17: Cuộc kháng chiến chống thực dân Pháp xâm lược từ năm 1858 đến năm 1884
+> Pháp nổ súng ở Đà Nẵng (1/9/1858), chiếm Gia Định, ba tỉnh miền Đông rồi miền Tây Nam Kì, đánh ra Bắc Kì; các hiệp ước 1862, 1874, 1883, 1884 (Pa-tơ-nốt). Nhân dân kháng chiến với Trương Định, Nguyễn Trung Trực, Hoàng Diệu.
+? Pháp bắt đầu xâm lược nước ta ở đâu, năm nào? → Đà Nẵng, 1858
+? Hiệp ước nào đánh dấu Việt Nam mất hoàn toàn độc lập? → Hiệp ước Pa-tơ-nốt 1884
+- Bài 18: Phong trào chống Pháp trong những năm 1885 – 1896
+> Phong trào Cần vương từ chiếu Cần vương 1885 (Tôn Thất Thuyết, vua Hàm Nghi) với các khởi nghĩa Ba Đình, Bãi Sậy, Hương Khê (Phan Đình Phùng); khởi nghĩa nông dân Yên Thế của Hoàng Hoa Thám.
+? Ai ban chiếu Cần vương? → vua Hàm Nghi
+? Khởi nghĩa Yên Thế do ai lãnh đạo? → Hoàng Hoa Thám
+- Bài 19: Phong trào yêu nước chống Pháp ở Việt Nam từ đầu thế kỉ XX đến năm 1917
+> Pháp khai thác thuộc địa lần thứ nhất làm xã hội chuyển biến; Phan Bội Châu với phong trào Đông du (bạo động), Phan Châu Trinh với Duy tân (cải cách), Đông Kinh nghĩa thục; Nguyễn Tất Thành ra đi tìm đường cứu nước 5/6/1911.
+? Phong trào Đông du do ai khởi xướng? → Phan Bội Châu
+? Nguyễn Tất Thành ra đi tìm đường cứu nước ngày nào? → 5/6/1911
+
+# Chủ đề chung Lịch sử và Địa lí
+- Chủ đề chung 1: Văn minh châu thổ sông Hồng và sông Cửu Long
+> Quá trình hình thành hai châu thổ; chế độ nước và hệ thống đê điều sông Hồng, sống chung với lũ ở Cửu Long; văn minh lúa nước và đời sống cư dân hai vùng.
+? Vì sao sông Hồng có hệ thống đê còn sông Cửu Long thì không? → lũ sông Hồng lên nhanh, dữ; lũ Cửu Long lên chậm, hiền hòa và có lợi
+- Chủ đề chung 2: Bảo vệ chủ quyền, các quyền và lợi ích hợp pháp của Việt Nam ở Biển Đông
+> Phạm vi Biển Đông, các vùng biển theo Công ước Luật Biển 1982; bằng chứng lịch sử về chủ quyền Hoàng Sa, Trường Sa; trách nhiệm của công dân, học sinh.
+? Hai quần đảo lớn của Việt Nam ở Biển Đông là gì? → Hoàng Sa và Trường Sa

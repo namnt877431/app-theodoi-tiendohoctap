@@ -77,7 +77,7 @@ class _TongQuanScreenState extends State<TongQuanScreen> {
                 children: [
                   Expanded(
                     child: OSoLieu(
-                        so: '${s.monHoc.length}', nhan: 'Môn học', mau: AppColor.mucNhat),
+                        so: '${s.truong.length}', nhan: 'Trường', mau: AppColor.mucNhat),
                   ),
                   const SizedBox(width: Gap.sm),
                   Expanded(

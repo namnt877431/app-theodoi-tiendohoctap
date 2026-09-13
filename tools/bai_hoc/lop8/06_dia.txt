@@ -1,0 +1,59 @@
+mon: m_dia
+lop: 8
+hk: 1
+
+# Chương 1: Vị trí địa lí và phạm vi lãnh thổ, địa hình và khoáng sản Việt Nam
+- Bài 1: Vị trí địa lí và phạm vi lãnh thổ Việt Nam
+> Nước ta nằm ở rìa đông bán đảo Đông Dương, trong vùng nội chí tuyến; lãnh thổ gồm đất liền (khoảng 331 nghìn km²), vùng biển rộng (khoảng 1 triệu km²) và vùng trời; các điểm cực. Vị trí quy định khí hậu nhiệt đới ẩm gió mùa.
+? Việt Nam nằm ở khu vực nào của châu Á? → Đông Nam Á
+? Diện tích đất liền nước ta khoảng bao nhiêu? → khoảng 331 nghìn km²
+- Bài 2: Địa hình Việt Nam
+> Đồi núi chiếm 3/4 diện tích, chủ yếu núi thấp; hướng tây bắc – đông nam và vòng cung; địa hình chịu tác động của con người. Các khu vực: Đông Bắc, Tây Bắc, Trường Sơn Bắc, Trường Sơn Nam, đồng bằng sông Hồng, sông Cửu Long, bờ biển và thềm lục địa.
+? Đồi núi chiếm bao nhiêu phần diện tích nước ta? → 3/4
+? Đỉnh núi cao nhất Việt Nam là gì? → Phan-xi-păng, 3147 m
+- Bài 3: Khoáng sản Việt Nam
+> Khoáng sản đa dạng nhưng phần lớn trữ lượng vừa và nhỏ: than ở Quảng Ninh, dầu khí ở thềm lục địa phía Nam, bô-xít ở Tây Nguyên, apatit ở Lào Cai…; khai thác và sử dụng hợp lí.
+? Than đá tập trung nhiều nhất ở tỉnh nào? → Quảng Ninh
+? Dầu mỏ được khai thác chủ yếu ở đâu? → thềm lục địa phía Nam
+
+# Chương 2: Khí hậu và thủy văn Việt Nam
+- Bài 4: Khí hậu Việt Nam
+> Khí hậu nhiệt đới ẩm gió mùa: nhiệt độ cao, mưa nhiều; gió mùa đông (lạnh, khô ở miền Bắc) và gió mùa hạ (nóng ẩm, mưa nhiều); phân hóa theo Bắc – Nam, theo độ cao và Đông – Tây.
+? Miền Bắc có mùa đông lạnh là do gió gì? → gió mùa Đông Bắc
+? Khí hậu nước ta thuộc kiểu gì? → nhiệt đới ẩm gió mùa
+- Bài 5: Thực hành: vẽ và phân tích biểu đồ khí hậu
+> Vẽ biểu đồ nhiệt độ và lượng mưa của một trạm khí tượng rồi nhận xét mùa mưa, mùa khô, biên độ nhiệt.
+? Tháng nào ở trạm con vẽ có lượng mưa lớn nhất?
+- Bài 6: Thủy văn Việt Nam
+> Mạng lưới sông ngòi dày đặc (2360 sông dài trên 10 km), chảy theo hướng tây bắc – đông nam và vòng cung, chế độ nước theo mùa; các hệ thống sông Hồng, Cửu Long, Đồng Nai; hồ, đầm và nước ngầm.
+? Hai hệ thống sông lớn nhất nước ta là gì? → sông Hồng và sông Cửu Long (Mê Công)
+? Mùa lũ của sông trùng với mùa gì? → mùa mưa
+- Bài 7: Vai trò của tài nguyên khí hậu và tài nguyên nước đối với sự phát triển kinh tế – xã hội của nước ta
+> Khí hậu thuận lợi cho nông nghiệp nhiệt đới, du lịch; nguồn nước phục vụ thủy điện, tưới tiêu, giao thông, sinh hoạt; thách thức từ thiên tai và ô nhiễm.
+? Khí hậu giúp gì cho nông nghiệp nước ta? → trồng nhiều vụ trong năm, nhiều cây nhiệt đới
+- Bài 8: Tác động của biến đổi khí hậu đối với khí hậu và thủy văn Việt Nam
+> Nhiệt độ tăng, mưa thất thường, bão mạnh hơn, nước biển dâng, hạn hán và lũ lụt cực đoan; giải pháp thích ứng và giảm nhẹ.
+? Nước biển dâng ảnh hưởng nặng nhất tới vùng nào? → đồng bằng sông Cửu Long
+? Gia đình mình có thể làm gì để giảm phát thải khí nhà kính?
+
+hk: 2
+
+# Chương 3: Thổ nhưỡng và sinh vật Việt Nam
+- Bài 9: Thổ nhưỡng Việt Nam
+> Ba nhóm đất chính: đất feralit ở đồi núi (khoảng 65%), đất phù sa ở đồng bằng (khoảng 24%), đất mùn núi cao; đặc điểm, phân bố, giá trị sử dụng; thoái hóa đất và cách bảo vệ.
+? Nhóm đất nào chiếm diện tích lớn nhất? → đất feralit
+? Đất phù sa thích hợp trồng gì? → lúa, hoa màu, cây ăn quả
+- Bài 10: Sinh vật Việt Nam
+> Đa dạng sinh học cao về loài, gen và hệ sinh thái (rừng nhiệt đới, rừng ngập mặn…); suy giảm do khai thác quá mức; bảo tồn qua vườn quốc gia, khu bảo tồn.
+? Kể tên hai vườn quốc gia của Việt Nam. → Cúc Phương, Cát Tiên, Phong Nha – Kẻ Bàng…
+? Vì sao đa dạng sinh học bị suy giảm? → phá rừng, săn bắt, ô nhiễm, biến đổi khí hậu
+
+# Chương 4: Biển đảo Việt Nam
+- Bài 11: Phạm vi Biển Đông. Vùng biển đảo và đặc điểm tự nhiên vùng biển đảo Việt Nam
+> Biển Đông rộng khoảng 3,5 triệu km²; các vùng biển của nước ta (nội thủy, lãnh hải, tiếp giáp lãnh hải, đặc quyền kinh tế, thềm lục địa); đảo và quần đảo; đặc điểm khí hậu, hải văn, tài nguyên.
+? Lãnh hải rộng bao nhiêu hải lí? → 12 hải lí
+? Vùng đặc quyền kinh tế rộng bao nhiêu hải lí tính từ đường cơ sở? → 200 hải lí
+- Bài 12: Môi trường và tài nguyên thiên nhiên biển đảo Việt Nam
+> Tài nguyên sinh vật, khoáng sản (dầu khí, cát, muối), du lịch, giao thông biển; ô nhiễm biển và suy giảm tài nguyên; bảo vệ môi trường biển đảo.
+? Kể ba loại tài nguyên biển. → hải sản, dầu khí, muối, du lịch…
+? Con có thể làm gì để bảo vệ biển?

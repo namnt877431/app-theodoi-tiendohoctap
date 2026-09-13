@@ -1,0 +1,57 @@
+# Bản web: build Flutter web rồi đưa lên GitHub Pages của repo này.
+#
+# Chạy mỗi khi đẩy lên nhánh `web` (hoặc bấm "Run workflow" trong tab Actions).
+# Cần hai secret trong Settings → Secrets and variables → Actions:
+#   SUPABASE_URL              https://xxxx.supabase.co
+#   SUPABASE_PUBLISHABLE_KEY  khóa publishable/anon của dự án
+# Thiếu thì bản web vẫn lên nhưng chạy bằng dữ liệu mẫu.
+#
+# Trang nằm ở https://<tài-khoản>.github.io/<tên-repo>/ — base-href phải khớp
+# tên repo, nên lấy thẳng từ ngữ cảnh chứ không ghi cứng.
+name: Web
+
+on:
+  push:
+    branches: [web]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.44.0
+          cache: true
+      - run: flutter pub get
+      - run: flutter test
+      - name: Build web
+        run: >
+          flutter build web --release
+          --base-href "/${{ github.event.repository.name }}/"
+          --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          --dart-define=SUPABASE_PUBLISHABLE_KEY=${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
