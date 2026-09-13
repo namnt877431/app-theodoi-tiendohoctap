@@ -307,28 +307,33 @@ pg_cron 20:00 (HS chưa viết bài) ──────────▶ (den_id, 
    → tên `gui-thong-bao` → dán toàn bộ
    [`supabase/functions/gui-thong-bao/index.ts`](supabase/functions/gui-thong-bao/index.ts)
    → **Deploy**.
-2. Mở function vừa tạo → **Details** → **tắt "Verify JWT"**. Trigger trong
+2. **Nhìn cột URL** trong danh sách function và bấm nút copy. Deploy qua
+   Editor thì Supabase tự đặt đường dẫn ngẫu nhiên kiểu
+   `…/functions/v1/dynamic-processor` — cái tên `gui-thong-bao` chỉ là nhãn
+   hiển thị, không phải địa chỉ. Địa chỉ này dùng ở bước 3; ghi nhầm
+   `/gui-thong-bao` thì mọi lời gọi đều 404 và không có gì tới máy.
+3. Mở function vừa tạo → **Details** → **tắt "Verify JWT"**. Trigger trong
    Postgres gọi thẳng, không có JWT; xác thực bằng mã bí mật ở bước sau.
-3. **Edge Functions** → **Secrets** → thêm hai secret:
+4. **Edge Functions** → **Secrets** → thêm hai secret:
    - `FCM_SERVICE_ACCOUNT` — dán **nguyên nội dung** file JSON tải ở bước 1.4.
    - `MA_BI_MAT_WEBHOOK` — một chuỗi ngẫu nhiên dài, tự nghĩ (ví dụ 32 ký tự
      lẫn chữ và số). Nhớ lại để dùng ở bước 3.
 
 Có Supabase CLI thì thay bằng
 `supabase functions deploy gui-thong-bao --no-verify-jwt` và
-`supabase secrets set FCM_SERVICE_ACCOUNT="$(cat khoa.json)" MA_BI_MAT_WEBHOOK=...`.
+`supabase secrets set FCM_SERVICE_ACCOUNT="$(cat khoa.json)" MA_BI_MAT_WEBHOOK=...`
+— deploy bằng CLI thì đường dẫn đúng là `/functions/v1/gui-thong-bao`.
 
 ### Bước 3. Nối Postgres với Edge Function
 
 Mở `supabase/07_thong_bao_may_chu.sql`, sửa hai dòng đầu:
 
 ```sql
-('url_gui_thong_bao', 'https://<project-ref>.supabase.co/functions/v1/gui-thong-bao'),
-('ma_bi_mat_webhook', '<chuỗi bí mật ở bước 2.3>')
+('url_gui_thong_bao', '<địa chỉ copy ở bước 2.2>'),
+('ma_bi_mat_webhook', '<chuỗi bí mật ở bước 2.4>')
 ```
 
-`<project-ref>` là đoạn trong địa chỉ dự án (`https://xxxx.supabase.co` →
-`xxxx`). Rồi dán cả file vào **SQL Editor** → **Run**. File này bật hai
+Rồi dán cả file vào **SQL Editor** → **Run**. File này bật hai
 extension `pg_net` và `pg_cron`, đặt lịch nhắc 20:00 mỗi tối và tổng kết tuần
 20:00 Chủ nhật (13:00 UTC).
 
@@ -351,7 +356,7 @@ select tao_luc, tieu_de, da_gui_luc, loi from thong_bao order by tao_luc desc li
 | Thấy gì | Nghĩa là | Làm gì |
 |---|---|---|
 | Không có hàng nào | Trigger chưa có | Chạy lại `06_thong_bao.sql` |
-| Có hàng, `da_gui_luc` trống | Edge Function chưa được gọi | Kiểm tra `url_gui_thong_bao` trong bảng `cau_hinh`; xem **Edge Functions → Logs** |
+| Có hàng, `da_gui_luc` trống | Edge Function chưa được gọi tới — thường là sai địa chỉ | Chạy `select status_code, left(content, 100) from net._http_response order by created desc limit 5;` — thấy `404` thì `url_gui_thong_bao` trong `cau_hinh` không khớp cột **URL** của function (bước 2.2); sửa xong chạy `select tb_goi_lai(id) from thong_bao where da_gui_luc is null;` |
 | `loi` = `người nhận chưa có máy nào đăng ký` | Máy bố mẹ chưa đăng nhập lại sau khi cài bản mới | Đăng xuất, đăng nhập lại; từ chối quyền thông báo thì cũng vào đây |
 | `loi` = `401 …` | Mã bí mật hai bên khác nhau | So `MA_BI_MAT_WEBHOOK` với hàng `ma_bi_mat_webhook` |
 | `loi` = `403 …` hoặc `PERMISSION_DENIED` | Service account chưa có quyền gửi | Firebase → Project settings → Cloud Messaging → bật **Firebase Cloud Messaging API (V1)** |
