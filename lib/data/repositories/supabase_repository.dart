@@ -490,6 +490,37 @@ class SupabaseRepository implements HocTapRepository {
       .eq('id', nhacNhoId)
       .eq('den_id', hocSinhId);
 
+  // -------------------------------------------------------------- phần thưởng
+
+  @override
+  Future<List<PhanThuong>> phanThuong(String hocSinhId) async {
+    try {
+      final ds = await _db
+          .from('phan_thuong')
+          .select()
+          .eq('hoc_sinh_id', hocSinhId)
+          .order('moc', ascending: true);
+      return ds.map(PhanThuongPg.fromMap).toList();
+    } on PostgrestException {
+      // Dự án chưa chạy 10_phan_thuong.sql thì bảng chưa có. Coi như chưa
+      // treo quà nào, đừng làm hỏng cả lượt nạp dữ liệu vì một mục phụ.
+      return const [];
+    }
+  }
+
+  @override
+  Future<void> luuPhanThuong(PhanThuong pt) async {
+    try {
+      await _db.from('phan_thuong').upsert(pt.toMap());
+    } on PostgrestException catch (e) {
+      throw LoiHocTap(_dichLoiPg(e), ma: e.code);
+    }
+  }
+
+  @override
+  Future<void> xoaPhanThuong(String hocSinhId, String id) =>
+      _db.from('phan_thuong').delete().eq('id', id).eq('hoc_sinh_id', hocSinhId);
+
   // ----------------------------------------------------------------- thiết bị
 
   @override

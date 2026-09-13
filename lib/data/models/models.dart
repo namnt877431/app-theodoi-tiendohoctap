@@ -399,6 +399,78 @@ class NhacNho {
       );
 }
 
+/// Phần thưởng bố mẹ treo cho một chuỗi ngày trọn vẹn: "7 ngày liền → đi ăn
+/// kem". App chỉ đếm; quà là thật và do nhà tự chọn — động lực bền nhất là
+/// thứ đến từ bố mẹ, không phải từ máy.
+///
+/// Đạt hay chưa không lưu, mà tính từ báo cáo: có một chuỗi dài ≥ [moc] kể
+/// từ [tuNgay]. Bố mẹ trao xong thì "treo lại" — [tuNgay] về hôm nay, chuỗi
+/// đếm lại từ đầu.
+class PhanThuong {
+  const PhanThuong({
+    required this.id,
+    required this.hocSinhId,
+    required this.taoBoi,
+    required this.moc,
+    required this.ten,
+    required this.tuNgay,
+    required this.taoLuc,
+    this.traoLuc,
+  });
+
+  final String id;
+  final String hocSinhId;
+
+  /// Phụ huynh đã treo.
+  final String taoBoi;
+
+  /// Số ngày liền phải đạt.
+  final int moc;
+  final String ten;
+
+  /// Chuỗi chỉ tính từ ngày này — treo lại là dời nó lên hôm nay.
+  final DateTime tuNgay;
+
+  /// Bố mẹ đã trao quà lúc nào; null là chưa.
+  final DateTime? traoLuc;
+  final DateTime taoLuc;
+
+  bool get daTrao => traoLuc != null;
+
+  PhanThuong copyWith({
+    int? moc,
+    String? ten,
+    DateTime? tuNgay,
+    DateTime? Function()? traoLuc,
+  }) =>
+      PhanThuong(
+        id: id,
+        hocSinhId: hocSinhId,
+        taoBoi: taoBoi,
+        moc: moc ?? this.moc,
+        ten: ten ?? this.ten,
+        tuNgay: tuNgay ?? this.tuNgay,
+        traoLuc: traoLuc == null ? this.traoLuc : traoLuc(),
+        taoLuc: taoLuc,
+      );
+}
+
+/// Một phần thưởng kèm chỗ đứng hiện tại của con so với mốc.
+class TienDoPhanThuong {
+  const TienDoPhanThuong(this.phanThuong, {required this.hienTai, required this.dat});
+
+  final PhanThuong phanThuong;
+
+  /// Chuỗi hiện tại tính từ ngày treo.
+  final int hienTai;
+
+  /// Đã có chuỗi chạm mốc kể từ ngày treo — kể cả khi sau đó đứt.
+  final bool dat;
+
+  int get conLai => (phanThuong.moc - hienTai).clamp(0, phanThuong.moc);
+  double get tiLe => dat ? 1 : (hienTai / phanThuong.moc).clamp(0, 1).toDouble();
+}
+
 /// Tổng hợp một ngày để hiện nhanh trên trang chủ phụ huynh.
 class TongKetNgay {
   const TongKetNgay({
@@ -662,6 +734,29 @@ extension NhacNhoPg on NhacNho {
         hanLuc: ngayTu(m['han_luc']),
         daDoc: m['da_doc'] as bool? ?? false,
         baoCaoId: m['bao_cao_id'] as String?,
+      );
+}
+
+extension PhanThuongPg on PhanThuong {
+  Map<String, Object?> toMap() => {
+        'id': id,
+        'hoc_sinh_id': hocSinhId,
+        'tao_boi': taoBoi,
+        'moc': moc,
+        'ten': ten,
+        'tu_ngay': ngayIso(tuNgay),
+        'trao_luc': traoLuc?.toIso8601String(),
+      };
+
+  static PhanThuong fromMap(Map<String, Object?> m) => PhanThuong(
+        id: '${m['id'] ?? ''}',
+        hocSinhId: '${m['hoc_sinh_id'] ?? ''}',
+        taoBoi: '${m['tao_boi'] ?? ''}',
+        moc: soTu(m['moc']) ?? 7,
+        ten: '${m['ten'] ?? ''}',
+        tuNgay: ngayTu(m['tu_ngay']) ?? DateTime.now(),
+        traoLuc: ngayTu(m['trao_luc']),
+        taoLuc: ngayTu(m['tao_luc']) ?? DateTime.now(),
       );
 }
 

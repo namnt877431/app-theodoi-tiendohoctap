@@ -10,6 +10,7 @@ import '../../data/app_state.dart';
 import '../../data/models/models.dart';
 import '../auth/ma_moi.dart';
 import '../shared/chi_tiet_bao_cao_screen.dart';
+import '../shared/phan_thuong.dart';
 import '../shared/the_bao_cao.dart';
 import 'nhac_nho_screen.dart';
 import 'soan_nhac_nho.dart';
@@ -88,6 +89,8 @@ class TrangChuPhScreen extends StatelessWidget {
                             ...dau,
                             _TomTatNgay(tongKet: tk, chuoi: s.chuoiNgayTron),
                             const SizedBox(height: Gap.xl),
+                            const KhungPhanThuong(),
+                            const SizedBox(height: Gap.xl),
                             const _TietHomNay(),
                           ],
                         ),
@@ -103,6 +106,8 @@ class TrangChuPhScreen extends StatelessWidget {
                           children: [
                             ...dau,
                             _TomTatNgay(tongKet: tk, chuoi: s.chuoiNgayTron),
+                            const SizedBox(height: Gap.xl),
+                            const KhungPhanThuong(),
                             const SizedBox(height: Gap.xl),
                             const _TietHomNay(),
                             const SizedBox(height: Gap.xl),

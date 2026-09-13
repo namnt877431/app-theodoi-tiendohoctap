@@ -354,6 +354,72 @@ class DongThongTin extends StatelessWidget {
   }
 }
 
+/// Ô chọn dạng thẻ: biểu tượng trên, chữ dưới, tô màu riêng khi đang chọn.
+/// Dùng cho hàng trạng thái bài trên biểu mẫu và bảng điểm danh.
+///
+/// [iconCoMau] giữ màu riêng cho biểu tượng cả khi chưa chọn — trên bảng điểm
+/// danh không ô nào được chọn sẵn, bốn ô cùng xám thì không nói được ô nào là gì.
+class OChon extends StatelessWidget {
+  const OChon({
+    super.key,
+    required this.icon,
+    required this.nhan,
+    required this.mau,
+    required this.mauNen,
+    required this.onTap,
+    this.chon = false,
+    this.iconCoMau = false,
+  });
+
+  final IconData icon;
+  final String nhan;
+  final Color mau;
+  final Color mauNen;
+  final VoidCallback? onTap;
+  final bool chon;
+  final bool iconCoMau;
+
+  @override
+  Widget build(BuildContext context) {
+    final mauChu = chon ? mau : AppColor.mucNhat;
+    return Opacity(
+      opacity: onTap == null ? .5 : 1,
+      child: Material(
+        color: chon ? mauNen : AppColor.giayTrang,
+        borderRadius: BorderRadius.circular(R.md),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(R.md),
+          splashColor: mau.withValues(alpha: .12),
+          child: Ink(
+            padding: const EdgeInsets.symmetric(vertical: Gap.md, horizontal: 4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(R.md),
+              border: Border.all(
+                color: chon ? mau.withValues(alpha: .5) : AppColor.dongKe,
+                width: chon ? 1.4 : 1,
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 18, color: chon || iconCoMau ? mau : AppColor.mucNhat),
+                const SizedBox(height: 5),
+                Text(
+                  nhan,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  style: AppType.ui(11.5, w: FontWeight.w600, color: mauChu, height: 1.2),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// Nhãn nhỏ đặt trên một ô nhập trong biểu mẫu.
 class NhanO extends StatelessWidget {
   const NhanO(this.chu, {super.key});

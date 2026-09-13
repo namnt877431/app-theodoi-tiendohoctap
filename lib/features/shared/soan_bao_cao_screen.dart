@@ -9,6 +9,8 @@ import '../../core/theme/typography.dart';
 import '../../core/utils/ngay.dart';
 import '../../core/widgets/common.dart';
 import '../../data/app_state.dart';
+import '../../data/diem_danh.dart';
+import '../../data/mau_nhap.dart';
 import '../../data/models/models.dart';
 import 'chon_bai_hoc.dart';
 import 'chon_giao_vien.dart';
@@ -16,11 +18,25 @@ import 'anh_bai_lam.dart';
 
 /// Học sinh viết báo cáo trong ngày. Ô nội dung được kẻ dòng đúng nhịp trang vở
 /// để việc gõ vào app giống viết vào vở hơn là điền biểu mẫu.
+///
+/// Mở trắng thì môn, thầy cô, hạng mục điền sẵn theo tiết đầu tiên trong thời
+/// khóa biểu hôm nay mà em chưa báo — thường đó chính là môn em định ghi.
+/// Mở từ bảng điểm danh thì nhận [muc] và bài đang chọn ở dòng đó.
 class SoanBaoCaoScreen extends StatefulWidget {
-  const SoanBaoCaoScreen({super.key, this.baoCao, this.loaiMacDinh});
+  const SoanBaoCaoScreen({
+    super.key,
+    this.baoCao,
+    this.loaiMacDinh,
+    this.muc,
+    this.baiHocId,
+  });
 
   final BaoCao? baoCao;
   final LoaiBaiTap? loaiMacDinh;
+
+  /// Dòng điểm danh mà em bấm "Ghi thêm" — chỉ dùng khi viết mới.
+  final MucDiemDanh? muc;
+  final String? baiHocId;
 
   @override
   State<SoanBaoCaoScreen> createState() => _SoanBaoCaoScreenState();
@@ -44,10 +60,20 @@ class _SoanBaoCaoScreenState extends State<SoanBaoCaoScreen> {
   void initState() {
     super.initState();
     final b = widget.baoCao;
-    _loai = b?.loai ?? widget.loaiMacDinh ?? LoaiBaiTap.trenLop;
-    _monId = b?.monId ?? context.read<AppState>().monMacDinh;
-    _gvId = b?.giaoVienId;
-    _baiHocId = b?.baiHocId;
+    final s = context.read<AppState>();
+    final muc = b != null
+        ? null
+        : widget.muc ??
+            s
+                .mucDiemDanh(Ngay.dauNgay(DateTime.now()))
+                .where((m) => widget.loaiMacDinh == null || m.loai == widget.loaiMacDinh)
+                .firstOrNull;
+    _loai = b?.loai ?? muc?.loai ?? widget.loaiMacDinh ?? LoaiBaiTap.trenLop;
+    _monId = b?.monId ?? muc?.monId ?? s.monMacDinh;
+    _gvId = b?.giaoVienId ?? muc?.giaoVienId;
+    // Bài chỉ điền sẵn khi đi từ bảng điểm danh — ở đó em đã nhìn thấy bài
+    // rồi. Mở trắng thì để nút gợi ý, em bấm mới nhận.
+    _baiHocId = b?.baiHocId ?? (widget.muc == null ? null : widget.baiHocId);
     _ngay = b?.ngay ?? Ngay.dauNgay(DateTime.now());
     _trangThai = b?.trangThai ?? TrangThai.xong;
     _noiDung = TextEditingController(text: b?.noiDung ?? '');
@@ -83,13 +109,15 @@ class _SoanBaoCaoScreenState extends State<SoanBaoCaoScreen> {
     }
   }
 
+  /// Chạm câu mẫu: ô trống thì điền, có chữ rồi thì nối xuống dòng dưới.
+  void _themCauMau(String cau) {
+    final cu = _noiDung.text.trimRight();
+    _noiDung.text = cu.isEmpty ? cau : '$cu\n$cau';
+    _noiDung.selection = TextSelection.collapsed(offset: _noiDung.text.length);
+    setState(() {});
+  }
+
   Future<void> _luu() async {
-    if (_noiDung.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Viết vài dòng về bài hôm nay đã nhé')),
-      );
-      return;
-    }
     setState(() => _dangLuu = true);
     final s = context.read<AppState>();
     final goc = widget.baoCao;
@@ -289,10 +317,32 @@ class _SoanBaoCaoScreenState extends State<SoanBaoCaoScreen> {
       ],
       const SizedBox(height: Gap.lg),
     ];
+    // Câu mẫu đổi theo môn đang chọn; câu của chính con đứng trước và mang
+    // biểu tượng "lịch sử" để em nhận ra đó là câu mình hay ghi.
+    final cuaCon = mauNhapCuaCon(s.baoCao, monId: _monId).map((c) => c.toLowerCase()).toSet();
     final viet = <Widget>[
-      _Nhan('Hôm nay con làm gì?'),
+      _Nhan('Hôm nay con làm gì? (không bắt buộc)'),
       // Màn rộng ô viết cao hơn cho cân với cột bên trái.
       _OViet(controller: _noiDung, soDong: BoCuc.coThanhBen(context) ? 12 : 5),
+      const SizedBox(height: Gap.sm),
+      Wrap(
+        spacing: Gap.sm,
+        runSpacing: Gap.sm,
+        children: [
+          for (final cau in mauNhap(s.baoCao, monId: _monId))
+            ActionChip(
+              label: Text(cau),
+              avatar: Icon(
+                cuaCon.contains(cau.toLowerCase()) ? Icons.history_rounded : Icons.add_rounded,
+                size: 15,
+                color: AppColor.muc,
+              ),
+              labelStyle: AppType.ui(12.5, w: FontWeight.w600, color: AppColor.muc),
+              visualDensity: VisualDensity.compact,
+              onPressed: () => _themCauMau(cau),
+            ),
+        ],
+      ),
       const SizedBox(height: Gap.lg),
     ];
     final trangThai = <Widget>[
@@ -301,36 +351,13 @@ class _SoanBaoCaoScreenState extends State<SoanBaoCaoScreen> {
         children: [
           for (final tt in TrangThai.values) ...[
             Expanded(
-              child: GestureDetector(
+              child: OChon(
+                icon: tt.icon,
+                nhan: tt.nhan,
+                mau: tt.mau,
+                mauNen: tt.mauNen,
+                chon: _trangThai == tt,
                 onTap: () => setState(() => _trangThai = tt),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: Gap.md),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: _trangThai == tt ? tt.mauNen : AppColor.giayTrang,
-                    borderRadius: BorderRadius.circular(R.md),
-                    border: Border.all(
-                      color: _trangThai == tt
-                          ? tt.mau.withValues(alpha: .5)
-                          : AppColor.dongKe,
-                      width: _trangThai == tt ? 1.4 : 1,
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(tt.icon,
-                          size: 18,
-                          color: _trangThai == tt ? tt.mau : AppColor.mucNhat),
-                      const SizedBox(height: 5),
-                      Text(
-                        tt.nhan,
-                        style: AppType.ui(11.5,
-                            w: FontWeight.w600,
-                            color: _trangThai == tt ? tt.mau : AppColor.mucNhat),
-                      ),
-                    ],
-                  ),
-                ),
               ),
             ),
             if (tt != TrangThai.values.last) const SizedBox(width: Gap.sm),

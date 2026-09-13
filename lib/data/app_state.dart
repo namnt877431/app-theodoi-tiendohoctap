@@ -3,9 +3,12 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
+import '../core/huy_hieu/chuoi.dart';
 import '../core/huy_hieu/huy_hieu.dart';
 import '../core/thong_bao/kenh_thong_bao.dart';
 import '../core/utils/mang.dart';
+import '../core/utils/ngay.dart';
+import 'diem_danh.dart';
 import 'models/models.dart';
 import 'nhap/kho_nhap.dart';
 import 'repositories/hoc_tap_repository.dart';
@@ -63,7 +66,7 @@ class AppState extends ChangeNotifier {
   Stream<HuyHieu> get huyHieuMoi => _huyHieuMoi.stream;
 
   /// Tiến độ mọi con dấu của học sinh đang xem, tính từ báo cáo đã nạp.
-  List<TienDoHuyHieu> get huyHieu => tinhHuyHieu(baoCao);
+  List<TienDoHuyHieu> get huyHieu => tinhHuyHieu(baoCao, luat: luatChuoi);
 
   /// Báo cáo viết lúc mất mạng, chờ gửi. Giữ trên máy, không phụ thuộc phiên.
   final KhoNhap _khoNhap;
@@ -106,6 +109,7 @@ class AppState extends ChangeNotifier {
   List<TietHoc> _tkb = const [];
   List<BaoCao> _baoCao = const [];
   List<NhacNho> _nhacNho = const [];
+  List<PhanThuong> _phanThuong = const [];
 
   List<Tinh> get tinh => _tinh;
   List<Truong> get truong => _truong;
@@ -207,24 +211,36 @@ class AppState extends ChangeNotifier {
     return null;
   }
 
-  /// Bài nên gợi ý khi học sinh mở biểu mẫu cho một môn: bài đứng ngay sau
-  /// bài gần nhất em đã ghi (theo ngày học, rồi giờ gửi); chưa ghi bài nào
-  /// thì bài đầu sách. Đã tới bài cuối thì không gợi ý.
-  BaiHoc? goiYBaiHoc(String? monId) {
+  /// Bài lớp đang học ở môn này: bài gắn vào báo cáo trên lớp gần nhất
+  /// (theo ngày học, rồi giờ gửi). Null khi chưa ghi bài nào hay môn không
+  /// có danh mục.
+  ///
+  /// Đây là mặc định khi con báo cáo. Một bài trong sách thường học hai ba
+  /// tiết, nên "vẫn bài hôm trước" đúng nhiều hơn "bài kế tiếp"; sang bài
+  /// mới là việc con biết chắc còn app thì không, để con bấm. Chỉ tính báo
+  /// cáo trên lớp — thầy dạy thêm không đi theo thứ tự sách.
+  BaiHoc? baiDangHoc(String? monId) {
     final ds = baiHocTheoMon(monId);
     if (ds.isEmpty) return null;
     final daGhi = baoCao
-        .where((b) => b.monId == monId && ds.any((x) => x.id == b.baiHocId))
+        .where((b) =>
+            b.monId == monId &&
+            b.loai == LoaiBaiTap.trenLop &&
+            ds.any((x) => x.id == b.baiHocId))
         .toList()
       ..sort((a, b) {
         final c = b.ngay.compareTo(a.ngay);
         return c != 0 ? c : b.taoLuc.compareTo(a.taoLuc);
       });
     final cuoi = daGhi.firstOrNull;
-    if (cuoi == null) return ds.first;
-    final vuaHoc = ds.firstWhere((x) => x.id == cuoi.baiHocId);
-    return ds.where((x) => x.thuTu > vuaHoc.thuTu).firstOrNull;
+    return cuoi == null ? null : ds.firstWhere((x) => x.id == cuoi.baiHocId);
   }
+
+  /// Bài đứng ngay sau [bh] trong sách của cùng môn; null khi hết sách hay
+  /// không có [bh].
+  BaiHoc? baiSau(BaiHoc? bh) => bh == null
+      ? null
+      : baiHocTheoMon(bh.monId).where((x) => x.thuTu > bh.thuTu).firstOrNull;
 
   Future<void> _napBaiHoc(int? khoi) async {
     if (khoi == null || _baiHocTheoKhoi.containsKey(khoi)) return;
@@ -364,6 +380,7 @@ class AppState extends ChangeNotifier {
     _tkb = const [];
     _baoCao = const [];
     _nhacNho = const [];
+    _phanThuong = const [];
   }
 
   Future<void> dangNhap(String email, String matKhau) =>
@@ -543,6 +560,7 @@ class AppState extends ChangeNotifier {
       _tkb = const [];
       _baoCao = const [];
       _nhacNho = const [];
+      _phanThuong = const [];
       return;
     }
     _tkb = await _repo.thoiKhoaBieu(hs.id);
@@ -553,6 +571,7 @@ class AppState extends ChangeNotifier {
     // Cả hai vai trò đọc cùng một dòng nhắc nhở gửi tới học sinh: học sinh
     // thấy lời mình nhận, phụ huynh thấy lời mình đã gửi.
     _nhacNho = await _repo.nhacNho(hs.id);
+    _phanThuong = await _repo.phanThuong(hs.id);
   }
 
   /// Người dùng sửa hồ sơ của chính mình (hiện chỉ có chọn trường). Lưu xong
@@ -657,37 +676,132 @@ class AppState extends ChangeNotifier {
     );
   }
 
-  /// Chuỗi ngày liên tiếp gần nhất mà mọi bài tập đều đã xong.
-  int get chuoiNgayTron {
-    var chuoi = 0;
-    final homNay = DateTime.now();
-    for (var i = 0; i < 30; i++) {
-      final ngay =
-          DateTime(homNay.year, homNay.month, homNay.day).subtract(Duration(days: i));
-      final ds = baoCaoNgay(ngay);
-      if (ds.isEmpty) {
-        if (i == 0) continue;
-        break;
-      }
-      if (ds.every((b) => b.trangThai == TrangThai.xong)) {
-        chuoi++;
-      } else {
-        break;
-      }
-    }
-    return chuoi;
+  // ---------------------------------------------------------------- chuỗi
+
+  /// Luật đếm chuỗi của học sinh đang xem: thứ nào không có tiết trong thời
+  /// khóa biểu là ngày nghỉ (chưa nhập TKB thì coi Chủ nhật là nghỉ), và
+  /// mỗi tuần một vé nghỉ.
+  LuatChuoi get luatChuoi {
+    final coTiet = _tkb.map((t) => t.thu == 8 ? 7 : t.thu - 1).toSet();
+    final nghi = _tkb.isEmpty
+        ? {DateTime.sunday}
+        : {for (var d = 1; d <= 7; d++) if (!coTiet.contains(d)) d};
+    return LuatChuoi(thuNghi: nghi, veMoiTuan: 1);
   }
 
-  BaoCao taoBaoCaoRong({required LoaiBaiTap loai}) => BaoCao(
+  KetQuaChuoi get chuoi => demChuoi(baoCao, luat: luatChuoi);
+
+  /// Chuỗi ngày liên tiếp gần nhất mà mọi bài tập đều đã xong.
+  int get chuoiNgayTron => chuoi.hienTai;
+
+  // ---------------------------------------------------------- phần thưởng
+
+  List<PhanThuong> get phanThuong => _phanThuong;
+
+  /// Từng phần thưởng kèm chỗ đứng của con: chuỗi đếm từ ngày treo, đã chạm
+  /// mốc chưa. Chưa trao xếp trước, mốc gần xếp trước.
+  List<TienDoPhanThuong> get tienDoPhanThuong {
+    final ds = [
+      for (final pt in _phanThuong)
+        () {
+          final kq = demChuoi(baoCao, luat: luatChuoi, tuNgay: pt.tuNgay);
+          return TienDoPhanThuong(pt, hienTai: kq.hienTai, dat: kq.daiNhat >= pt.moc);
+        }(),
+    ]..sort((a, b) {
+        if (a.phanThuong.daTrao != b.phanThuong.daTrao) return a.phanThuong.daTrao ? 1 : -1;
+        return a.phanThuong.moc.compareTo(b.phanThuong.moc);
+      });
+    return ds;
+  }
+
+  /// Phụ huynh treo phần thưởng mới cho con đang xem.
+  Future<void> treoPhanThuong({required int moc, required String ten}) async {
+    final hs = hocSinhHienTai;
+    final ph = _nguoiDung;
+    if (hs == null || ph == null) return;
+    await _repo.luuPhanThuong(PhanThuong(
+      id: _id(),
+      hocSinhId: hs.id,
+      taoBoi: ph.id,
+      moc: moc,
+      ten: ten,
+      tuNgay: Ngay.dauNgay(DateTime.now()),
+      taoLuc: DateTime.now(),
+    ));
+    await taiLai();
+  }
+
+  Future<void> luuPhanThuong(PhanThuong pt) async {
+    await _repo.luuPhanThuong(pt);
+    await taiLai();
+  }
+
+  /// Bố mẹ đã đưa quà cho con.
+  Future<void> traoPhanThuong(PhanThuong pt) =>
+      luuPhanThuong(pt.copyWith(traoLuc: () => DateTime.now()));
+
+  /// Treo lại cùng phần thưởng: chuỗi đếm lại từ hôm nay.
+  Future<void> treoLaiPhanThuong(PhanThuong pt) => luuPhanThuong(
+        pt.copyWith(tuNgay: Ngay.dauNgay(DateTime.now()), traoLuc: () => null),
+      );
+
+  Future<void> xoaPhanThuong(PhanThuong pt) async {
+    await _repo.xoaPhanThuong(pt.hocSinhId, pt.id);
+    await taiLai();
+  }
+
+  /// Bảng điểm danh của một ngày: môn có tiết mà chưa có báo cáo, kèm thầy
+  /// cô và bài kế tiếp điền sẵn.
+  List<MucDiemDanh> mucDiemDanh(DateTime ngay) => tinhMucDiemDanh(
+        tkbTheoThu(Ngay.cotTuNgay(ngay)),
+        baoCaoNgay(ngay),
+        baiDangHoc: baiDangHoc,
+        baiSau: baiSau,
+      );
+
+  BaoCao taoBaoCaoRong({
+    required LoaiBaiTap loai,
+    String? monId,
+    String? giaoVienId,
+    String? baiHocId,
+    TrangThai trangThai = TrangThai.chuaLam,
+    String noiDung = '',
+    DateTime? ngay,
+  }) =>
+      BaoCao(
         id: _id(),
         hocSinhId: hocSinhHienTai?.id ?? '',
-        ngay: DateTime.now(),
+        ngay: ngay ?? Ngay.dauNgay(DateTime.now()),
         loai: loai,
-        monId: monMacDinh,
-        noiDung: '',
-        trangThai: TrangThai.chuaLam,
+        monId: monId ?? monMacDinh,
+        giaoVienId: giaoVienId,
+        baiHocId: baiHocId,
+        noiDung: noiDung,
+        trangThai: trangThai,
         taoLuc: DateTime.now(),
       );
+
+  /// Ghi nhanh một môn từ bảng điểm danh: môn, thầy cô, hạng mục lấy từ thời
+  /// khóa biểu, chỉ trạng thái (và bài, nếu em đổi) là do em chọn. Trả về
+  /// báo cáo vừa tạo để còn mở ra ghi thêm.
+  Future<(BaoCao, KetQuaLuu)> diemDanh(
+    MucDiemDanh muc,
+    TrangThai trangThai, {
+    String? baiHocId,
+    String noiDung = '',
+    DateTime? ngay,
+  }) async {
+    final bc = taoBaoCaoRong(
+      loai: muc.loai,
+      monId: muc.monId,
+      giaoVienId: muc.giaoVienId,
+      baiHocId: baiHocId,
+      trangThai: trangThai,
+      noiDung: noiDung,
+      ngay: ngay,
+    );
+    return (bc, await luuBaoCao(bc));
+  }
 
   /// Lưu báo cáo. Có mạng thì lên máy chủ ngay; không có thì cất trên máy
   /// và trả về [KetQuaLuu.choMang] — bài vẫn hiện trong danh sách với nhãn

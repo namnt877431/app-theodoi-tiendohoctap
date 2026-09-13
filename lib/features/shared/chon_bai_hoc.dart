@@ -9,9 +9,9 @@ import '../../data/models/models.dart';
 
 /// Ô chọn bài học theo sách giáo khoa trên biểu mẫu báo cáo.
 ///
-/// Chạm vào ô là mở bảng tìm bài; chưa chọn thì bên dưới có sẵn một nút gợi
-/// ý bài kế tiếp (bài đứng sau bài gần nhất em đã ghi) để bấm một phát là
-/// xong — ngày thường con ghi đúng bài hôm nay, hiếm khi phải lục.
+/// Chạm vào ô là mở bảng tìm bài; chưa chọn thì bên dưới có sẵn hai nút gợi
+/// ý — bài hôm trước (lớp thường học một bài vài tiết) và bài kế tiếp — để
+/// bấm một phát là xong, hiếm khi phải lục.
 class ChonBaiHoc extends StatelessWidget {
   const ChonBaiHoc({
     super.key,
@@ -28,7 +28,8 @@ class ChonBaiHoc extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.watch<AppState>();
     final bh = s.baiHocTheoId(giaTri);
-    final goiY = bh == null ? s.goiYBaiHoc(monId) : null;
+    final homTruoc = bh == null ? s.baiDangHoc(monId) : null;
+    final keTiep = s.baiSau(homTruoc);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,9 +70,13 @@ class ChonBaiHoc extends StatelessWidget {
                   ),
           ),
         ),
-        if (goiY != null) ...[
+        if (homTruoc != null) ...[
           const SizedBox(height: Gap.sm),
-          _NutGoiY(bh: goiY, onTap: () => onChanged(goiY.id)),
+          _NutGoiY(nhan: 'Hôm trước: ', bh: homTruoc, onTap: () => onChanged(homTruoc.id)),
+        ],
+        if (keTiep != null) ...[
+          const SizedBox(height: Gap.sm),
+          _NutGoiY(nhan: 'Bài tiếp: ', bh: keTiep, onTap: () => onChanged(keTiep.id)),
         ],
       ],
     );
@@ -79,7 +84,8 @@ class ChonBaiHoc extends StatelessWidget {
 }
 
 class _NutGoiY extends StatelessWidget {
-  const _NutGoiY({required this.bh, required this.onTap});
+  const _NutGoiY({required this.nhan, required this.bh, required this.onTap});
+  final String nhan;
   final BaiHoc bh;
   final VoidCallback onTap;
 
@@ -106,9 +112,9 @@ class _NutGoiY extends StatelessWidget {
                 text: TextSpan(
                   style: AppType.ui(13, w: FontWeight.w500, color: AppColor.ink),
                   children: [
-                    const TextSpan(
-                      text: 'Bài kế tiếp: ',
-                      style: TextStyle(color: AppColor.mucNhat),
+                    TextSpan(
+                      text: nhan,
+                      style: const TextStyle(color: AppColor.mucNhat),
                     ),
                     TextSpan(text: bh.ten, style: const TextStyle(fontWeight: FontWeight.w600)),
                   ],
@@ -163,7 +169,8 @@ class _BangChonBaiHocState extends State<_BangChonBaiHoc> {
   Widget build(BuildContext context) {
     final s = context.watch<AppState>();
     final tatCa = s.baiHocTheoMon(widget.monId);
-    final goiY = s.goiYBaiHoc(widget.monId);
+    final homTruoc = s.baiDangHoc(widget.monId);
+    final keTiep = s.baiSau(homTruoc);
     final ds = locBaiHoc(tatCa, _tim.text);
 
     // Nhóm theo chương, giữ thứ tự trong sách. Đang tìm thì bỏ tiêu đề
@@ -179,7 +186,11 @@ class _BangChonBaiHocState extends State<_BangChonBaiHoc> {
       muc.add(_DongBai(
         bh: b,
         dangChon: b.id == widget.dangChon,
-        laGoiY: b.id == goiY?.id,
+        nhan: b.id == homTruoc?.id
+            ? 'Hôm trước'
+            : b.id == keTiep?.id
+                ? 'Kế tiếp'
+                : null,
         onTap: () => Navigator.of(context).pop(b.id),
       ));
     }
@@ -311,13 +322,15 @@ class _DongBai extends StatelessWidget {
   const _DongBai({
     required this.bh,
     required this.dangChon,
-    required this.laGoiY,
+    required this.nhan,
     required this.onTap,
   });
 
   final BaiHoc bh;
   final bool dangChon;
-  final bool laGoiY;
+
+  /// Huy hiệu nhỏ bên phải: "Hôm trước" hay "Kế tiếp"; null là không có.
+  final String? nhan;
   final VoidCallback onTap;
 
   @override
@@ -339,7 +352,7 @@ class _DongBai extends StatelessWidget {
                 style: AppType.ui(14.5, w: dangChon ? FontWeight.w700 : FontWeight.w500),
               ),
             ),
-            if (laGoiY) ...[
+            if (nhan != null) ...[
               const SizedBox(width: Gap.sm),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
@@ -348,7 +361,7 @@ class _DongBai extends StatelessWidget {
                   borderRadius: BorderRadius.circular(R.sm),
                   border: Border.all(color: AppColor.dongKe),
                 ),
-                child: Text('Kế tiếp',
+                child: Text(nhan!,
                     style: AppType.ui(10.5, w: FontWeight.w600, color: AppColor.muc)),
               ),
             ],

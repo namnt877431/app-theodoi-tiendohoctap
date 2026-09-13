@@ -77,13 +77,23 @@ language plpgsql security definer set search_path = public as $$
 declare
   v_ten text;
   v_mon text;
+  v_bai text;
+  v_tom_tat text;
 begin
   select ho_ten into v_ten from nguoi_dung where id = new.hoc_sinh_id;
   select ten into v_mon from mon_hoc where id = new.mon_id;
+  select ten into v_bai from bai_hoc where id = new.bai_hoc_id;
+  -- Ghi từ bảng điểm danh thì nội dung trống; khi đó đưa trạng thái và tên
+  -- bài vào thay, để bố mẹ không nhận một dòng "Toán · " cụt lủn.
+  v_tom_tat := coalesce(
+    left(nullif(trim(new.noi_dung), ''), 90),
+    case new.trang_thai
+      when 'xong' then 'Đã xong' when 'dangLam' then 'Đang làm' else 'Chưa làm'
+    end || coalesce(' · ' || v_bai, ''));
   insert into thong_bao (den_id, tieu_de, noi_dung, du_lieu)
   select lk.phu_huynh_id,
          coalesce(v_ten, 'Con') || ' vừa gửi báo cáo',
-         coalesce(v_mon, 'Môn khác') || ' · ' || left(new.noi_dung, 90),
+         coalesce(v_mon, 'Môn khác') || ' · ' || v_tom_tat,
          jsonb_build_object('loai', 'bao_cao',
                             'bao_cao_id', new.id,
                             'hoc_sinh_id', new.hoc_sinh_id)

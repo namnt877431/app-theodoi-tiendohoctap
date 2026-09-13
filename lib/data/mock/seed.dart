@@ -187,6 +187,28 @@ abstract final class Seed {
     ];
   }
 
+  /// Hai phần thưởng bố Hùng treo cho Khôi: một mốc gần, một mốc xa.
+  static List<PhanThuong> get phanThuong => [
+        PhanThuong(
+          id: 'pt_01',
+          hocSinhId: 'hs_01',
+          taoBoi: 'ph_01',
+          moc: 7,
+          ten: 'Đi ăn kem cả nhà',
+          tuNgay: _ngay(6),
+          taoLuc: _ngay(6).add(const Duration(hours: 21)),
+        ),
+        PhanThuong(
+          id: 'pt_02',
+          hocSinhId: 'hs_01',
+          taoBoi: 'ph_01',
+          moc: 30,
+          ten: 'Bộ Lego Technic',
+          tuNgay: _ngay(6),
+          taoLuc: _ngay(6).add(const Duration(hours: 21, minutes: 2)),
+        ),
+      ];
+
   static List<NhacNho> get nhacNho => [
         NhacNho(
           id: 'nn_01',

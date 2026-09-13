@@ -10,12 +10,15 @@ import '../../core/widgets/trang_vo.dart';
 import '../../data/app_state.dart';
 import '../../data/models/models.dart';
 import '../shared/chi_tiet_bao_cao_screen.dart';
+import '../shared/phan_thuong.dart';
 import '../shared/soan_bao_cao_screen.dart';
 import '../shared/the_bao_cao.dart';
+import 'diem_danh_hom_nay.dart';
 import 'huy_hieu_section.dart';
 
-/// Trang chủ học sinh mở ra là thấy hai thứ: bố mẹ đang nhắc gì, và
-/// hôm nay còn bài nào chưa báo cáo.
+/// Trang chủ học sinh mở ra là thấy hai thứ: bố mẹ đang nhắc gì, và hôm nay
+/// còn môn nào chưa điểm danh — mỗi môn trong thời khóa biểu là một dòng,
+/// bấm một cái là xong một báo cáo.
 class TrangChuHsScreen extends StatelessWidget {
   const TrangChuHsScreen({super.key});
 
@@ -27,8 +30,7 @@ class TrangChuHsScreen extends StatelessWidget {
     final ds = s.baoCaoNgay(homNay);
     final tk = s.tongKet(homNay);
     final chuaDoc = s.nhacNho.where((n) => !n.daDoc).toList();
-    final cot = Ngay.cotTuNgay(DateTime.now());
-    final tiet = s.tkbTheoThu(cot);
+    final diemDanh = s.mucDiemDanh(homNay);
 
     final le = BoCuc.le(context);
 
@@ -60,31 +62,40 @@ class TrangChuHsScreen extends StatelessWidget {
         const SizedBox(height: Gap.md),
       ],
     ];
-    final viec = _ViecHomNay(tongKet: tk, soTiet: tiet.length);
-    final tietHomNay = <Widget>[
-      if (tiet.isNotEmpty) ...[
-        TieuDeMuc('Hôm nay học gì', eyebrow: '${tiet.length} tiết'),
+    final viec = _ViecHomNay(tongKet: tk, soChuaDiemDanh: diemDanh.length);
+    // Bảng điểm danh chỉ hiện khi còn môn chưa báo; xong hết thì nhường chỗ
+    // cho danh sách báo cáo — câu "xong hết bài rồi" ở trên đã nói đủ.
+    final diemDanhHomNay = <Widget>[
+      if (diemDanh.isNotEmpty) ...[
+        TieuDeMuc(
+          'Điểm danh bài hôm nay',
+          eyebrow: 'Còn ${diemDanh.length} môn chưa báo',
+        ),
         const SizedBox(height: Gap.md),
-        _DsTiet(ds: tiet),
+        DiemDanhHomNay(ds: diemDanh),
       ],
     ];
     final baoCao = <Widget>[
-      TieuDeMuc(
-        'Báo cáo hôm nay',
-        eyebrow: ds.isEmpty ? 'Chưa có mục nào' : '${ds.length} mục',
-        hanhDong: ds.isEmpty
-            ? null
-            : TextButton.icon(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const SoanBaoCaoScreen()),
+      // Chưa có gì mà bảng điểm danh đã là lời mời rồi thì không bày thêm
+      // một khung trống nữa.
+      if (ds.isNotEmpty || diemDanh.isEmpty) ...[
+        TieuDeMuc(
+          'Báo cáo hôm nay',
+          eyebrow: ds.isEmpty ? 'Chưa có mục nào' : '${ds.length} mục',
+          hanhDong: ds.isEmpty
+              ? null
+              : TextButton.icon(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const SoanBaoCaoScreen()),
+                  ),
+                  icon: const Icon(Icons.add_rounded, size: 17),
+                  label: const Text('Thêm'),
+                  style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
                 ),
-                icon: const Icon(Icons.add_rounded, size: 17),
-                label: const Text('Thêm'),
-                style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
-              ),
-      ),
-      const SizedBox(height: Gap.md),
-      if (ds.isEmpty)
+        ),
+        const SizedBox(height: Gap.md),
+      ],
+      if (ds.isEmpty && diemDanh.isEmpty)
         const _ChuaViet()
       else
         for (final b in ds) ...[
@@ -110,9 +121,10 @@ class TrangChuHsScreen extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(le, Gap.md, le, 96),
             children: [
               NoiDung(
-                // Màn rộng: cột trái tóm tắt ngày (lời nhắc, việc, con dấu,
-                // tiết học), cột phải rộng hơn là dòng báo cáo. Điện thoại
-                // giữ thứ tự đọc từ trên xuống.
+                // Màn rộng: cột trái tóm tắt ngày (lời nhắc, việc, con dấu),
+                // cột phải rộng hơn là việc phải làm: điểm danh rồi tới dòng
+                // báo cáo. Điện thoại giữ thứ tự đọc từ trên xuống, điểm danh
+                // đứng ngay sau câu "việc hôm nay" vì đó chính là việc.
                 child: HaiCot(
                   tiLeTrai: 2,
                   tiLePhai: 3,
@@ -124,17 +136,19 @@ class TrangChuHsScreen extends StatelessWidget {
                       ...nhac,
                       viec,
                       const SizedBox(height: Gap.xl),
+                      const KhungPhanThuong(),
+                      const SizedBox(height: Gap.xl),
                       const KeHuyHieu(),
-                      if (tietHomNay.isNotEmpty) ...[
-                        const SizedBox(height: Gap.xl),
-                        ...tietHomNay,
-                      ],
                     ],
                   ),
                   phai: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const SizedBox(height: Gap.xxl + Gap.md),
+                      if (diemDanhHomNay.isNotEmpty) ...[
+                        ...diemDanhHomNay,
+                        const SizedBox(height: Gap.xl),
+                      ],
                       ...baoCao,
                     ],
                   ),
@@ -146,12 +160,14 @@ class TrangChuHsScreen extends StatelessWidget {
                       ...nhac,
                       viec,
                       const SizedBox(height: Gap.xl),
-                      const KeHuyHieu(),
-                      const SizedBox(height: Gap.xl),
-                      if (tietHomNay.isNotEmpty) ...[
-                        ...tietHomNay,
+                      if (diemDanhHomNay.isNotEmpty) ...[
+                        ...diemDanhHomNay,
                         const SizedBox(height: Gap.xl),
                       ],
+                      const KhungPhanThuong(),
+                      const SizedBox(height: Gap.xl),
+                      const KeHuyHieu(),
+                      const SizedBox(height: Gap.xl),
                       ...baoCao,
                     ],
                   ),
@@ -241,18 +257,20 @@ class _LoiNhac extends StatelessWidget {
 }
 
 /// Câu đầu tiên trên trang chủ nói thẳng còn việc gì, thay vì bày ra số liệu
-/// rồi bắt người đọc tự luận.
+/// rồi bắt người đọc tự luận. Bài chưa làm nói trước, rồi bài dở, rồi môn
+/// chưa điểm danh — "xong hết" chỉ khi không còn gì trong ba thứ đó.
 class _ViecHomNay extends StatelessWidget {
-  const _ViecHomNay({required this.tongKet, required this.soTiet});
+  const _ViecHomNay({required this.tongKet, required this.soChuaDiemDanh});
   final TongKetNgay tongKet;
-  final int soTiet;
+  final int soChuaDiemDanh;
 
   @override
   Widget build(BuildContext context) {
     final (chu, mau) = switch (tongKet) {
-      _ when tongKet.tong == 0 => ('Chưa báo cáo bài nào', AppColor.mucNhat),
       _ when tongKet.chuaLam > 0 => ('Còn ${tongKet.chuaLam} bài chưa làm', AppColor.butDo),
       _ when tongKet.dangLam > 0 => ('${tongKet.dangLam} bài đang làm dở', AppColor.dangLam),
+      _ when soChuaDiemDanh > 0 => ('Còn $soChuaDiemDanh môn chưa điểm danh', AppColor.muc),
+      _ when tongKet.tong == 0 => ('Chưa báo cáo bài nào', AppColor.mucNhat),
       _ => ('Xong hết bài rồi', AppColor.xong),
     };
 
@@ -292,59 +310,6 @@ class _ViecHomNay extends StatelessWidget {
               ),
             ],
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DsTiet extends StatelessWidget {
-  const _DsTiet({required this.ds});
-  final List<TietHoc> ds;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = context.read<AppState>();
-
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColor.giayTrang,
-        borderRadius: BorderRadius.circular(R.lg),
-        border: Border.all(color: AppColor.dongKe),
-      ),
-      child: Column(
-        children: [
-          for (var i = 0; i < ds.length; i++) ...[
-            if (i > 0) const Divider(indent: Gap.lg, endIndent: Gap.lg),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Gap.lg, vertical: Gap.md),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 30,
-                    child: Text(
-                      ds[i].loai == LoaiBaiTap.hocThem ? 'HT' : '${ds[i].tiet}',
-                      style: AppType.numeric(
-                        14,
-                        w: FontWeight.w700,
-                        color: ds[i].loai == LoaiBaiTap.hocThem
-                            ? AppColor.hocThem
-                            : AppColor.muc,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(s.tenMon(ds[i].monId),
-                        style: AppType.ui(14.5, w: FontWeight.w600)),
-                  ),
-                  Text(
-                    ds[i].khungGio.isEmpty ? (ds[i].phong ?? '') : ds[i].khungGio,
-                    style: AppType.numeric(11.5, color: AppColor.mucNhat, w: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ],
       ),
     );

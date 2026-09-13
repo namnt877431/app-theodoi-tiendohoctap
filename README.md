@@ -16,6 +16,19 @@ trong sách giáo khoa** thay vì gõ tên (app gợi ý sẵn bài kế tiếp)
 huynh đọc được **tóm tắt bài** kèm vài câu hỏi để kiểm tra con — hiện có đủ
 lớp 8, bộ "Kết nối tri thức".
 
+Báo cáo không còn là việc điền biểu mẫu mỗi môn. Trang chủ học sinh có
+**bảng điểm danh**: mỗi môn trong thời khóa biểu hôm nay là một dòng, môn,
+thầy cô đã điền sẵn, bài điền sẵn là bài của lần báo cáo trước (một bài
+thường học vài tiết) với nút *Bài tiếp ›* khi lớp sang bài mới — con chỉ bấm
+*Chưa làm / Đang làm / Đã xong / Không có bài*, mỗi môn một chạm. Cần ghi chữ
+hay chụp ảnh thì mở biểu mẫu đầy đủ, cũng đã điền sẵn; phần chữ không bắt
+buộc, có câu mẫu theo từng môn và app tự nhớ những câu con hay ghi.
+
+Để con *muốn* báo cáo: bố mẹ **treo phần thưởng** theo chuỗi ngày trọn bài —
+"7 ngày liền → đi ăn kem" — app đếm, con thấy trên trang chủ còn mấy ngày,
+bố mẹ trao rồi treo lại. Chuỗi không đứt oan: ngày không có tiết trong thời
+khóa biểu không tính, và mỗi tuần con có một **vé nghỉ** tự dùng.
+
 ---
 
 ## Phần 1 — Dựng cơ sở dữ liệu
@@ -51,15 +64,16 @@ nội dung một file vào khung soạn thảo rồi bấm **Run** (hoặc `Ctrl
 | 3 | `03_ma_moi.sql` | Hai hàm sinh và dùng mã mời sáu số |
 | 4 | `04_storage.sql` | Kho ảnh bài làm, để riêng tư |
 | 5 | `05_danh_muc.sql` | Danh mục mẫu: 1 tỉnh, 1 trường, 12 môn, 8 thầy cô — không bắt buộc, nhập tay trong app cũng được |
-| 6 | `06_thong_bao.sql` | Hàng đợi thông báo và luật "ai nhận gì" — chạy luôn dù chưa bật thông báo đẩy |
+| 6 | `06_thong_bao.sql` | Hàng đợi thông báo và luật "ai nhận gì" — chạy luôn dù chưa bật thông báo đẩy. Đã dựng từ trước bản có bảng điểm danh thì chạy lại file này một lần, để thông báo của báo cáo không có chữ vẫn nói được trạng thái và tên bài |
 | — | `07_thong_bao_may_chu.sql` | Chỉ chạy khi bật thông báo đẩy, xem Phần 4 |
 | 7 | `08_tinh_thanh.sql` | 34 tỉnh, thành phố theo sắp xếp từ 1/7/2025 — để học sinh chọn lúc đăng ký |
 | 8 | `09_bai_hoc_lop8.sql` | Danh mục bài học lớp 8 (421 mục, 9 sách) kèm tóm tắt và câu hỏi cho phụ huynh — cần `05_danh_muc.sql` chạy trước vì tham chiếu mã môn `m_toan`, `m_van`… |
+| 9 | `10_phan_thuong.sql` | Phần thưởng bố mẹ treo theo chuỗi ngày trọn vẹn ("7 ngày liền → đi ăn kem") |
 
 Mỗi lần chạy xong phải thấy **Success. No rows returned**. Nếu thấy chữ đỏ thì
 dừng lại, đừng chạy file tiếp theo — xem bảng lỗi ở cuối trang này.
 
-Cả chín file đều chạy lại được nhiều lần mà không hỏng gì, nên lỡ chạy trùng
+Cả mười file đều chạy lại được nhiều lần mà không hỏng gì, nên lỡ chạy trùng
 cũng không sao.
 
 ### Bước 3. Tắt xác nhận email
@@ -86,7 +100,7 @@ Kết quả hiện ra trong một **khung đỏ** — đó là bình thường, 
 nhìn màu:
 
 ```
-KIỂM THỬ PHÂN QUYỀN — tất cả 93 phép thử đều ĐẠT.
+KIỂM THỬ PHÂN QUYỀN — tất cả 170 phép thử đều ĐẠT.
 ```
 
 Còn nếu có chỗ hỏng thì nó liệt kê ra từng cái. Khung đỏ vì bộ test cố ý ném

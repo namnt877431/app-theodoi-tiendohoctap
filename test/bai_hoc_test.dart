@@ -125,27 +125,32 @@ void main() {
     });
   });
 
-  group('Gợi ý bài kế tiếp', () {
-    test('là bài đứng sau bài gần nhất đã ghi cho môn đó', () async {
+  group('Bài đang học và bài sau', () {
+    test('bài đang học là bài gắn ở báo cáo trên lớp gần nhất; bài sau đứng kế nó trong sách',
+        () async {
       final s = await vaoVoiVaiTro(VaiTro.hocSinh);
       // Dữ liệu mẫu: báo cáo Toán gần nhất có gắn bài là Bài 1 (thứ tự 1).
-      expect(s.goiYBaiHoc('m_toan')?.id, 'l9_toan_bai_2');
+      expect(s.baiDangHoc('m_toan')?.id, 'l9_toan_bai_1');
+      expect(s.baiSau(s.baiDangHoc('m_toan'))?.id, 'l9_toan_bai_2');
     });
 
-    test('chưa ghi bài nào thì gợi ý bài đầu sách; hết sách thì thôi', () async {
+    test('chưa ghi bài nào thì không đoán gì; hết sách thì không có bài sau', () async {
       final s = await vaoVoiVaiTro(VaiTro.hocSinh);
       // Văn: bài gần nhất là văn bản thứ 2 và cũng là bài cuối trong mẫu.
-      expect(s.goiYBaiHoc('m_van'), isNull);
-      // Xóa báo cáo Văn có gắn bài đi thì về bài đầu.
+      expect(s.baiDangHoc('m_van')?.id, 'l9_van_nam_xuong');
+      expect(s.baiSau(s.baiDangHoc('m_van')), isNull);
+      // Xóa báo cáo Văn có gắn bài đi thì không còn gì để đoán — không đưa
+      // bài đầu sách cho một em vào giữa năm.
       for (final bc in s.baoCao.where((b) => b.baiHocId == 'l9_van_nam_xuong').toList()) {
         await s.xoaBaoCao(bc.id);
       }
-      expect(s.goiYBaiHoc('m_van')?.thuTu, 1);
+      expect(s.baiDangHoc('m_van'), isNull);
+      expect(s.baiSau(null), isNull);
       // Môn không có danh mục thì không gợi ý gì.
-      expect(s.goiYBaiHoc('m_anh'), isNull);
+      expect(s.baiDangHoc('m_anh'), isNull);
     });
 
-    test('ghi bài kế tiếp xong thì gợi ý nhảy tiếp', () async {
+    test('ghi bài mới xong thì bài đang học đổi theo, bài sau dịch lên', () async {
       final s = await vaoVoiVaiTro(VaiTro.hocSinh);
       final bc = s.taoBaoCaoRong(loai: LoaiBaiTap.trenLop).copyWith(
             monId: 'm_toan',
@@ -154,7 +159,8 @@ void main() {
             trangThai: TrangThai.xong,
           );
       expect(await s.luuBaoCao(bc), KetQuaLuu.daGui);
-      expect(s.goiYBaiHoc('m_toan')?.id, 'l9_toan_ltc_1');
+      expect(s.baiDangHoc('m_toan')?.id, 'l9_toan_bai_2');
+      expect(s.baiSau(s.baiDangHoc('m_toan'))?.id, 'l9_toan_ltc_1');
       // Bài đã lưu lên kho vẫn giữ liên kết.
       final trenKho = await s.repo.baoCao(bc.hocSinhId);
       expect(trenKho.firstWhere((b) => b.id == bc.id).baiHocId, 'l9_toan_bai_2');
@@ -163,7 +169,7 @@ void main() {
     test('tính theo ngày học chứ không theo thứ tự trong sách', () async {
       final s = await vaoVoiVaiTro(VaiTro.hocSinh);
       // Ghi một bài "lùi" (Bài 1) với ngày hôm nay: gần nhất theo ngày là Bài 1
-      // nên gợi ý vẫn là Bài 2, dù trước đó có thể đã ghi bài xa hơn.
+      // nên bài đang học vẫn là Bài 1, dù trước đó có thể đã ghi bài xa hơn.
       final cu = s.taoBaoCaoRong(loai: LoaiBaiTap.trenLop).copyWith(
             ngay: DateTime.now().subtract(const Duration(days: 10)),
             monId: 'm_toan',
@@ -179,7 +185,19 @@ void main() {
             trangThai: TrangThai.xong,
           );
       await s.luuBaoCao(moi);
-      expect(s.goiYBaiHoc('m_toan')?.id, 'l9_toan_bai_2');
+      expect(s.baiDangHoc('m_toan')?.id, 'l9_toan_bai_1');
+    });
+
+    test('báo cáo học thêm gắn bài không kéo bài đang học của lớp', () async {
+      final s = await vaoVoiVaiTro(VaiTro.hocSinh);
+      final ht = s.taoBaoCaoRong(loai: LoaiBaiTap.hocThem).copyWith(
+            monId: 'm_toan',
+            baiHocId: 'l9_toan_bai_3',
+            noiDung: 'Thầy Sơn dạy trước',
+            trangThai: TrangThai.xong,
+          );
+      await s.luuBaoCao(ht);
+      expect(s.baiDangHoc('m_toan')?.id, 'l9_toan_bai_1');
     });
   });
 

@@ -82,13 +82,17 @@ class TheBaoCao extends StatelessWidget {
               ],
             ],
           ),
-          const SizedBox(height: Gap.sm + 2),
-          Text(
-            bc.noiDung,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            style: AppType.ui(13.5, w: FontWeight.w400, height: 1.55, color: AppColor.ink),
-          ),
+          // Ghi từ bảng điểm danh thì thường không có chữ — môn, bài và
+          // đường lề đã nói hết; không chừa một khoảng trống ở đó.
+          if (bc.noiDung.isNotEmpty) ...[
+            const SizedBox(height: Gap.sm + 2),
+            Text(
+              bc.noiDung,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: AppType.ui(13.5, w: FontWeight.w400, height: 1.55, color: AppColor.ink),
+            ),
+          ],
           const SizedBox(height: Gap.md),
           Row(
             children: [

@@ -107,6 +107,14 @@ abstract interface class HocTapRepository {
   Future<void> guiNhacNho(NhacNho nn);
   Future<void> danhDauDaDoc(String hocSinhId, String nhacNhoId);
 
+  // -------------------------------------------------------------- phần thưởng
+
+  Future<List<PhanThuong>> phanThuong(String hocSinhId);
+
+  /// Ghi đè theo id — tạo mới, sửa, đánh dấu đã trao, treo lại đều qua đây.
+  Future<void> luuPhanThuong(PhanThuong pt);
+  Future<void> xoaPhanThuong(String hocSinhId, String id);
+
   // ----------------------------------------------------------------- thiết bị
 
   /// Ghi token thông báo đẩy của máy này cho người đang đăng nhập. Gọi mỗi

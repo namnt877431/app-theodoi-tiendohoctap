@@ -84,11 +84,13 @@ class ChiTietBaoCaoScreen extends StatelessWidget {
                     style: AppType.ui(13, color: AppColor.mucNhat, w: FontWeight.w500),
                   ),
                 ],
-                const SizedBox(height: Gap.md),
-                Text(
-                  bc.noiDung,
-                  style: AppType.ui(15, w: FontWeight.w400, height: lineHeight / 15),
-                ),
+                if (bc.noiDung.isNotEmpty) ...[
+                  const SizedBox(height: Gap.md),
+                  Text(
+                    bc.noiDung,
+                    style: AppType.ui(15, w: FontWeight.w400, height: lineHeight / 15),
+                  ),
+                ],
               ],
             ),
           ),

@@ -21,7 +21,8 @@ class MockRepository implements HocTapRepository {
         _baiHoc = [...Seed.baiHoc],
         _tietHoc = [...Seed.tietHoc],
         _baoCao = [...Seed.baoCao],
-        _nhacNho = [...Seed.nhacNho];
+        _nhacNho = [...Seed.nhacNho],
+        _phanThuong = [...Seed.phanThuong];
 
   final List<NguoiDung> _nguoiDung;
   final List<Tinh> _tinh;
@@ -32,6 +33,7 @@ class MockRepository implements HocTapRepository {
   final List<TietHoc> _tietHoc;
   final List<BaoCao> _baoCao;
   final List<NhacNho> _nhacNho;
+  final List<PhanThuong> _phanThuong;
   final List<MaMoi> _maMoi = [];
 
   /// Token → id người dùng. Để test kiểm được app lưu và xóa đúng lúc.
@@ -396,6 +398,27 @@ class MockRepository implements HocTapRepository {
 
   @override
   Future<void> guiNhacNho(NhacNho nn) async => _nhacNho.add(nn);
+
+  @override
+  Future<List<PhanThuong>> phanThuong(String hocSinhId) async {
+    final ds = _phanThuong.where((p) => p.hocSinhId == hocSinhId).toList()
+      ..sort((a, b) => a.moc.compareTo(b.moc));
+    return ds;
+  }
+
+  @override
+  Future<void> luuPhanThuong(PhanThuong pt) async {
+    final i = _phanThuong.indexWhere((p) => p.id == pt.id);
+    if (i >= 0) {
+      _phanThuong[i] = pt;
+    } else {
+      _phanThuong.add(pt);
+    }
+  }
+
+  @override
+  Future<void> xoaPhanThuong(String hocSinhId, String id) async =>
+      _phanThuong.removeWhere((p) => p.hocSinhId == hocSinhId && p.id == id);
 
   @override
   Future<void> danhDauDaDoc(String hocSinhId, String nhacNhoId) async {

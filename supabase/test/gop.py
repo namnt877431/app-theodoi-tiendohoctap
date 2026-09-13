@@ -14,7 +14,7 @@ doc = lambda t: io.open(os.path.join(o, t), encoding='utf-8').read()
 DAU   = '00_dau.sql'
 BANG  = ['01_nguoi_dung.sql', '02_lien_ket.sql', '03_bao_cao.sql',
          '04_tkb_nhac_nho.sql', '05_kho_anh.sql', '06_danh_muc.sql',
-         '07_thong_bao.sql']
+         '07_thong_bao.sql', '07b_phan_thuong.sql']
 DUOI  = ['08_chay.sql', '10_ma_moi.sql', '11_theo_lich.sql', '12_cuoi.sql']
 
 # Bảng phép thử là một danh sách VALUES: dòng cuối không được có dấu phẩy.

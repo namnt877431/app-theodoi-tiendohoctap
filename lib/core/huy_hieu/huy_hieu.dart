@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../data/models/models.dart';
+import 'chuoi.dart';
 
 /// Huy hiệu — con dấu khen cô đóng vào vở.
 ///
@@ -91,12 +92,11 @@ class TienDoHuyHieu {
 
 /// Tính tiến độ mọi con dấu từ danh sách báo cáo.
 ///
-/// Chuỗi ngày: một ngày "trọn vẹn" là ngày có ít nhất một báo cáo và mọi báo
-/// cáo đều xong; chuỗi là số ngày trọn vẹn liên tiếp, lấy chuỗi dài nhất
-/// từng có trong dữ liệu. Ngày không có báo cáo nào làm đứt chuỗi.
-List<TienDoHuyHieu> tinhHuyHieu(List<BaoCao> ds) {
+/// Chuỗi ngày đếm theo [luat] (xem [demChuoi]): lấy chuỗi dài nhất từng có.
+/// Mặc định là luật thuần — ngày trống nào cũng đứt.
+List<TienDoHuyHieu> tinhHuyHieu(List<BaoCao> ds, {LuatChuoi luat = const LuatChuoi()}) {
   final soDo = <String, int>{
-    'chuoi': _chuoiDaiNhat(ds),
+    'chuoi': demChuoi(ds, luat: luat).daiNhat,
     'xong': ds.where((b) => b.trangThai == TrangThai.xong).length,
     'som': ds.where((b) => b.taoLuc.hour < 19).length,
     'anh': ds.where((b) => b.anh.isNotEmpty).length,
@@ -111,27 +111,6 @@ List<TienDoHuyHieu> tinhHuyHieu(List<BaoCao> ds) {
     for (final hh in danhSachHuyHieu)
       TienDoHuyHieu(hh, soDo[hh.id.replaceAll(RegExp(r'_\d+$'), '')] ?? 0),
   ];
-}
-
-int _chuoiDaiNhat(List<BaoCao> ds) {
-  if (ds.isEmpty) return 0;
-  final theoNgay = <DateTime, bool>{};
-  for (final b in ds) {
-    final ngay = DateTime(b.ngay.year, b.ngay.month, b.ngay.day);
-    theoNgay[ngay] = (theoNgay[ngay] ?? true) && b.trangThai == TrangThai.xong;
-  }
-  final ngayTron = theoNgay.entries.where((e) => e.value).map((e) => e.key).toList()
-    ..sort();
-
-  var daiNhat = 0;
-  var hienTai = 0;
-  DateTime? truoc;
-  for (final n in ngayTron) {
-    hienTai = (truoc != null && n.difference(truoc).inDays == 1) ? hienTai + 1 : 1;
-    if (hienTai > daiNhat) daiNhat = hienTai;
-    truoc = n;
-  }
-  return daiNhat;
 }
 
 /// Những con dấu vừa đạt được giữa hai lần tính — để reo lên đúng lúc.

@@ -79,6 +79,20 @@ không dùng đổ bóng.
   trường và phụ huynh theo dõi nó theo *người dạy* chứ không theo tiết.
 - **Thanh phân đoạn** trên trang chủ: mỗi bài tập là một vạch riêng, tô màu theo
   trạng thái — thay cho một con số phần trăm bắt người đọc tự nhẩm.
+- **Bảng điểm danh** trên trang chủ học sinh (`DiemDanhHomNay`): mỗi môn trong
+  thời khóa biểu hôm nay là một dòng, số tiết ghim bên lề như tờ TKB, và bốn ô
+  trạng thái để chạm. Không ô nào được chọn sẵn — "Đã xong" phải là câu trả
+  lời của con, không phải cái có sẵn để bấm Gửi cho xong. Mọi thứ khác (môn,
+  thầy cô, bài) app điền từ dữ liệu đã có; con chỉ trả lời hai câu app không
+  tự biết: hôm nay cô sang bài mới chưa ("Bài tiếp ›"), và làm tới đâu rồi.
+  Bài điền sẵn là *bài hôm trước* chứ không phải bài kế tiếp: một bài trong
+  sách học vài tiết, đoán "kế tiếp" là dữ liệu chạy trước lớp.
+- **Phần thưởng** (`KhungPhanThuong`) là quà thật do bố mẹ treo, app chỉ đếm
+  ngày — không có điểm ảo, không có cửa hàng trong app. Con nhìn thấy đúng
+  một câu: "còn 3 ngày nữa". Chuỗi có **vé nghỉ** (`LuatChuoi`): ngày không có
+  tiết không tính, mỗi tuần được bỏ một ngày học — một chuỗi hai mươi ngày
+  đứt vì đi chơi cuối tuần là thứ giết động lực nhanh nhất. Không thưởng riêng
+  "Đã xong" ở đâu khác ngoài chuỗi, để con không có lý do bấm cho qua.
 
 ## Chữ nghĩa trong giao diện
 
