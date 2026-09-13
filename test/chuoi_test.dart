@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:theodoi_hoctap/core/huy_hieu/chuoi.dart';
+import 'package:theodoi_hoctap/data/app_state.dart';
 import 'package:theodoi_hoctap/data/models/models.dart';
 
 import 'tro_giup.dart';
@@ -117,6 +118,68 @@ void main() {
     });
   });
 
+  group('Tiến độ phần thưởng', () {
+    PhanThuong pt({required int moc, required bool lapLai, int soLanTrao = 0}) => PhanThuong(
+          id: 'p',
+          hocSinhId: 'hs',
+          taoBoi: 'ph',
+          moc: moc,
+          ten: 'Kem',
+          tuNgay: _t2,
+          taoLuc: _t2,
+          lapLai: lapLai,
+          soLanTrao: soLanTrao,
+        );
+    KetQuaChuoi kq(List<int> cacChuoi) => KetQuaChuoi(
+          hienTai: cacChuoi.isEmpty ? 0 : cacChuoi.last,
+          daiNhat: cacChuoi.isEmpty ? 0 : cacChuoi.reduce((a, b) => a > b ? a : b),
+          veDaDungTuanNay: 0,
+          veConLaiTuanNay: 1,
+          cacChuoi: cacChuoi,
+        );
+
+    test('lặp lại: mỗi chuỗi góp dài chia mốc, bước tới lần kế là phần dư', () {
+      // Chuỗi 15 rồi đứt, chuỗi mới 10 đang chạy: 2 + 1 = 3 lần, dư 3.
+      final td = AppState.tinhTienDo(pt(moc: 7, lapLai: true), kq([15, 10]));
+      expect(td.soLanDat, 3);
+      expect(td.hienTai, 3);
+      expect(td.conLai, 4);
+      expect(td.dat, isTrue);
+      expect(td.conNo, 3);
+    });
+
+    test('lặp lại: trao rồi thì hết nợ, thanh tiến độ về phần dư', () {
+      final td = AppState.tinhTienDo(pt(moc: 7, lapLai: true, soLanTrao: 3), kq([15, 10]));
+      expect(td.dat, isFalse);
+      expect(td.conNo, 0);
+      expect(td.tiLe, closeTo(3 / 7, 1e-9));
+    });
+
+    test('một lần: đạt khi có chuỗi chạm mốc, kể cả đã đứt; không cộng dồn', () {
+      final td = AppState.tinhTienDo(pt(moc: 7, lapLai: false), kq([15, 2]));
+      expect(td.soLanDat, 1);
+      expect(td.dat, isTrue);
+      expect(td.tiLe, 1);
+      final chua = AppState.tinhTienDo(pt(moc: 7, lapLai: false), kq([5, 6]));
+      expect(chua.dat, isFalse);
+      expect(chua.hienTai, 6);
+      expect(chua.conLai, 1);
+    });
+
+    test('demChuoi liệt kê từng chuỗi, chuỗi đang chạy ở cuối', () {
+      // T2,T3 xong · T4 hỏng · T5,T6 xong · T7 trống (vé) · CN nghỉ · T2 sau xong.
+      final ds = [
+        _bc(_n(0)), _bc(_n(1)),
+        _bc(_n(2), tt: TrangThai.chuaLam),
+        _bc(_n(3)), _bc(_n(4)),
+        _bc(_n(7)),
+      ];
+      final r = demChuoi(ds, luat: _luatNha, homNay: _n(7));
+      expect(r.cacChuoi, [2, 3]);
+      expect(r.hienTai, 3);
+    });
+  });
+
   group('AppState', () {
     test('luật chuỗi lấy ngày nghỉ từ thời khóa biểu — Khôi học thứ Hai tới thứ Bảy', () async {
       final s = await vaoVoiVaiTro(VaiTro.hocSinh);
@@ -124,30 +187,36 @@ void main() {
       expect(s.luatChuoi.veMoiTuan, 1);
     });
 
-    test('phần thưởng mẫu: hai món chưa trao, mốc 7 và 30, tiến độ tính từ ngày treo', () async {
+    test('phần thưởng mẫu: quà điểm đã đạt xếp đầu, rồi hai quà chuỗi mốc 7 và 30', () async {
       final s = await vaoVoiVaiTro(VaiTro.hocSinh);
       final ds = s.tienDoPhanThuong;
-      expect(ds.map((t) => t.phanThuong.moc), [7, 30]);
-      expect(ds.every((t) => !t.phanThuong.daTrao), isTrue);
-      expect(ds.first.hienTai, lessThanOrEqualTo(7));
+      // Khôi có 8,5 giữa kì Toán, quà "từ 8 trở lên" đạt → còn nợ, xếp đầu.
+      expect(ds.first.phanThuong.loai, LoaiPhanThuong.diem);
+      expect(ds.first.dat, isTrue);
+      expect(ds.first.baiDat.single.diem, 8.5);
+      expect(ds.skip(1).map((t) => t.phanThuong.moc), [7, 30]);
+      expect(ds.every((t) => !t.phanThuong.xongHan), isTrue);
     });
 
-    test('phụ huynh treo, trao, treo lại, xóa; học sinh thấy y như vậy', () async {
+    test('phụ huynh treo quà một lần, trao, treo lại, xóa; học sinh thấy y như vậy', () async {
       final ph = await vaoVoiVaiTro(VaiTro.phuHuynh);
-      await ph.treoPhanThuong(moc: 3, ten: 'Đi công viên');
+      await ph.treoPhanThuong(moc: 3, ten: 'Đi công viên', lapLai: false);
       final moi = ph.phanThuong.firstWhere((p) => p.ten == 'Đi công viên');
       expect(moi.taoBoi, ph.nguoiDung!.id);
       expect(moi.hocSinhId, ph.hocSinhHienTai!.id);
-      expect(moi.daTrao, isFalse);
+      expect(moi.xongHan, isFalse);
 
       await ph.traoPhanThuong(moi);
-      expect(ph.phanThuong.firstWhere((p) => p.id == moi.id).daTrao, isTrue);
-      // Đã trao thì xếp cuối.
+      final daTrao = ph.phanThuong.firstWhere((p) => p.id == moi.id);
+      expect(daTrao.xongHan, isTrue);
+      expect(daTrao.soLanTrao, 1);
+      // Đã trao xong hẳn thì xếp cuối.
       expect(ph.tienDoPhanThuong.last.phanThuong.id, moi.id);
 
-      await ph.treoLaiPhanThuong(moi);
+      await ph.treoLaiPhanThuong(daTrao);
       final lai = ph.phanThuong.firstWhere((p) => p.id == moi.id);
-      expect(lai.daTrao, isFalse);
+      expect(lai.xongHan, isFalse);
+      expect(lai.soLanTrao, 0);
       expect(lai.tuNgay.isAfter(moi.tuNgay.subtract(const Duration(seconds: 1))), isTrue);
 
       await ph.xoaPhanThuong(lai);

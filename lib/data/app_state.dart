@@ -110,6 +110,7 @@ class AppState extends ChangeNotifier {
   List<BaoCao> _baoCao = const [];
   List<NhacNho> _nhacNho = const [];
   List<PhanThuong> _phanThuong = const [];
+  List<DiemThi> _diemThi = const [];
 
   List<Tinh> get tinh => _tinh;
   List<Truong> get truong => _truong;
@@ -381,6 +382,7 @@ class AppState extends ChangeNotifier {
     _baoCao = const [];
     _nhacNho = const [];
     _phanThuong = const [];
+    _diemThi = const [];
   }
 
   Future<void> dangNhap(String email, String matKhau) =>
@@ -561,6 +563,7 @@ class AppState extends ChangeNotifier {
       _baoCao = const [];
       _nhacNho = const [];
       _phanThuong = const [];
+      _diemThi = const [];
       return;
     }
     _tkb = await _repo.thoiKhoaBieu(hs.id);
@@ -572,6 +575,7 @@ class AppState extends ChangeNotifier {
     // thấy lời mình nhận, phụ huynh thấy lời mình đã gửi.
     _nhacNho = await _repo.nhacNho(hs.id);
     _phanThuong = await _repo.phanThuong(hs.id);
+    _diemThi = await _repo.diemThi(hs.id);
   }
 
   /// Người dùng sửa hồ sơ của chính mình (hiện chỉ có chọn trường). Lưu xong
@@ -698,36 +702,84 @@ class AppState extends ChangeNotifier {
 
   List<PhanThuong> get phanThuong => _phanThuong;
 
-  /// Từng phần thưởng kèm chỗ đứng của con: chuỗi đếm từ ngày treo, đã chạm
-  /// mốc chưa. Chưa trao xếp trước, mốc gần xếp trước.
+  /// Từng phần thưởng kèm chỗ đứng của con. Còn nợ quà xếp trước, rồi quà
+  /// chuỗi theo mốc gần, quà điểm sau; quà một lần đã trao xếp cuối.
   List<TienDoPhanThuong> get tienDoPhanThuong {
     final ds = [
       for (final pt in _phanThuong)
-        () {
-          final kq = demChuoi(baoCao, luat: luatChuoi, tuNgay: pt.tuNgay);
-          return TienDoPhanThuong(pt, hienTai: kq.hienTai, dat: kq.daiNhat >= pt.moc);
-        }(),
+        pt.loai == LoaiPhanThuong.diem
+            ? tinhTienDoDiem(pt, _diemThi)
+            : tinhTienDo(pt, demChuoi(baoCao, luat: luatChuoi, tuNgay: pt.tuNgay)),
     ]..sort((a, b) {
-        if (a.phanThuong.daTrao != b.phanThuong.daTrao) return a.phanThuong.daTrao ? 1 : -1;
+        if (a.phanThuong.xongHan != b.phanThuong.xongHan) return a.phanThuong.xongHan ? 1 : -1;
+        if (a.dat != b.dat) return a.dat ? -1 : 1;
+        if (a.phanThuong.loai != b.phanThuong.loai) {
+          return a.phanThuong.loai == LoaiPhanThuong.chuoi ? -1 : 1;
+        }
         return a.phanThuong.moc.compareTo(b.phanThuong.moc);
       });
     return ds;
   }
 
-  /// Phụ huynh treo phần thưởng mới cho con đang xem.
-  Future<void> treoPhanThuong({required int moc, required String ten}) async {
-    final hs = hocSinhHienTai;
-    final ph = _nguoiDung;
-    if (hs == null || ph == null) return;
-    await _repo.luuPhanThuong(PhanThuong(
-      id: _id(),
-      hocSinhId: hs.id,
-      taoBoi: ph.id,
-      moc: moc,
-      ten: ten,
-      tuNgay: Ngay.dauNgay(DateTime.now()),
-      taoLuc: DateTime.now(),
-    ));
+  /// Quà lặp lại: mỗi chuỗi góp `dài ~/ mốc` lần, bước tới lần kế là phần dư
+  /// của chuỗi đang chạy. Quà một lần: đạt khi có chuỗi nào chạm mốc.
+  static TienDoPhanThuong tinhTienDo(PhanThuong pt, KetQuaChuoi kq) {
+    if (pt.lapLai) {
+      final soLan = kq.cacChuoi.fold(0, (t, c) => t + c ~/ pt.moc);
+      return TienDoPhanThuong(pt, hienTai: kq.hienTai % pt.moc, soLanDat: soLan);
+    }
+    return TienDoPhanThuong(
+      pt,
+      hienTai: kq.hienTai.clamp(0, pt.moc),
+      soLanDat: kq.daiNhat >= pt.moc ? 1 : 0,
+    );
+  }
+
+  /// Quà điểm thi: mỗi bài lớn đạt điểm từ ngày treo là một lần.
+  static TienDoPhanThuong tinhTienDoDiem(PhanThuong pt, List<DiemThi> diem) {
+    final dat = diem.where(pt.khopDiem).toList()..sort((a, b) => b.ngay.compareTo(a.ngay));
+    return TienDoPhanThuong(pt, hienTai: 0, soLanDat: dat.length, baiDat: dat);
+  }
+
+  /// Phụ huynh treo phần thưởng chuỗi ngày cho con đang xem.
+  Future<void> treoPhanThuong({required int moc, required String ten, bool lapLai = true}) =>
+      _treo(PhanThuong(
+        id: _id(),
+        hocSinhId: hocSinhHienTai?.id ?? '',
+        taoBoi: _nguoiDung?.id ?? '',
+        moc: moc,
+        ten: ten,
+        lapLai: lapLai,
+        tuNgay: Ngay.dauNgay(DateTime.now()),
+        taoLuc: DateTime.now(),
+      ));
+
+  /// Phụ huynh treo phần thưởng điểm thi: môn (null = môn nào cũng được),
+  /// kì (null = giữa hay cuối kì đều được), điểm từ [diemToiThieu] trở lên.
+  Future<void> treoPhanThuongDiem({
+    required String ten,
+    required double diemToiThieu,
+    String? monId,
+    LoaiKiemTra? kiThi,
+  }) =>
+      _treo(PhanThuong(
+        id: _id(),
+        hocSinhId: hocSinhHienTai?.id ?? '',
+        taoBoi: _nguoiDung?.id ?? '',
+        loai: LoaiPhanThuong.diem,
+        moc: 1,
+        ten: ten,
+        lapLai: true,
+        monId: monId,
+        kiThi: kiThi,
+        diemToiThieu: diemToiThieu,
+        tuNgay: Ngay.dauNgay(DateTime.now()),
+        taoLuc: DateTime.now(),
+      ));
+
+  Future<void> _treo(PhanThuong pt) async {
+    if (hocSinhHienTai == null || _nguoiDung == null) return;
+    await _repo.luuPhanThuong(pt);
     await taiLai();
   }
 
@@ -736,19 +788,65 @@ class AppState extends ChangeNotifier {
     await taiLai();
   }
 
-  /// Bố mẹ đã đưa quà cho con.
-  Future<void> traoPhanThuong(PhanThuong pt) =>
-      luuPhanThuong(pt.copyWith(traoLuc: () => DateTime.now()));
+  /// Bố mẹ đã đưa quà cho con — một lần.
+  Future<void> traoPhanThuong(PhanThuong pt) => luuPhanThuong(
+        pt.copyWith(soLanTrao: pt.soLanTrao + 1, traoLuc: () => DateTime.now()),
+      );
 
-  /// Treo lại cùng phần thưởng: chuỗi đếm lại từ hôm nay.
+  /// Treo lại cùng phần thưởng: chuỗi đếm lại từ hôm nay, số lần về 0.
   Future<void> treoLaiPhanThuong(PhanThuong pt) => luuPhanThuong(
-        pt.copyWith(tuNgay: Ngay.dauNgay(DateTime.now()), traoLuc: () => null),
+        pt.copyWith(tuNgay: Ngay.dauNgay(DateTime.now()), soLanTrao: 0, traoLuc: () => null),
       );
 
   Future<void> xoaPhanThuong(PhanThuong pt) async {
     await _repo.xoaPhanThuong(pt.hocSinhId, pt.id);
     await taiLai();
   }
+
+  // -------------------------------------------------------------- sổ điểm
+
+  /// Sổ điểm của học sinh đang xem, mới nhất trước.
+  List<DiemThi> get diemThi => _diemThi;
+
+  /// Ghi một điểm mới. Con hay bố mẹ ghi đều được; ai ghi thì ghi tên người đó.
+  Future<void> ghiDiem({
+    required String monId,
+    required LoaiKiemTra loai,
+    required int hocKi,
+    required double diem,
+    required DateTime ngay,
+    String? ghiChu,
+  }) async {
+    final hs = hocSinhHienTai;
+    if (hs == null) return;
+    await _repo.luuDiemThi(DiemThi(
+      id: _id(),
+      hocSinhId: hs.id,
+      monId: monId,
+      loai: loai,
+      hocKi: hocKi,
+      diem: diem,
+      ngay: Ngay.dauNgay(ngay),
+      ghiChu: (ghiChu ?? '').trim().isEmpty ? null : ghiChu!.trim(),
+      taoBoi: _nguoiDung?.id,
+      taoLuc: DateTime.now(),
+    ));
+    await taiLai();
+  }
+
+  Future<void> luuDiem(DiemThi d) async {
+    await _repo.luuDiemThi(d);
+    await taiLai();
+  }
+
+  Future<void> xoaDiem(DiemThi d) async {
+    await _repo.xoaDiemThi(d.hocSinhId, d.id);
+    await taiLai();
+  }
+
+  /// Học kì hiện tại theo lịch phổ thông: tháng 9 tới hết tháng 12 là kì 1,
+  /// tháng 1 tới tháng 8 là kì 2. Đủ đúng để điền sẵn, sửa được.
+  static int hocKiCua(DateTime d) => d.month >= 9 ? 1 : 2;
 
   /// Bảng điểm danh của một ngày: môn có tiết mà chưa có báo cáo, kèm thầy
   /// cô và bài kế tiếp điền sẵn.
@@ -822,9 +920,23 @@ class AppState extends ChangeNotifier {
       return KetQuaLuu.choMang;
     }
 
-    await taiLai();
+    await taiLaiBaoCao();
     _reoHuyHieu(truoc);
     return KetQuaLuu.daGui;
+  }
+
+  /// Nạp lại mỗi danh sách báo cáo — sau khi lưu hay xóa một bài. Thời khóa
+  /// biểu, nhắc nhở, phần thưởng, sổ điểm không đổi theo, khỏi kéo lại; những
+  /// gì tính từ báo cáo (chuỗi, con dấu, tiến độ quà) tự cập nhật.
+  Future<void> taiLaiBaoCao() async {
+    final hs = hocSinhHienTai;
+    if (hs == null) return;
+    try {
+      _baoCao = await _repo.baoCao(hs.id);
+    } catch (e) {
+      if (!laLoiMang(e)) rethrow;
+    }
+    notifyListeners();
   }
 
   void _reoHuyHieu(List<TienDoHuyHieu>? truoc) {
@@ -896,7 +1008,7 @@ class AppState extends ChangeNotifier {
       _dangGuiNhap = false;
     }
     if (daGui > 0) {
-      await taiLai();
+      await taiLaiBaoCao();
     } else {
       notifyListeners();
     }
@@ -911,7 +1023,7 @@ class AppState extends ChangeNotifier {
     }
     final bc = _baoCao.where((b) => b.id == id).firstOrNull;
     await _repo.xoaBaoCao(bc?.hocSinhId ?? hocSinhHienTai?.id ?? '', id);
-    await taiLai();
+    await taiLaiBaoCao();
   }
 
   // ------------------------------------------------------------- nhắc nhở

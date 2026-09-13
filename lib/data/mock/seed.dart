@@ -195,6 +195,7 @@ abstract final class Seed {
           taoBoi: 'ph_01',
           moc: 7,
           ten: 'Đi ăn kem cả nhà',
+          lapLai: true,
           tuNgay: _ngay(6),
           taoLuc: _ngay(6).add(const Duration(hours: 21)),
         ),
@@ -204,9 +205,36 @@ abstract final class Seed {
           taoBoi: 'ph_01',
           moc: 30,
           ten: 'Bộ Lego Technic',
+          lapLai: false,
           tuNgay: _ngay(6),
           taoLuc: _ngay(6).add(const Duration(hours: 21, minutes: 2)),
         ),
+        PhanThuong(
+          id: 'pt_03',
+          hocSinhId: 'hs_01',
+          taoBoi: 'ph_01',
+          loai: LoaiPhanThuong.diem,
+          moc: 1,
+          ten: 'Đi xem phim',
+          kiThi: null,
+          monId: null,
+          diemToiThieu: 8,
+          tuNgay: _ngay(20),
+          taoLuc: _ngay(20).add(const Duration(hours: 21)),
+        ),
+      ];
+
+  /// Sổ điểm của Khôi: vài bài thường xuyên và một bài giữa kì.
+  static List<DiemThi> get diemThi => [
+        DiemThi(id: 'dt_01', hocSinhId: 'hs_01', monId: 'm_toan', loai: LoaiKiemTra.thuongXuyen,
+            hocKi: 1, diem: 9, ngay: _ngay(12), taoBoi: 'hs_01', taoLuc: _ngay(12)),
+        DiemThi(id: 'dt_02', hocSinhId: 'hs_01', monId: 'm_van', loai: LoaiKiemTra.thuongXuyen,
+            hocKi: 1, diem: 7.5, ngay: _ngay(9), taoBoi: 'hs_01', taoLuc: _ngay(9)),
+        DiemThi(id: 'dt_03', hocSinhId: 'hs_01', monId: 'm_anh', loai: LoaiKiemTra.thuongXuyen,
+            hocKi: 1, diem: 8, ngay: _ngay(5), taoBoi: 'ph_01', taoLuc: _ngay(5)),
+        DiemThi(id: 'dt_04', hocSinhId: 'hs_01', monId: 'm_toan', loai: LoaiKiemTra.giuaKi,
+            hocKi: 1, diem: 8.5, ngay: _ngay(3), ghiChu: 'Sai câu hình cuối', taoBoi: 'hs_01',
+            taoLuc: _ngay(3)),
       ];
 
   static List<NhacNho> get nhacNho => [

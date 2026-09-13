@@ -49,10 +49,23 @@
 
     ('PH đánh dấu đã trao và treo lại được',
      '11111111-1111-1111-1111-111111111111'::uuid, 'duoc',
-     $q$update phan_thuong set trao_luc = now(), tu_ngay = current_date
+     $q$update phan_thuong set so_lan_trao = 1, trao_luc = now(), tu_ngay = current_date
          where id = 'dddddddd-0000-0000-0000-000000000001'$q$, 0),
 
     ('PH xóa được phần thưởng mình treo',
      '11111111-1111-1111-1111-111111111111'::uuid, 'duoc',
      $q$delete from phan_thuong
          where id = 'dddddddd-0000-0000-0000-000000000001'$q$, 0),
+
+    ('PH treo được thưởng điểm thi: giữa kì Toán từ 8',
+     '11111111-1111-1111-1111-111111111111'::uuid, 'duoc',
+     $q$insert into phan_thuong (hoc_sinh_id, tao_boi, loai, moc, ten, mon_id, ki_thi, diem_toi_thieu)
+        values ('33333333-3333-3333-3333-333333333333',
+                '11111111-1111-1111-1111-111111111111', 'diem', 1, 'Đi xem phim',
+                'm_toan', 'giuaKi', 8)$q$, 0),
+
+    ('Thưởng điểm với kì thi lạ bị chặn',
+     '11111111-1111-1111-1111-111111111111'::uuid, 'chan',
+     $q$insert into phan_thuong (hoc_sinh_id, tao_boi, loai, moc, ten, ki_thi, diem_toi_thieu)
+        values ('33333333-3333-3333-3333-333333333333',
+                '11111111-1111-1111-1111-111111111111', 'diem', 1, 'Sai kì', 'thuongXuyen', 8)$q$, 0),

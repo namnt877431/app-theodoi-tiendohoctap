@@ -24,10 +24,14 @@ thường học vài tiết) với nút *Bài tiếp ›* khi lớp sang bài m�
 hay chụp ảnh thì mở biểu mẫu đầy đủ, cũng đã điền sẵn; phần chữ không bắt
 buộc, có câu mẫu theo từng môn và app tự nhớ những câu con hay ghi.
 
-Để con *muốn* báo cáo: bố mẹ **treo phần thưởng** theo chuỗi ngày trọn bài —
-"7 ngày liền → đi ăn kem" — app đếm, con thấy trên trang chủ còn mấy ngày,
-bố mẹ trao rồi treo lại. Chuỗi không đứt oan: ngày không có tiết trong thời
-khóa biểu không tính, và mỗi tuần con có một **vé nghỉ** tự dùng.
+Để con *muốn* báo cáo: bố mẹ **treo phần thưởng** — theo chuỗi ngày trọn bài
+("cứ 7 ngày liền → đi ăn kem", lặp lại đều) hoặc theo **điểm thi** ("giữa kì
+Toán từ 8 trở lên → đi xem phim"). App đếm, con thấy trên trang chủ còn mấy
+ngày, bố mẹ bấm "Đã trao". Chuỗi không đứt oan: ngày không có tiết trong thời
+khóa biểu không tính, và mỗi tuần con có một **vé nghỉ** tự dùng. Điểm ghi
+vào **sổ điểm** — thường xuyên, giữa kì, cuối kì, có điểm trung bình môn theo
+cách trường tính — con hay bố mẹ ghi đều được. Ảnh bài làm chạm vào là xem
+cả màn hình, phóng to đọc được chữ.
 
 ---
 
@@ -68,13 +72,14 @@ nội dung một file vào khung soạn thảo rồi bấm **Run** (hoặc `Ctrl
 | — | `07_thong_bao_may_chu.sql` | Chỉ chạy khi bật thông báo đẩy, xem Phần 4 |
 | 7 | `08_tinh_thanh.sql` | 34 tỉnh, thành phố theo sắp xếp từ 1/7/2025 — để học sinh chọn lúc đăng ký |
 | 8 | `09_bai_hoc_lop8.sql` | Danh mục bài học lớp 8 (421 mục, 9 sách) kèm tóm tắt và câu hỏi cho phụ huynh — cần `05_danh_muc.sql` chạy trước vì tham chiếu mã môn `m_toan`, `m_van`… |
-| 9 | `10_phan_thuong.sql` | Phần thưởng bố mẹ treo theo chuỗi ngày trọn vẹn ("7 ngày liền → đi ăn kem") |
+| 9 | `10_phan_thuong.sql` | Phần thưởng bố mẹ treo: theo chuỗi ngày trọn vẹn ("7 ngày liền → đi ăn kem") hoặc theo điểm thi |
+| 10 | `11_diem_thi.sql` | Sổ điểm: điểm thường xuyên, giữa kì, cuối kì — con hay bố mẹ ghi đều được |
 
 Mỗi lần chạy xong phải thấy **Success. No rows returned**. Nếu thấy chữ đỏ thì
 dừng lại, đừng chạy file tiếp theo — xem bảng lỗi ở cuối trang này.
 
-Cả mười file đều chạy lại được nhiều lần mà không hỏng gì, nên lỡ chạy trùng
-cũng không sao.
+Cả mười một file đều chạy lại được nhiều lần mà không hỏng gì, nên lỡ chạy
+trùng cũng không sao.
 
 ### Bước 3. Tắt xác nhận email
 
@@ -100,7 +105,7 @@ Kết quả hiện ra trong một **khung đỏ** — đó là bình thường, 
 nhìn màu:
 
 ```
-KIỂM THỬ PHÂN QUYỀN — tất cả 170 phép thử đều ĐẠT.
+KIỂM THỬ PHÂN QUYỀN — tất cả 180 phép thử đều ĐẠT.
 ```
 
 Còn nếu có chỗ hỏng thì nó liệt kê ra từng cái. Khung đỏ vì bộ test cố ý ném

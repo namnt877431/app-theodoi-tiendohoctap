@@ -591,10 +591,11 @@ class _KhoAnh extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               itemCount: anh.length,
               separatorBuilder: (_, _) => const SizedBox(width: Gap.sm),
-              itemBuilder: (_, i) => AnhBaiLam(
+              itemBuilder: (context, i) => AnhBaiLam(
                 duongDan: anh[i],
                 canh: 104,
                 onXoa: () => onXoa(i),
+                onTap: () => moXemAnh(context, duongDan: anh, batDau: i),
               ),
             ),
           ),

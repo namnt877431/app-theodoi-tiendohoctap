@@ -92,7 +92,13 @@ không dùng đổ bóng.
   một câu: "còn 3 ngày nữa". Chuỗi có **vé nghỉ** (`LuatChuoi`): ngày không có
   tiết không tính, mỗi tuần được bỏ một ngày học — một chuỗi hai mươi ngày
   đứt vì đi chơi cuối tuần là thứ giết động lực nhanh nhất. Không thưởng riêng
-  "Đã xong" ở đâu khác ngoài chuỗi, để con không có lý do bấm cho qua.
+  "Đã xong" ở đâu khác ngoài chuỗi, để con không có lý do bấm cho qua. Mốc
+  chuỗi mặc định **lặp lại** (cứ 7 ngày lại một lần) — thưởng đều mới thành
+  nếp; quà lớn một lần là ngoại lệ, phải tắt lặp.
+- **Sổ điểm** (`KhungSoDiem`, `SoDiemScreen`) ghi như ghi vào sổ thật: ô điểm
+  to bên trái, màu theo mức (xanh lá ≥ 8, mực ≥ 6,5, hổ phách ≥ 5, đỏ dưới 5),
+  điểm trung bình môn tính đúng hệ số trường dùng (TX 1, GK 2, CK 3) và chỉ
+  hiện khi đủ cả giữa kì lẫn cuối kì — con số nửa vời chỉ gây hiểu nhầm.
 
 ## Chữ nghĩa trong giao diện
 

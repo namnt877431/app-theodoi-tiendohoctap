@@ -29,7 +29,7 @@ class KhungPhanThuong extends StatelessWidget {
 
     final chuoi = s.chuoi;
     final ten = s.hocSinhHienTai?.tenGoi ?? 'con';
-    final hien = ds.where((t) => !t.phanThuong.daTrao).take(2).toList();
+    final hien = ds.where((t) => !t.phanThuong.xongHan).take(2).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,12 +124,27 @@ class _DongTienDo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = context.read<AppState>();
     final pt = td.phanThuong;
+    final laDiem = pt.loai == LoaiPhanThuong.diem;
+    final lanThu = pt.lapLai && pt.soLanTrao > 0 ? ' lần thứ ${pt.soLanTrao + 1}' : '';
+    final baiMoi = td.baiDat.firstOrNull;
     final (chu, mau) = td.dat
-        ? (laPhuHuynh ? '$ten đã đạt rồi — trao quà thôi!' : 'Đạt rồi! Chờ bố mẹ trao', AppColor.xong)
-        : td.conLai == pt.moc
-            ? ('${pt.moc} ngày liền xong hết bài', AppColor.mucNhat)
-            : ('Còn ${td.conLai} ngày nữa', AppColor.muc);
+        ? (
+            laDiem && baiMoi != null
+                ? '${baiMoi.diemChu} ${baiMoi.loai.nhan.toLowerCase()} ${s.tenMon(baiMoi.monId)}'
+                    '${td.conNo > 1 ? ' và ${td.conNo - 1} bài nữa' : ''} — '
+                    '${laPhuHuynh ? 'trao quà thôi!' : 'chờ bố mẹ trao'}'
+                : laPhuHuynh
+                    ? '$ten đã đạt${td.conNo > 1 ? ' ${td.conNo} lần' : ''} — trao quà thôi!'
+                    : 'Đạt rồi! Chờ bố mẹ trao${td.conNo > 1 ? ' (${td.conNo} lần)' : ''}',
+            AppColor.xong
+          )
+        : laDiem
+            ? (moTaDieuKien(pt, s), AppColor.mucNhat)
+            : td.conLai == pt.moc
+                ? ('${pt.moc} ngày liền xong hết bài${pt.lapLai ? ', lặp lại' : ''}', AppColor.mucNhat)
+                : ('Còn ${td.conLai} ngày nữa$lanThu', AppColor.muc);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.md, Gap.lg, Gap.md),
@@ -139,7 +154,11 @@ class _DongTienDo extends StatelessWidget {
           Row(
             children: [
               Icon(
-                td.dat ? Icons.redeem_rounded : Icons.card_giftcard_rounded,
+                td.dat
+                    ? Icons.redeem_rounded
+                    : laDiem
+                        ? Icons.grade_rounded
+                        : Icons.card_giftcard_rounded,
                 size: 20,
                 color: td.dat ? AppColor.xong : AppColor.hocThem,
               ),
@@ -151,12 +170,19 @@ class _DongTienDo extends StatelessWidget {
                     style: AppType.ui(15, w: FontWeight.w700)),
               ),
               const SizedBox(width: Gap.sm),
-              Text('${td.hienTai.clamp(0, pt.moc)}/${pt.moc}',
-                  style: AppType.numeric(12.5, color: AppColor.mucNhat, w: FontWeight.w600)),
+              if (!laDiem)
+                Text('${td.hienTai.clamp(0, pt.moc)}/${pt.moc}',
+                    style: AppType.numeric(12.5, color: AppColor.mucNhat, w: FontWeight.w600))
+              else if (pt.soLanTrao > 0)
+                Text('${pt.soLanTrao} lần',
+                    style: AppType.numeric(12.5, color: AppColor.mucNhat, w: FontWeight.w600)),
             ],
           ),
-          const SizedBox(height: Gap.sm),
-          ThanhTienDo(td.tiLe, mau: td.dat ? AppColor.xong : AppColor.muc),
+          // Quà điểm thi không có "tiến độ" — chỉ có đạt hay chưa.
+          if (!laDiem || td.dat) ...[
+            const SizedBox(height: Gap.sm),
+            ThanhTienDo(td.tiLe, mau: td.dat ? AppColor.xong : AppColor.muc),
+          ],
           const SizedBox(height: 6),
           Row(
             children: [
@@ -209,6 +235,19 @@ class _VeNghi extends StatelessWidget {
       ),
     );
   }
+}
+
+/// "Cứ 7 ngày liền xong hết bài lại được một lần" / "Điểm giữa kì Toán từ 8
+/// trở lên" — một câu nói đủ điều kiện, dùng ở khung, danh sách và bảng treo.
+String moTaDieuKien(PhanThuong pt, AppState s) {
+  if (pt.loai == LoaiPhanThuong.diem) {
+    final ki = pt.kiThi?.nhan.toLowerCase() ?? 'giữa hoặc cuối kì';
+    final mon = pt.monId == null ? 'môn nào cũng được' : s.tenMon(pt.monId);
+    return 'Điểm $ki $mon từ ${chuDiem(pt.diemToiThieu ?? 8)} trở lên';
+  }
+  return pt.lapLai
+      ? 'Cứ ${pt.moc} ngày liền xong hết bài lại được một lần'
+      : '${pt.moc} ngày liền xong hết bài, một lần';
 }
 
 Future<void> _trao(BuildContext context, PhanThuong pt) async {
@@ -309,31 +348,50 @@ class _TheMon extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.read<AppState>();
     final pt = td.phanThuong;
-    final mau = pt.daTrao
+    final laDiem = pt.loai == LoaiPhanThuong.diem;
+    final xong = pt.xongHan;
+    final mau = xong
         ? AppColor.mucNhat
         : td.dat
             ? AppColor.xong
             : AppColor.hocThem;
-    final trangThai = pt.daTrao
+    final daTrao = pt.soLanTrao == 0
+        ? ''
+        : pt.lapLai
+            ? ' · đã trao ${pt.soLanTrao} lần'
+            : '';
+    final baiMoi = td.baiDat.firstOrNull;
+    final trangThai = xong
         ? 'Đã trao ${Ngay.ddMM(pt.traoLuc!)}'
         : td.dat
-            ? 'Đã đạt — chờ trao'
-            : 'Còn ${td.conLai} ngày · tính từ ${Ngay.ddMM(pt.tuNgay)}';
+            ? laDiem && baiMoi != null
+                ? '${baiMoi.diemChu} ${baiMoi.loai.nhan.toLowerCase()} ${s.tenMon(baiMoi.monId)} '
+                    '${Ngay.ddMM(baiMoi.ngay)}${td.conNo > 1 ? ' và ${td.conNo - 1} bài nữa' : ''} — chờ trao$daTrao'
+                : 'Đã đạt${td.conNo > 1 ? ' ${td.conNo} lần' : ''} — chờ trao$daTrao'
+            : laDiem
+                ? 'Chờ bài kiểm tra tới · tính từ ${Ngay.ddMM(pt.tuNgay)}$daTrao'
+                : 'Còn ${td.conLai} ngày · tính từ ${Ngay.ddMM(pt.tuNgay)}$daTrao';
 
     return Container(
       padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.md, Gap.md, Gap.sm),
       decoration: BoxDecoration(
-        color: pt.daTrao ? AppColor.skySoft : AppColor.giayTrang,
+        color: xong ? AppColor.skySoft : AppColor.giayTrang,
         borderRadius: BorderRadius.circular(R.lg),
-        border: Border.all(color: td.dat && !pt.daTrao ? AppColor.xong.withValues(alpha: .45) : AppColor.dongKe),
+        border: Border.all(color: td.dat ? AppColor.xong.withValues(alpha: .45) : AppColor.dongKe),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(pt.daTrao ? Icons.check_circle_rounded : Icons.card_giftcard_rounded,
-                  size: 20, color: mau),
+              Icon(
+                  xong
+                      ? Icons.check_circle_rounded
+                      : laDiem
+                          ? Icons.grade_rounded
+                          : Icons.card_giftcard_rounded,
+                  size: 20,
+                  color: mau),
               const SizedBox(width: Gap.sm + 2),
               Expanded(
                 child: Column(
@@ -341,17 +399,22 @@ class _TheMon extends StatelessWidget {
                   children: [
                     Text(pt.ten, style: AppType.ui(15, w: FontWeight.w700)),
                     const SizedBox(height: 2),
-                    Text('${pt.moc} ngày liền xong hết bài',
-                        style: AppType.ui(12.5, color: AppColor.mucNhat, w: FontWeight.w500)),
+                    Text(
+                      moTaDieuKien(pt, s),
+                      style: AppType.ui(12.5, color: AppColor.mucNhat, w: FontWeight.w500),
+                    ),
                   ],
                 ),
               ),
-              Text('${td.hienTai.clamp(0, pt.moc)}/${pt.moc}',
-                  style: AppType.numeric(13, color: AppColor.mucNhat, w: FontWeight.w600)),
+              if (!laDiem)
+                Text('${td.hienTai.clamp(0, pt.moc)}/${pt.moc}',
+                    style: AppType.numeric(13, color: AppColor.mucNhat, w: FontWeight.w600)),
             ],
           ),
-          const SizedBox(height: Gap.sm),
-          ThanhTienDo(pt.daTrao ? 1 : td.tiLe, mau: mau),
+          if (!laDiem || td.dat) ...[
+            const SizedBox(height: Gap.sm),
+            ThanhTienDo(xong ? 1 : td.tiLe, mau: mau),
+          ],
           const SizedBox(height: 6),
           Row(
             children: [
@@ -359,7 +422,7 @@ class _TheMon extends StatelessWidget {
                 child: Text(trangThai, style: AppType.ui(12.5, color: mau, w: FontWeight.w600)),
               ),
               if (laPhuHuynh) ...[
-                if (pt.daTrao)
+                if (xong)
                   TextButton(
                     onPressed: () => s.treoLaiPhanThuong(pt),
                     style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
@@ -428,9 +491,16 @@ class _SoanPhanThuongState extends State<_SoanPhanThuong> {
     'Một cuốn truyện mới',
   ];
 
+  static const _diemNhanh = [7.0, 8.0, 8.5, 9.0, 9.5, 10.0];
+
   late final _ten = TextEditingController(text: widget.pt?.ten ?? '');
   late final _mocKhac = TextEditingController();
+  late LoaiPhanThuong _loai = widget.pt?.loai ?? LoaiPhanThuong.chuoi;
   late int _moc = widget.pt?.moc ?? 7;
+  late bool _lapLai = widget.pt?.lapLai ?? true;
+  late String? _monId = widget.pt?.monId;
+  late LoaiKiemTra? _kiThi = widget.pt?.kiThi;
+  late double _diemToiThieu = widget.pt?.diemToiThieu ?? 8;
   bool _dangLuu = false;
 
   @override
@@ -453,9 +523,22 @@ class _SoanPhanThuongState extends State<_SoanPhanThuong> {
     final cu = widget.pt;
     try {
       if (cu == null) {
-        await s.treoPhanThuong(moc: _moc, ten: ten);
+        if (_loai == LoaiPhanThuong.diem) {
+          await s.treoPhanThuongDiem(
+              ten: ten, diemToiThieu: _diemToiThieu, monId: _monId, kiThi: _kiThi);
+        } else {
+          await s.treoPhanThuong(moc: _moc, ten: ten, lapLai: _lapLai);
+        }
       } else {
-        await s.luuPhanThuong(cu.copyWith(moc: _moc, ten: ten));
+        await s.luuPhanThuong(cu.copyWith(
+          loai: _loai,
+          moc: _loai == LoaiPhanThuong.diem ? 1 : _moc,
+          ten: ten,
+          lapLai: _loai == LoaiPhanThuong.diem ? true : _lapLai,
+          monId: () => _loai == LoaiPhanThuong.diem ? _monId : null,
+          kiThi: () => _loai == LoaiPhanThuong.diem ? _kiThi : null,
+          diemToiThieu: _diemToiThieu,
+        ));
       }
     } catch (e) {
       if (!mounted) return;
@@ -469,7 +552,9 @@ class _SoanPhanThuongState extends State<_SoanPhanThuong> {
 
   @override
   Widget build(BuildContext context) {
-    final ten = context.read<AppState>().hocSinhHienTai?.tenGoi ?? 'con';
+    final s = context.read<AppState>();
+    final ten = s.hocSinhHienTai?.tenGoi ?? 'con';
+    final chuoi = s.chuoi;
     final suaCu = widget.pt != null;
 
     return KhungBieuMau(
@@ -479,6 +564,86 @@ class _SoanPhanThuongState extends State<_SoanPhanThuong> {
       dangLuu: _dangLuu,
       onLuu: _luu,
       children: [
+        const NhanO('Thưởng cho việc gì?'),
+        Row(
+          children: [
+            for (final l in LoaiPhanThuong.values) ...[
+              Expanded(
+                child: OChon(
+                  icon: l == LoaiPhanThuong.chuoi
+                      ? Icons.local_fire_department_rounded
+                      : Icons.grade_rounded,
+                  nhan: l == LoaiPhanThuong.chuoi ? 'Chuỗi ngày trọn bài' : 'Điểm thi cao',
+                  mau: AppColor.muc,
+                  mauNen: AppColor.sky,
+                  chon: _loai == l,
+                  onTap: () => setState(() => _loai = l),
+                ),
+              ),
+              if (l != LoaiPhanThuong.values.last) const SizedBox(width: Gap.sm),
+            ],
+          ],
+        ),
+        const SizedBox(height: Gap.lg),
+        if (_loai == LoaiPhanThuong.diem) ...[
+          const NhanO('Môn nào?'),
+          DropdownButtonFormField<String?>(
+            initialValue: s.monHoc.any((m) => m.id == _monId) ? _monId : null,
+            isExpanded: true,
+            style: AppType.ui(15, w: FontWeight.w500),
+            items: [
+              const DropdownMenuItem<String?>(value: null, child: Text('Môn nào cũng được')),
+              for (final m in s.monHoc) DropdownMenuItem<String?>(value: m.id, child: Text(m.ten)),
+            ],
+            onChanged: (v) => setState(() => _monId = v),
+          ),
+          const SizedBox(height: Gap.lg),
+          const NhanO('Bài nào?'),
+          Wrap(
+            spacing: Gap.sm,
+            runSpacing: Gap.sm,
+            children: [
+              for (final (LoaiKiemTra? ki, String nhan) in [
+                (null, 'Giữa hoặc cuối kì'),
+                (LoaiKiemTra.giuaKi, 'Giữa kì'),
+                (LoaiKiemTra.cuoiKi, 'Cuối kì'),
+              ])
+                ChoiceChip(
+                  label: Text(nhan),
+                  selected: _kiThi == ki,
+                  showCheckmark: false,
+                  selectedColor: AppColor.muc,
+                  labelStyle: AppType.ui(13,
+                      w: FontWeight.w600, color: _kiThi == ki ? Colors.white : AppColor.muc),
+                  onSelected: (_) => setState(() => _kiThi = ki),
+                ),
+            ],
+          ),
+          const SizedBox(height: Gap.lg),
+          const NhanO('Điểm từ bao nhiêu trở lên?'),
+          Wrap(
+            spacing: Gap.sm,
+            runSpacing: Gap.sm,
+            children: [
+              for (final d in _diemNhanh)
+                ChoiceChip(
+                  label: Text(chuDiem(d)),
+                  selected: _diemToiThieu == d,
+                  showCheckmark: false,
+                  selectedColor: AppColor.muc,
+                  labelStyle: AppType.numeric(13,
+                      w: FontWeight.w600, color: _diemToiThieu == d ? Colors.white : AppColor.muc),
+                  onSelected: (_) => setState(() => _diemToiThieu = d),
+                ),
+            ],
+          ),
+          const SizedBox(height: Gap.sm),
+          Text(
+            'Mỗi bài đạt là một lần quà. Điểm thường xuyên không tính — chỉ giữa kì và '
+            'cuối kì, ghi trong Sổ điểm.',
+            style: AppType.ui(12.5, color: AppColor.mucNhat, w: FontWeight.w400, height: 1.45),
+          ),
+        ] else ...[
         const NhanO('Bao nhiêu ngày liền xong hết bài?'),
         Wrap(
           spacing: Gap.sm,
@@ -513,12 +678,40 @@ class _SoanPhanThuongState extends State<_SoanPhanThuong> {
             ),
           ],
         ),
+        const SizedBox(height: Gap.md),
+        // Lặp lại là mặc định: thưởng đều mới giữ được nếp; quà lớn một lần
+        // (bộ Lego) thì tắt đi.
+        SwitchListTile.adaptive(
+          value: _lapLai,
+          onChanged: (v) => setState(() => _lapLai = v),
+          contentPadding: EdgeInsets.zero,
+          visualDensity: VisualDensity.compact,
+          title: Text('Lặp lại — cứ $_moc ngày lại được một lần',
+              style: AppType.ui(14, w: FontWeight.w600)),
+          subtitle: Text(
+            _lapLai
+                ? 'Chuỗi ${_moc * 2} ngày là hai lần quà. Đứt rồi nối lại thì đếm tiếp.'
+                : 'Một lần duy nhất. Trao xong bấm "Treo lại" nếu muốn đếm lại.',
+            style: AppType.ui(12.5, color: AppColor.mucNhat, w: FontWeight.w400, height: 1.4),
+          ),
+        ),
         const SizedBox(height: Gap.sm),
+        // Chuỗi đang có và kỷ lục — để chọn mốc vừa sức: xa hơn kỷ lục một
+        // chút thì hay, gấp ba thì con nản.
+        Text(
+          chuoi.daiNhat == 0
+              ? '$ten chưa có chuỗi ngày nào. Mốc đầu nên ngắn — 3 hay 5 ngày.'
+              : '$ten đang có chuỗi ${chuoi.hienTai} ngày, dài nhất từng đạt '
+                  '${chuoi.daiNhat} ngày. Mốc nhỉnh hơn kỷ lục một chút là vừa sức.',
+          style: AppType.ui(12.5, color: AppColor.muc, w: FontWeight.w600, height: 1.45),
+        ),
+        const SizedBox(height: 4),
         Text(
           'Ngày không có tiết trong thời khóa biểu không tính, và mỗi tuần $ten '
           'được một vé nghỉ — bận một tối cũng không đứt chuỗi.',
           style: AppType.ui(12.5, color: AppColor.mucNhat, w: FontWeight.w400, height: 1.45),
         ),
+        ],
         const SizedBox(height: Gap.lg),
         const NhanO('Quà là gì?'),
         TextField(
@@ -541,7 +734,7 @@ class _SoanPhanThuongState extends State<_SoanPhanThuong> {
               ),
           ],
         ),
-        if (suaCu) ...[
+        if (suaCu && _loai == LoaiPhanThuong.chuoi) ...[
           const SizedBox(height: Gap.md),
           Text(
             'Đổi mốc không đếm lại từ đầu — chuỗi vẫn tính từ ${Ngay.ddMM(widget.pt!.tuNgay)}.',

@@ -1,13 +1,13 @@
 # Kiểm thử phân quyền
 
-170 phép thử. Bộ này kiểm cái mà app không kiểm được: giả sử có người moi khóa
+180 phép thử. Bộ này kiểm cái mà app không kiểm được: giả sử có người moi khóa
 publishable ra khỏi file APK rồi gọi thẳng API, họ chạm được tới đâu. Câu trả
 lời phải là "chỉ dữ liệu của chính mình", và đó là việc của RLS chứ không phải
 của Flutter.
 
 ## Cách chạy
 
-1. Chạy xong `01_bang.sql` → `06_thong_bao.sql` và `10_phan_thuong.sql` trước đã (`07_thong_bao_may_chu.sql` không cần).
+1. Chạy xong `01_bang.sql` → `06_thong_bao.sql`, `10_phan_thuong.sql` và `11_diem_thi.sql` trước đã (`07_thong_bao_may_chu.sql` không cần).
 2. Supabase → **SQL Editor** → **New query** → dán toàn bộ `KIEM_THU.sql` → **Run**.
 3. Đọc thông báo hiện ra.
 
@@ -15,7 +15,7 @@ Kết quả luôn hiện dưới dạng **khung lỗi màu đỏ** — đó là 
 chứ đừng nhìn màu:
 
 ```
-KIỂM THỬ PHÂN QUYỀN — tất cả 170 phép thử đều ĐẠT.
+KIỂM THỬ PHÂN QUYỀN — tất cả 180 phép thử đều ĐẠT.
 ```
 
 hoặc, khi có chỗ hỏng:
@@ -54,6 +54,7 @@ lẻ rồi chạy lại script đó, đừng sửa thẳng file nối.
 | `06_danh_muc.sql` | Tỉnh, trường công khai nhưng chỉ quản trị sửa; thầy cô chung ai cũng thấy, thầy riêng chỉ nhà mình thấy và tự thêm được |
 | `07_thong_bao.sql` | Thông báo đẩy: máy của ai người đó đăng ký; hàng đợi chỉ trigger ghi và xếp đúng người — con gửi bài → bố mẹ, bố mẹ nhận xét/nhắc → con |
 | `07b_phan_thuong.sql` | Phần thưởng: bố mẹ treo dưới tên mình, trao, xóa; con chỉ nhìn |
+| `07c_diem_thi.sql` | Sổ điểm: con và bố mẹ ghi/sửa/xóa, thang 10; người lạ không thấy |
 | `08_chay.sql` | Vòng lặp chạy bảng phép thử ở trên |
 | `10_ma_moi.sql` | Mã mời — viết tay vì phải bắt lấy mã vừa sinh rồi mang đi dùng lại |
 | `11_theo_lich.sql` | Đợt nhắc 20:00 và tổng kết tuần — viết tay vì chạy với vai máy chủ như pg_cron |
@@ -61,7 +62,7 @@ lẻ rồi chạy lại script đó, đừng sửa thẳng file nối.
 
 ## Thêm một phép thử
 
-Chèn một dòng vào file `01`–`07b`, đúng năm cột:
+Chèn một dòng vào file `01`–`07c`, đúng năm cột:
 
 ```sql
     ('PH lạ không xóa được liên kết của nhà khác',   -- tên hiện trong báo cáo

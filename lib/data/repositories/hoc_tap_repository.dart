@@ -107,6 +107,14 @@ abstract interface class HocTapRepository {
   Future<void> guiNhacNho(NhacNho nn);
   Future<void> danhDauDaDoc(String hocSinhId, String nhacNhoId);
 
+  // ------------------------------------------------------------------ sổ điểm
+
+  Future<List<DiemThi>> diemThi(String hocSinhId);
+
+  /// Ghi đè theo id — con hay bố mẹ ghi đều qua đây.
+  Future<void> luuDiemThi(DiemThi d);
+  Future<void> xoaDiemThi(String hocSinhId, String id);
+
   // -------------------------------------------------------------- phần thưởng
 
   Future<List<PhanThuong>> phanThuong(String hocSinhId);

@@ -11,6 +11,7 @@ import '../../data/app_state.dart';
 import '../../data/models/models.dart';
 import '../shared/chi_tiet_bao_cao_screen.dart';
 import '../shared/phan_thuong.dart';
+import '../shared/so_diem.dart';
 import '../shared/soan_bao_cao_screen.dart';
 import '../shared/the_bao_cao.dart';
 import 'diem_danh_hom_nay.dart';
@@ -138,6 +139,8 @@ class TrangChuHsScreen extends StatelessWidget {
                       const SizedBox(height: Gap.xl),
                       const KhungPhanThuong(),
                       const SizedBox(height: Gap.xl),
+                      const KhungSoDiem(),
+                      const SizedBox(height: Gap.xl),
                       const KeHuyHieu(),
                     ],
                   ),
@@ -165,6 +168,8 @@ class TrangChuHsScreen extends StatelessWidget {
                         const SizedBox(height: Gap.xl),
                       ],
                       const KhungPhanThuong(),
+                      const SizedBox(height: Gap.xl),
+                      const KhungSoDiem(),
                       const SizedBox(height: Gap.xl),
                       const KeHuyHieu(),
                       const SizedBox(height: Gap.xl),

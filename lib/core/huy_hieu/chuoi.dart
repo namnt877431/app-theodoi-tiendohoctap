@@ -27,6 +27,7 @@ class KetQuaChuoi {
     required this.daiNhat,
     required this.veDaDungTuanNay,
     required this.veConLaiTuanNay,
+    this.cacChuoi = const [],
     this.ngayDungVeGanNhat,
   });
 
@@ -36,6 +37,10 @@ class KetQuaChuoi {
     veDaDungTuanNay: 0,
     veConLaiTuanNay: 0,
   );
+
+  /// Độ dài từng chuỗi đã có trong khoảng đếm, theo thứ tự thời gian; chuỗi
+  /// đang chạy (nếu có) là phần tử cuối. Phần thưởng lặp lại đếm trên đây.
+  final List<int> cacChuoi;
 
   /// Chuỗi tính tới hôm nay. Hôm nay chưa báo cáo thì chưa đứt — ngày còn
   /// chưa hết.
@@ -80,9 +85,15 @@ KetQuaChuoi demChuoi(
   if (tuNgay != null && _ngay(tuNgay).isAfter(dau)) dau = _ngay(tuNgay);
 
   final veDaDung = <DateTime, int>{};
+  final cacChuoi = <int>[];
   DateTime? veGanNhat;
   var hienTai = 0;
   var daiNhat = 0;
+  void dut() {
+    if (hienTai > 0) cacChuoi.add(hienTai);
+    hienTai = 0;
+  }
+
   for (var d = dau; !d.isAfter(nay); d = d.add(const Duration(days: 1))) {
     final tron = theoNgay[d];
     if (tron == true) {
@@ -91,7 +102,7 @@ KetQuaChuoi demChuoi(
       continue;
     }
     if (tron == false) {
-      hienTai = 0;
+      dut();
       continue;
     }
     // Ngày trống.
@@ -104,8 +115,9 @@ KetQuaChuoi demChuoi(
       veGanNhat = d;
       continue;
     }
-    hienTai = 0;
+    dut();
   }
+  if (hienTai > 0) cacChuoi.add(hienTai);
 
   final dungTuanNay = veDaDung[tuan] ?? 0;
   return KetQuaChuoi(
@@ -113,6 +125,7 @@ KetQuaChuoi demChuoi(
     daiNhat: daiNhat,
     veDaDungTuanNay: dungTuanNay,
     veConLaiTuanNay: (luat.veMoiTuan - dungTuanNay).clamp(0, luat.veMoiTuan),
+    cacChuoi: cacChuoi,
     ngayDungVeGanNhat: veGanNhat,
   );
 }

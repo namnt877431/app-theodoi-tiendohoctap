@@ -53,10 +53,13 @@ class ChiTietBaoCaoScreen extends StatelessWidget {
         final le = BoCuc.le(context);
         // Lời của học sinh: nhãn và trang vở…
         final trangVo = <Widget>[
-          Row(
+          // Wrap chứ không Row: người dùng phóng chữ lên 1.3 thì hai nhãn
+          // không còn vừa một hàng trên điện thoại hẹp.
+          Wrap(
+            spacing: Gap.sm,
+            runSpacing: Gap.sm,
             children: [
               NhanLoai(bc.loai, dayDu: true),
-              const SizedBox(width: Gap.sm),
               NhanTrangThai(bc.trangThai),
             ],
           ),
@@ -214,7 +217,11 @@ class _LuoiAnh extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         itemCount: duongDan.length,
         separatorBuilder: (_, _) => const SizedBox(width: Gap.sm),
-        itemBuilder: (_, i) => AnhBaiLam(duongDan: duongDan[i], canh: 132),
+        itemBuilder: (context, i) => AnhBaiLam(
+          duongDan: duongDan[i],
+          canh: 132,
+          onTap: () => moXemAnh(context, duongDan: duongDan, batDau: i),
+        ),
       ),
     );
   }

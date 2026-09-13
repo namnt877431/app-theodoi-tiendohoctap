@@ -399,13 +399,112 @@ class NhacNho {
       );
 }
 
-/// Phần thưởng bố mẹ treo cho một chuỗi ngày trọn vẹn: "7 ngày liền → đi ăn
-/// kem". App chỉ đếm; quà là thật và do nhà tự chọn — động lực bền nhất là
-/// thứ đến từ bố mẹ, không phải từ máy.
+/// Ba loại bài kiểm tra ở trường phổ thông. Thường xuyên là điểm miệng, 15
+/// phút; giữa kì và cuối kì là hai bài lớn mỗi học kì — thưởng thường treo
+/// vào hai bài đó.
+enum LoaiKiemTra {
+  thuongXuyen('Thường xuyên', 'TX'),
+  giuaKi('Giữa kì', 'GK'),
+  cuoiKi('Cuối kì', 'CK');
+
+  const LoaiKiemTra(this.nhan, this.nhanNgan);
+  final String nhan;
+  final String nhanNgan;
+
+  /// Hai bài lớn — loại mà phần thưởng nhắm tới.
+  bool get laBaiLon => this != thuongXuyen;
+}
+
+/// Một điểm kiểm tra trong sổ điểm. Con hay bố mẹ đều ghi được; điểm là
+/// thang 10, lẻ tới 0,25.
+class DiemThi {
+  const DiemThi({
+    required this.id,
+    required this.hocSinhId,
+    required this.monId,
+    required this.loai,
+    required this.hocKi,
+    required this.diem,
+    required this.ngay,
+    required this.taoLuc,
+    this.ghiChu,
+    this.taoBoi,
+  });
+
+  final String id;
+  final String hocSinhId;
+  final String monId;
+  final LoaiKiemTra loai;
+
+  /// Học kì 1 hay 2.
+  final int hocKi;
+  final double diem;
+  final DateTime ngay;
+  final String? ghiChu;
+
+  /// Ai ghi — con hay bố mẹ.
+  final String? taoBoi;
+  final DateTime taoLuc;
+
+  /// "8,5" — dấu phẩy như trên học bạ, bỏ ",0".
+  String get diemChu => chuDiem(diem);
+
+  DiemThi copyWith({
+    String? monId,
+    LoaiKiemTra? loai,
+    int? hocKi,
+    double? diem,
+    DateTime? ngay,
+    String? Function()? ghiChu,
+  }) =>
+      DiemThi(
+        id: id,
+        hocSinhId: hocSinhId,
+        monId: monId ?? this.monId,
+        loai: loai ?? this.loai,
+        hocKi: hocKi ?? this.hocKi,
+        diem: diem ?? this.diem,
+        ngay: ngay ?? this.ngay,
+        ghiChu: ghiChu == null ? this.ghiChu : ghiChu(),
+        taoBoi: taoBoi,
+        taoLuc: taoLuc,
+      );
+}
+
+/// 8.5 → "8,5", 9.0 → "9" — dấu phẩy như trên học bạ.
+String chuDiem(double d) {
+  var s = d.toStringAsFixed(2);
+  if (s.contains('.')) {
+    s = s.replaceAll(RegExp(r'0+$'), '');
+    if (s.endsWith('.')) s = s.substring(0, s.length - 1);
+  }
+  return s.replaceAll('.', ',');
+}
+
+/// Phần thưởng thuộc về gì: chuỗi ngày trọn bài, hay điểm bài kiểm tra.
+enum LoaiPhanThuong {
+  chuoi('Chuỗi ngày'),
+  diem('Điểm thi');
+
+  const LoaiPhanThuong(this.nhan);
+  final String nhan;
+}
+
+/// Phần thưởng bố mẹ treo. App chỉ đếm; quà là thật và do nhà tự chọn —
+/// động lực bền nhất là thứ đến từ bố mẹ, không phải từ máy.
 ///
-/// Đạt hay chưa không lưu, mà tính từ báo cáo: có một chuỗi dài ≥ [moc] kể
-/// từ [tuNgay]. Bố mẹ trao xong thì "treo lại" — [tuNgay] về hôm nay, chuỗi
-/// đếm lại từ đầu.
+/// Hai loại, số lần đạt đều tính từ dữ liệu kể từ [tuNgay], không lưu:
+///
+/// - [LoaiPhanThuong.chuoi]: "7 ngày liền xong hết bài → đi ăn kem".
+///   [lapLai] thì cứ mỗi [moc] ngày liền lại một lần — chuỗi 15 ngày với mốc
+///   7 là hai lần; đứt rồi nối lại thì đếm tiếp. Không lặp thì một lần duy
+///   nhất, trao xong "treo lại" mới đếm lại.
+/// - [LoaiPhanThuong.diem]: "điểm giữa kì Toán từ 8 trở lên → quà". Mỗi bài
+///   đạt là một lần; [monId] null là môn nào cũng được, [kiThi] null là giữa
+///   kì hay cuối kì đều được.
+///
+/// Bố mẹ bấm "Đã trao" là [soLanTrao] tăng một; số lần đạt trừ số lần trao
+/// là số quà còn nợ con.
 class PhanThuong {
   const PhanThuong({
     required this.id,
@@ -415,7 +514,13 @@ class PhanThuong {
     required this.ten,
     required this.tuNgay,
     required this.taoLuc,
+    this.loai = LoaiPhanThuong.chuoi,
+    this.lapLai = true,
+    this.soLanTrao = 0,
     this.traoLuc,
+    this.monId,
+    this.kiThi,
+    this.diemToiThieu,
   });
 
   final String id;
@@ -423,49 +528,95 @@ class PhanThuong {
 
   /// Phụ huynh đã treo.
   final String taoBoi;
+  final LoaiPhanThuong loai;
 
-  /// Số ngày liền phải đạt.
+  /// Số ngày liền phải đạt (loại chuỗi).
   final int moc;
   final String ten;
 
+  /// Loại điểm: môn (null = môn nào cũng được), kì thi (null = giữa hay
+  /// cuối kì đều được), điểm từ bao nhiêu trở lên.
+  final String? monId;
+  final LoaiKiemTra? kiThi;
+  final double? diemToiThieu;
+
   /// Chuỗi chỉ tính từ ngày này — treo lại là dời nó lên hôm nay.
   final DateTime tuNgay;
+  final bool lapLai;
 
-  /// Bố mẹ đã trao quà lúc nào; null là chưa.
+  /// Số lần bố mẹ đã trao, và lần gần nhất.
+  final int soLanTrao;
   final DateTime? traoLuc;
   final DateTime taoLuc;
 
-  bool get daTrao => traoLuc != null;
+  /// Quà một lần đã trao xong — chỉ còn "treo lại" hoặc xóa. Quà điểm thi
+  /// thì mỗi bài là một lần, không bao giờ "xong hẳn".
+  bool get xongHan => loai == LoaiPhanThuong.chuoi && !lapLai && soLanTrao > 0;
+
+  /// Một bài kiểm tra có tính cho phần thưởng này không.
+  bool khopDiem(DiemThi d) =>
+      loai == LoaiPhanThuong.diem &&
+      d.loai.laBaiLon &&
+      (monId == null || d.monId == monId) &&
+      (kiThi == null || d.loai == kiThi) &&
+      d.diem >= (diemToiThieu ?? 10) &&
+      !d.ngay.isBefore(DateTime(tuNgay.year, tuNgay.month, tuNgay.day));
 
   PhanThuong copyWith({
     int? moc,
     String? ten,
     DateTime? tuNgay,
+    bool? lapLai,
+    int? soLanTrao,
     DateTime? Function()? traoLuc,
+    LoaiPhanThuong? loai,
+    String? Function()? monId,
+    LoaiKiemTra? Function()? kiThi,
+    double? diemToiThieu,
   }) =>
       PhanThuong(
         id: id,
         hocSinhId: hocSinhId,
         taoBoi: taoBoi,
+        loai: loai ?? this.loai,
         moc: moc ?? this.moc,
         ten: ten ?? this.ten,
         tuNgay: tuNgay ?? this.tuNgay,
+        lapLai: lapLai ?? this.lapLai,
+        soLanTrao: soLanTrao ?? this.soLanTrao,
         traoLuc: traoLuc == null ? this.traoLuc : traoLuc(),
+        monId: monId == null ? this.monId : monId(),
+        kiThi: kiThi == null ? this.kiThi : kiThi(),
+        diemToiThieu: diemToiThieu ?? this.diemToiThieu,
         taoLuc: taoLuc,
       );
 }
 
 /// Một phần thưởng kèm chỗ đứng hiện tại của con so với mốc.
 class TienDoPhanThuong {
-  const TienDoPhanThuong(this.phanThuong, {required this.hienTai, required this.dat});
+  const TienDoPhanThuong(
+    this.phanThuong, {
+    required this.hienTai,
+    required this.soLanDat,
+    this.baiDat = const [],
+  });
 
   final PhanThuong phanThuong;
 
-  /// Chuỗi hiện tại tính từ ngày treo.
+  /// Bước tới lần đạt kế tiếp: quà lặp lại thì là phần dư của chuỗi hiện tại
+  /// so với mốc; quà một lần thì là chuỗi hiện tại.
   final int hienTai;
 
-  /// Đã có chuỗi chạm mốc kể từ ngày treo — kể cả khi sau đó đứt.
-  final bool dat;
+  /// Số lần đã chạm mốc kể từ ngày treo.
+  final int soLanDat;
+
+  /// Quà điểm thi: những bài đã đạt, mới nhất trước — để nói "9,0 giữa kì
+  /// Toán" chứ không chỉ "đạt".
+  final List<DiemThi> baiDat;
+
+  /// Số quà bố mẹ còn nợ con.
+  int get conNo => (soLanDat - phanThuong.soLanTrao).clamp(0, soLanDat);
+  bool get dat => conNo > 0;
 
   int get conLai => (phanThuong.moc - hienTai).clamp(0, phanThuong.moc);
   double get tiLe => dat ? 1 : (hienTai / phanThuong.moc).clamp(0, 1).toDouble();
@@ -514,6 +665,13 @@ List<String> chuoiTu(Object? v) =>
 int? soTu(Object? v) => switch (v) {
       num n => n.toInt(),
       String s => int.tryParse(s),
+      _ => null,
+    };
+
+/// Cột numeric của Postgres về qua PostgREST là chuỗi "8.50".
+double? thucTu(Object? v) => switch (v) {
+      num n => n.toDouble(),
+      String s => double.tryParse(s.replaceAll(',', '.')),
       _ => null,
     };
 
@@ -742,20 +900,59 @@ extension PhanThuongPg on PhanThuong {
         'id': id,
         'hoc_sinh_id': hocSinhId,
         'tao_boi': taoBoi,
+        'loai': loai.name,
         'moc': moc,
         'ten': ten,
         'tu_ngay': ngayIso(tuNgay),
+        'lap_lai': lapLai,
+        'so_lan_trao': soLanTrao,
         'trao_luc': traoLuc?.toIso8601String(),
+        'mon_id': monId,
+        'ki_thi': kiThi?.name,
+        'diem_toi_thieu': diemToiThieu,
       };
 
   static PhanThuong fromMap(Map<String, Object?> m) => PhanThuong(
         id: '${m['id'] ?? ''}',
         hocSinhId: '${m['hoc_sinh_id'] ?? ''}',
         taoBoi: '${m['tao_boi'] ?? ''}',
+        loai: enumTu(LoaiPhanThuong.values, m['loai'], LoaiPhanThuong.chuoi),
         moc: soTu(m['moc']) ?? 7,
         ten: '${m['ten'] ?? ''}',
         tuNgay: ngayTu(m['tu_ngay']) ?? DateTime.now(),
+        lapLai: m['lap_lai'] as bool? ?? false,
+        soLanTrao: soTu(m['so_lan_trao']) ?? 0,
         traoLuc: ngayTu(m['trao_luc']),
+        monId: m['mon_id'] as String?,
+        kiThi: m['ki_thi'] == null ? null : enumTu(LoaiKiemTra.values, m['ki_thi'], LoaiKiemTra.giuaKi),
+        diemToiThieu: thucTu(m['diem_toi_thieu']),
+        taoLuc: ngayTu(m['tao_luc']) ?? DateTime.now(),
+      );
+}
+
+extension DiemThiPg on DiemThi {
+  Map<String, Object?> toMap() => {
+        'id': id,
+        'hoc_sinh_id': hocSinhId,
+        'mon_id': monId,
+        'loai': loai.name,
+        'hoc_ki': hocKi,
+        'diem': diem,
+        'ngay': ngayIso(ngay),
+        'ghi_chu': ghiChu,
+        'tao_boi': taoBoi,
+      };
+
+  static DiemThi fromMap(Map<String, Object?> m) => DiemThi(
+        id: '${m['id'] ?? ''}',
+        hocSinhId: '${m['hoc_sinh_id'] ?? ''}',
+        monId: '${m['mon_id'] ?? ''}',
+        loai: enumTu(LoaiKiemTra.values, m['loai'], LoaiKiemTra.thuongXuyen),
+        hocKi: soTu(m['hoc_ki']) ?? 1,
+        diem: thucTu(m['diem']) ?? 0,
+        ngay: ngayTu(m['ngay']) ?? DateTime.now(),
+        ghiChu: m['ghi_chu'] as String?,
+        taoBoi: m['tao_boi'] as String?,
         taoLuc: ngayTu(m['tao_luc']) ?? DateTime.now(),
       );
 }
