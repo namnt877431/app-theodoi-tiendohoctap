@@ -25,10 +25,11 @@ GOC = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = os.path.join(GOC, 'build', 'web')
 
 
-def chay(lenh, cwd=GOC, im=False):
+def chay(lenh, cwd=GOC, im=False, env=None):
     if not im:
         print('  $', ' '.join(lenh))
-    r = subprocess.run(lenh, cwd=cwd, capture_output=True, text=True, encoding='utf-8', errors='replace', shell=os.name == 'nt')
+    r = subprocess.run(lenh, cwd=cwd, env=env, capture_output=True, text=True,
+                       encoding='utf-8', errors='replace', shell=os.name == 'nt')
     if r.returncode != 0:
         print(r.stdout[-2000:])
         print(r.stderr[-2000:])
@@ -61,15 +62,23 @@ def main():
     io.open(os.path.join(WEB, '.nojekyll'), 'w').close()
 
     print('Đẩy lên nhánh gh-pages')
-    git_dir = os.path.join(WEB, '.git')
-    if os.path.isdir(git_dir):
-        shutil.rmtree(git_dir)
-    chay(['git', 'init', '-q', '-b', 'gh-pages'], cwd=WEB, im=True)
-    chay(['git', 'add', '-A'], cwd=WEB, im=True)
-    chay(['git', '-c', 'user.name=dua_len_web', '-c', 'user.email=web@local',
-          'commit', '-q', '-m', f'Web {datetime.now():%Y-%m-%d %H:%M}'], cwd=WEB, im=True)
-    chay(['git', 'push', '-f', remote, 'gh-pages:gh-pages'], cwd=WEB)
-    shutil.rmtree(git_dir, ignore_errors=True)
+    # Không tạo repo lồng trong build/web (Windows hay giữ file, xóa .git dở
+    # dang rồi git lại trèo lên repo mẹ). Thay vào đó ghi thẳng một commit mồ
+    # côi vào repo chính bằng một index tạm: cây = nội dung build/web.
+    index_tam = os.path.join(GOC, '.git', 'index.ghpages')
+    if os.path.exists(index_tam):
+        os.remove(index_tam)
+    moi_truong = dict(os.environ, GIT_INDEX_FILE=index_tam)
+    try:
+        chay(['git', '--work-tree=build/web', 'add', '-A', '-f', '.'], env=moi_truong, im=True)
+        cay = chay(['git', 'write-tree'], env=moi_truong, im=True)
+        commit = chay(['git', 'commit-tree', cay, '-m', f'Web {datetime.now():%Y-%m-%d %H:%M}'],
+                      env=moi_truong, im=True)
+    finally:
+        if os.path.exists(index_tam):
+            os.remove(index_tam)
+    chay(['git', 'update-ref', 'refs/heads/gh-pages', commit], im=True)
+    chay(['git', 'push', '-f', 'origin', 'gh-pages'])
 
     # Trỏ Pages vào nhánh này nếu có gh; không có thì chỉ nhắc.
     if shutil.which('gh'):
