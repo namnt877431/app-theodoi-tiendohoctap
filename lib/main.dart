@@ -14,6 +14,7 @@ import 'core/theme/typography.dart';
 import 'core/thong_bao/fcm_kenh.dart';
 import 'core/thong_bao/kenh_thong_bao.dart';
 import 'core/widgets/con_dau.dart';
+import 'core/widgets/khung_rong.dart';
 import 'core/huy_hieu/huy_hieu.dart';
 import 'data/app_state.dart';
 import 'data/nhap/kho_nhap.dart';
@@ -163,7 +164,7 @@ class _SoLienLacAppState extends State<SoLienLacApp> with WidgetsBindingObserver
         builder: (context, child) => MediaQuery.withClampedTextScaling(
           minScaleFactor: 0.9,
           maxScaleFactor: 1.3,
-          child: child!,
+          child: KhungRong(child: child!),
         ),
       ),
     );
