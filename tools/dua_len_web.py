@@ -55,7 +55,8 @@ def main():
     print(f'Build web, base-href {base}')
     if os.path.isdir(WEB):
         shutil.rmtree(WEB)
-    chay(['flutter', 'build', 'web', '--release', '--base-href', base, *dinh_nghia])
+    # --no-wasm-dry-run: khỏi biên dịch thử wasm, tiết kiệm nửa thời gian build.
+    chay(['flutter', 'build', 'web', '--release', '--no-wasm-dry-run', '--base-href', base, *dinh_nghia])
 
     # Pages mặc định chạy Jekyll, sẽ bỏ qua thư mục bắt đầu bằng dấu gạch dưới
     # — Flutter không có, nhưng tắt hẳn cho chắc.
