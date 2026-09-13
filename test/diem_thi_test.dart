@@ -138,6 +138,55 @@ void main() {
     });
   });
 
+  group('Cả năm và xếp loại', () {
+    KetQuaMon km(String mon, double? tb, {bool? dat}) =>
+        KetQuaMon(mon, tb: tb != null ? TbMon.so(tb) : dat != null ? TbMon.nhanXet(dat) : null);
+
+    test('TB cả năm = (HK1 + 2 × HK2) ÷ 3; thiếu một kỳ thì chưa tính', () {
+      final ds = [
+        _d('m_toan', LoaiKiemTra.giuaKi, 8, hocKi: 1),
+        _d('m_toan', LoaiKiemTra.cuoiKi, 8, hocKi: 1),
+        _d('m_toan', LoaiKiemTra.giuaKi, 9.5, hocKi: 2),
+        _d('m_toan', LoaiKiemTra.cuoiKi, 9.5, hocKi: 2),
+      ];
+      final k = ketQuaCaNam('m_toan', ds);
+      expect(k.hk1!.so, closeTo(8, 1e-9));
+      expect(k.hk2!.so, closeTo(9.5, 1e-9));
+      expect(k.tb!.so, closeTo((8 + 2 * 9.5) / 3, 1e-9));
+      expect(k.chu, '9,0');
+
+      final thieu = ketQuaCaNam('m_toan', ds.where((d) => d.hocKi == 1).toList());
+      expect(thieu.tb, isNull);
+      expect(thieu.chuaDu, isTrue);
+    });
+
+    test('môn nhận xét cả năm Đ khi cả hai kỳ Đ', () {
+      final ds = [_nx('m_td', true).copyWith(hocKi: 1), _nx('m_td', true).copyWith(hocKi: 2)];
+      expect(ketQuaCaNam('m_td', ds).chu, 'Đ');
+      final xau = [_nx('m_td', true).copyWith(hocKi: 1), _nx('m_td', false).copyWith(hocKi: 2)];
+      expect(ketQuaCaNam('m_td', xau).chu, 'CĐ');
+    });
+
+    test('xếp loại Giỏi cần TB ≥ 8, không môn nào dưới 6,5, Toán hoặc Văn ≥ 8, nhận xét Đ', () {
+      expect(xepLoaiHocLuc([km('m_toan', 8.5), km('m_van', 7), km('m_anh', 9), km('m_td', null, dat: true)]), 'Giỏi');
+      // Một môn 6,4 → tụt xuống Khá.
+      expect(xepLoaiHocLuc([km('m_toan', 9), km('m_van', 9), km('m_anh', 6.4)]), 'Khá');
+      // Toán và Văn đều dưới 8 → Khá dù TB cao.
+      expect(xepLoaiHocLuc([km('m_toan', 7.9), km('m_van', 7.9), km('m_anh', 10), km('m_ly', 10)]), 'Khá');
+      // Thể dục CĐ → không Giỏi, không Khá, không TB → Yếu.
+      expect(xepLoaiHocLuc([km('m_toan', 9), km('m_van', 9), km('m_td', null, dat: false)]), 'Yếu');
+    });
+
+    test('các mức thấp hơn; chưa có TBM nào thì không xếp', () {
+      expect(xepLoaiHocLuc([km('m_toan', 7), km('m_van', 6)]), 'Khá');
+      expect(xepLoaiHocLuc([km('m_toan', 5.5), km('m_van', 4.5)]), 'Trung bình');
+      expect(xepLoaiHocLuc([km('m_toan', 4), km('m_van', 3)]), 'Yếu');
+      expect(xepLoaiHocLuc([km('m_toan', 2), km('m_van', 1)]), 'Kém');
+      expect(xepLoaiHocLuc([km('m_toan', null), km('m_td', null, dat: true)]), isNull);
+      expect(tbCacMonCua([km('m_toan', 8), km('m_van', 6)]), closeTo(7, 1e-9));
+    });
+  });
+
   group('Bảng điểm (widget)', () {
     for (final rong in [360.0, 390.0, 800.0]) {
       testWidgets('đủ mọi môn một hàng, không tràn ở $rong', (t) async {
@@ -162,6 +211,23 @@ void main() {
         expect(find.text('TBM'), findsOneWidget);
       });
     }
+
+    testWidgets('chế độ cả năm: ba cột học kỳ 1, học kỳ 2, cả năm', (t) async {
+      final s = (await t.runAsync(() => vaoVoiVaiTro(VaiTro.hocSinh)))!;
+      t.view.physicalSize = const Size(390, 900);
+      t.view.devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      await t.pumpWidget(ChangeNotifierProvider.value(
+        value: s,
+        child: const MaterialApp(home: SoDiemScreen()),
+      ));
+      await t.pump();
+      await t.tap(find.text('Cả năm'));
+      await t.pump();
+      expect(t.takeException(), isNull);
+      expect(find.text('Học kỳ 1'), findsNWidgets(2), reason: 'chip và đầu cột');
+      expect(find.text('TBM'), findsNothing);
+    });
 
     testWidgets('chạm ô trống mở bảng ghi với đúng môn và cột', (t) async {
       final s = (await t.runAsync(() => vaoVoiVaiTro(VaiTro.hocSinh)))!;

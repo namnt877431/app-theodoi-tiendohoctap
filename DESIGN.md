@@ -103,7 +103,9 @@ không dùng đổ bóng.
   lại vừa khít điện thoại 390 px, không bắt cuộn ngang mới thấy học kỳ. Màu
   điểm theo bốn mức xếp loại (xanh lá ≥ 8, mực ≥ 6,5, hổ phách ≥ 5, đỏ dưới
   5); TBM tính đúng hệ số trường dùng (1, 1, 2, 3), một chữ số lẻ, chỉ hiện
-  khi đủ cả 1 tiết lẫn học kỳ — con số nửa vời chỉ gây hiểu nhầm.
+  khi đủ cả 1 tiết lẫn học kỳ — con số nửa vời chỉ gây hiểu nhầm. Chế độ
+  "Cả năm" là bảng ba cột HK1 · HK2 · Cả năm ((HK1 + 2 × HK2) ÷ 3) kèm xếp
+  loại học lực; còn môn nào thiếu TBM thì ghi rõ "(tạm tính)".
 
 ## Chữ nghĩa trong giao diện
 

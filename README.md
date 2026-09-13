@@ -32,8 +32,9 @@ khóa biểu không tính, và mỗi tuần con có một **vé nghỉ** tự d�
 vào **sổ điểm** đúng như tờ sổ điểm ở trường — mỗi môn một hàng, cột Điểm
 miệng · Điểm 15 phút · Điểm 1 tiết · Học kỳ · TBM, nhiều điểm ghi liền
 "10 | 9,5", môn Thể dục, Âm nhạc chấm Đ/CĐ — con hay bố mẹ ghi đều được, chạm
-một ô là ghi vào đúng môn đúng cột. Ảnh bài làm chạm vào là xem cả màn hình:
-phóng to đọc chữ, xoay, tải về máy.
+một ô là ghi vào đúng môn đúng cột. Có TBM từng kỳ, **TB cả năm** và **xếp
+loại học lực** (Giỏi / Khá / Trung bình / Yếu). Ảnh bài làm chạm vào là xem
+cả màn hình: phóng to đọc chữ, xoay, tải về máy.
 
 ---
 

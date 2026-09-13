@@ -182,72 +182,81 @@ class SoDiemScreen extends StatefulWidget {
 }
 
 class _SoDiemScreenState extends State<SoDiemScreen> {
-  late int _hocKi = AppState.hocKiCua(DateTime.now());
+  /// 1, 2 là học kỳ; 0 là cả năm.
+  late int _cheDo = AppState.hocKiCua(DateTime.now());
 
   @override
   Widget build(BuildContext context) {
     final s = context.watch<AppState>();
     final ten = s.hocSinhHienTai?.tenGoi ?? 'con';
-    final ds = s.diemThi.where((d) => d.hocKi == _hocKi).toList();
-    final tbCacMon = [
+    final caNam = _cheDo == 0;
+    final ds = caNam ? s.diemThi : s.diemThi.where((d) => d.hocKi == _cheDo).toList();
+
+    // Kết quả từng môn cho chế độ đang xem, để tính TB các môn và xếp loại.
+    final ketQua = [
       for (final m in s.monHoc)
-        diemTrungBinh(ds.where((d) => d.monId == m.id).toList()),
-    ].whereType<double>().toList();
+        caNam ? ketQuaCaNam(m.id, s.diemThi) : ketQuaHocKi(m.id, ds),
+    ];
+    final tbCacMon = tbCacMonCua(ketQua);
+    final xepLoai = xepLoaiHocLuc(ketQua);
+    // Còn môn nào chưa có TBM thì xếp loại chỉ là tạm — học lực thật cần đủ
+    // mọi môn.
+    final tamTinh = ketQua.any((k) => k.tb == null);
 
     return Scaffold(
       appBar: AppBar(title: Text('Sổ điểm của $ten')),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => moGhiDiem(context, hocKi: _hocKi),
+        onPressed: () => moGhiDiem(context, hocKi: caNam ? null : _cheDo),
         icon: const Icon(Icons.add_rounded),
         label: const Text('Ghi điểm'),
       ),
       body: ListView(
-        padding: EdgeInsets.fromLTRB(
-          BoCuc.le(context),
-          Gap.sm,
-          BoCuc.le(context),
-          96,
-        ),
+        padding: EdgeInsets.fromLTRB(BoCuc.le(context), Gap.sm, BoCuc.le(context), 96),
         children: [
           NoiDung(
             toiDa: 900,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Row(
+                // Wrap chứ không Row: ba chip cộng chữ to có thể không vừa một
+                // hàng trên máy hẹp.
+                Wrap(
+                  spacing: Gap.sm - 2,
+                  runSpacing: Gap.sm - 2,
                   children: [
-                    for (final ki in [1, 2]) ...[
+                    for (final (int cd, String nhan) in [(1, 'Học kỳ 1'), (2, 'Học kỳ 2'), (0, 'Cả năm')])
                       ChoiceChip(
-                        label: Text('Học kỳ $ki'),
-                        selected: _hocKi == ki,
+                        label: Text(nhan),
+                        selected: _cheDo == cd,
                         showCheckmark: false,
                         selectedColor: AppColor.muc,
-                        labelStyle: AppType.ui(
-                          13,
-                          w: FontWeight.w600,
-                          color: _hocKi == ki ? Colors.white : AppColor.muc,
-                        ),
-                        onSelected: (_) => setState(() => _hocKi = ki),
+                        visualDensity: VisualDensity.compact,
+                        labelStyle: AppType.ui(13,
+                            w: FontWeight.w600, color: _cheDo == cd ? Colors.white : AppColor.muc),
+                        onSelected: (_) => setState(() => _cheDo = cd),
                       ),
-                      const SizedBox(width: Gap.sm),
-                    ],
+                  ],
+                ),
+                const SizedBox(height: Gap.sm),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
                     Expanded(
                       child: Text(
-                        tbCacMon.isEmpty
-                            ? '${ds.length} điểm'
-                            : 'TB các môn ${chuTbm(tbCacMon.reduce((a, b) => a + b) / tbCacMon.length)}',
-                        textAlign: TextAlign.right,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppType.numeric(
-                          12.5,
-                          color: tbCacMon.isEmpty
-                              ? AppColor.mucNhat
-                              : AppColor.muc,
-                          w: FontWeight.w700,
-                        ),
+                        tbCacMon == null
+                            ? '${ds.length} điểm đã ghi'
+                            : 'TB các môn${tamTinh ? ' (tạm tính)' : ''}'
+                                '${xepLoai == null ? '' : ' · Học lực $xepLoai'}',
+                        style: AppType.ui(12.5, color: AppColor.mucNhat, w: FontWeight.w600, height: 1.4),
                       ),
                     ),
+                    if (tbCacMon != null) ...[
+                      const SizedBox(width: Gap.sm),
+                      Text(
+                        chuTbm(tbCacMon),
+                        style: AppType.numeric(18, color: mauSo(tbCacMon), w: FontWeight.w700),
+                      ),
+                    ],
                   ],
                 ),
                 const SizedBox(height: Gap.md),
@@ -255,21 +264,21 @@ class _SoDiemScreenState extends State<SoDiemScreen> {
                   const TrangTrong(
                     icon: Icons.menu_book_outlined,
                     tieuDe: 'Chưa có môn học nào',
-                    moTa:
-                        'Danh mục môn học còn trống nên chưa lập được sổ điểm.',
+                    moTa: 'Danh mục môn học còn trống nên chưa lập được sổ điểm.',
                   )
+                else if (caNam)
+                  _BangCaNam(ketQua: ketQua)
                 else
-                  _BangDiem(ds: ds, hocKi: _hocKi),
+                  _BangDiem(ds: ds, hocKi: _cheDo),
                 const SizedBox(height: Gap.md),
                 Text(
-                  'TBM = (miệng + 15 phút + 2 × 1 tiết + 3 × học kỳ) ÷ tổng hệ số, chỉ tính '
-                  'khi đã có cả điểm 1 tiết lẫn học kỳ. Chạm một ô để ghi hay sửa.',
-                  style: AppType.ui(
-                    12,
-                    color: AppColor.mucNhat,
-                    w: FontWeight.w400,
-                    height: 1.45,
-                  ),
+                  caNam
+                      ? 'TB cả năm = (TBM học kỳ 1 + 2 × TBM học kỳ 2) ÷ 3. Học lực Giỏi: TB các môn '
+                          'từ 8, không môn nào dưới 6,5, Toán hoặc Văn từ 8; Khá: từ 6,5, không môn '
+                          'nào dưới 5; Trung bình: từ 5, không môn nào dưới 3,5.'
+                      : 'TBM = (miệng + 15 phút + 2 × 1 tiết + 3 × học kỳ) ÷ tổng hệ số, chỉ tính '
+                          'khi đã có cả điểm 1 tiết lẫn học kỳ. Chạm một ô để ghi hay sửa.',
+                  style: AppType.ui(12, color: AppColor.mucNhat, w: FontWeight.w400, height: 1.45),
                 ),
               ],
             ),
@@ -278,6 +287,177 @@ class _SoDiemScreenState extends State<SoDiemScreen> {
       ),
     );
   }
+}
+
+/// Bảng cả năm: mỗi môn một hàng, ba cột TBM học kỳ 1, học kỳ 2 và cả năm.
+class _BangCaNam extends StatelessWidget {
+  const _BangCaNam({required this.ketQua});
+  final List<KetQuaMon> ketQua;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = context.read<AppState>();
+    final kieuDau = AppType.ui(11.5, w: FontWeight.w700, color: Colors.white, height: 1.25);
+    Widget oDau(String chu) => Expanded(
+          child: Text(chu, textAlign: TextAlign.center, style: kieuDau),
+        );
+    Widget o(String? chu, Color mau, {bool dam = false}) => Expanded(
+          child: Center(
+            child: Text(chu ?? '',
+                style: AppType.numeric(13.5, w: dam ? FontWeight.w700 : FontWeight.w600, color: mau)),
+          ),
+        );
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColor.giayTrang,
+        borderRadius: BorderRadius.circular(R.md),
+        border: Border.all(color: AppColor.dongKe),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          Container(
+            color: AppColor.muc,
+            padding: const EdgeInsets.symmetric(vertical: Gap.sm + 2),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 120,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: Gap.sm + 2),
+                    child: Text('Môn học', style: kieuDau),
+                  ),
+                ),
+                oDau('Học kỳ 1'),
+                oDau('Học kỳ 2'),
+                oDau('Cả năm'),
+              ],
+            ),
+          ),
+          for (var i = 0; i < ketQua.length; i++)
+            Container(
+              decoration: BoxDecoration(
+                color: i.isOdd ? AppColor.skySoft.withValues(alpha: .6) : null,
+                border: const Border(top: BorderSide(color: AppColor.dongKe)),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: Gap.sm + 2),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 120,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: Gap.sm + 2, right: Gap.xs),
+                      child: Text(s.tenMon(ketQua[i].monId),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppType.ui(13, w: FontWeight.w600, height: 1.25)),
+                    ),
+                  ),
+                  o(ketQua[i].hk1?.chu, ketQua[i].hk1?.mau ?? AppColor.mucNhat),
+                  o(ketQua[i].hk2?.chu, ketQua[i].hk2?.mau ?? AppColor.mucNhat),
+                  o(ketQua[i].chu, ketQua[i].mau, dam: true),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+// ------------------------------------------------------------- kết quả môn
+
+/// Kết quả một môn trong một kỳ (hay cả năm): số, hoặc Đ/CĐ, hoặc chưa có.
+class TbMon {
+  const TbMon.so(double v)
+      : so = v,
+        dat = null;
+  const TbMon.nhanXet(bool d)
+      : so = null,
+        dat = d;
+
+  final double? so;
+  final bool? dat;
+
+  String get chu => so != null ? chuTbm(so!) : (dat! ? 'Đ' : 'CĐ');
+  Color get mau => so != null ? mauSo(so!) : (dat! ? AppColor.xong : AppColor.butDo);
+}
+
+/// Kết quả một môn để tính TB các môn và xếp loại. [hk1], [hk2] chỉ có khi
+/// xem cả năm. [chuaDu]: đã có điểm nhưng chưa đủ để ra TBM — xếp loại trên
+/// số liệu này chỉ là tạm tính.
+class KetQuaMon {
+  const KetQuaMon(this.monId, {this.tb, this.hk1, this.hk2, this.chuaDu = false});
+  final String monId;
+  final TbMon? tb;
+  final TbMon? hk1;
+  final TbMon? hk2;
+  final bool chuaDu;
+
+  String? get chu => tb?.chu;
+  Color get mau => tb?.mau ?? AppColor.mucNhat;
+}
+
+/// Kết quả một môn trong một học kỳ, từ điểm của kỳ đó.
+KetQuaMon ketQuaHocKi(String monId, List<DiemThi> dsKi) {
+  final ds = dsKi.where((d) => d.monId == monId).toList();
+  final tb = _tbMon(ds);
+  return KetQuaMon(monId, tb: tb, chuaDu: tb == null && ds.isNotEmpty);
+}
+
+/// Kết quả cả năm: (HK1 + 2 × HK2) ÷ 3; môn nhận xét là Đ khi cả hai kỳ Đ.
+/// Thiếu một kỳ thì chưa tính.
+KetQuaMon ketQuaCaNam(String monId, List<DiemThi> tatCa) {
+  final ds = tatCa.where((d) => d.monId == monId).toList();
+  final k1 = _tbMon(ds.where((d) => d.hocKi == 1).toList());
+  final k2 = _tbMon(ds.where((d) => d.hocKi == 2).toList());
+  TbMon? cn;
+  if (k1 != null && k2 != null) {
+    if (k1.so != null && k2.so != null) {
+      cn = TbMon.so((k1.so! + 2 * k2.so!) / 3);
+    } else if (k1.dat != null && k2.dat != null) {
+      cn = TbMon.nhanXet(k1.dat! && k2.dat!);
+    }
+  }
+  return KetQuaMon(monId, tb: cn, hk1: k1, hk2: k2, chuaDu: cn == null && ds.isNotEmpty);
+}
+
+TbMon? _tbMon(List<DiemThi> ds) {
+  final so = diemTrungBinh(ds);
+  if (so != null) return TbMon.so(so);
+  final nhanXet = ds.where((d) => d.bangNhanXet).toList();
+  if (nhanXet.isEmpty || ds.any((d) => !d.bangNhanXet)) return null;
+  return TbMon.nhanXet(nhanXet.every((d) => d.dat ?? false));
+}
+
+/// Trung bình cộng TBM các môn chấm điểm; null khi chưa môn nào có TBM.
+double? tbCacMonCua(List<KetQuaMon> ds) {
+  final so = [for (final k in ds) if (k.tb?.so != null) k.tb!.so!];
+  if (so.isEmpty) return null;
+  return so.reduce((a, b) => a + b) / so.length;
+}
+
+/// Xếp loại học lực theo cách trường dùng với sổ điểm dạng này:
+/// - Giỏi: TB các môn ≥ 8,0, Toán hoặc Văn ≥ 8,0, không môn nào dưới 6,5.
+/// - Khá: ≥ 6,5, Toán hoặc Văn ≥ 6,5, không môn nào dưới 5,0.
+/// - Trung bình: ≥ 5,0, Toán hoặc Văn ≥ 5,0, không môn nào dưới 3,5.
+/// - Yếu: ≥ 3,5, không môn nào dưới 2,0. Còn lại: Kém.
+/// Ba mức trên còn cần mọi môn chấm nhận xét đều Đ. Chưa có Toán lẫn Văn thì
+/// bỏ điều kiện đó. Null khi chưa môn nào có TBM.
+String? xepLoaiHocLuc(List<KetQuaMon> ds, {Set<String> monChinh = const {'m_toan', 'm_van'}}) {
+  final tb = tbCacMonCua(ds);
+  if (tb == null) return null;
+  final so = [for (final k in ds) if (k.tb?.so != null) k.tb!.so!];
+  final thap = so.reduce((a, b) => a < b ? a : b);
+  final chinh = [for (final k in ds) if (monChinh.contains(k.monId) && k.tb?.so != null) k.tb!.so!];
+  bool chinhDat(double muc) => chinh.isEmpty || chinh.any((v) => v >= muc);
+  final nhanXetDat = ds.every((k) => k.tb?.dat != false);
+  if (tb >= 8 && thap >= 6.5 && chinhDat(8) && nhanXetDat) return 'Giỏi';
+  if (tb >= 6.5 && thap >= 5 && chinhDat(6.5) && nhanXetDat) return 'Khá';
+  if (tb >= 5 && thap >= 3.5 && chinhDat(5) && nhanXetDat) return 'Trung bình';
+  if (tb >= 3.5 && thap >= 2) return 'Yếu';
+  return 'Kém';
 }
 
 /// Bảng sáu cột. Cộng lại vừa khít điện thoại 390 px trừ lề, để năm cột điểm
