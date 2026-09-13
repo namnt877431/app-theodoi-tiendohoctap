@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/layout/bo_cuc.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../core/utils/ngay.dart';
@@ -29,6 +30,76 @@ class TrangChuHsScreen extends StatelessWidget {
     final cot = Ngay.cotTuNgay(DateTime.now());
     final tiet = s.tkbTheoThu(cot);
 
+    final le = BoCuc.le(context);
+
+    final chao = Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Eyebrow(Ngay.dayDu(DateTime.now())),
+              const SizedBox(height: 3),
+              Text('Chào ${hs?.tenGoi ?? ''}', style: AppType.display(26)),
+            ],
+          ),
+        ),
+        AvatarChu(hs?.hoTen ?? '', kichThuoc: 44),
+      ],
+    );
+    final nhac = <Widget>[
+      if (chuaDoc.isNotEmpty) ...[
+        for (final nn in chuaDoc.take(2)) ...[
+          _LoiNhac(nn: nn),
+          const SizedBox(height: Gap.sm + 2),
+        ],
+        const SizedBox(height: Gap.sm),
+      ],
+      if (s.soNhap > 0) ...[
+        _ChoMang(so: s.soNhap),
+        const SizedBox(height: Gap.md),
+      ],
+    ];
+    final viec = _ViecHomNay(tongKet: tk, soTiet: tiet.length);
+    final tietHomNay = <Widget>[
+      if (tiet.isNotEmpty) ...[
+        TieuDeMuc('Hôm nay học gì', eyebrow: '${tiet.length} tiết'),
+        const SizedBox(height: Gap.md),
+        _DsTiet(ds: tiet),
+      ],
+    ];
+    final baoCao = <Widget>[
+      TieuDeMuc(
+        'Báo cáo hôm nay',
+        eyebrow: ds.isEmpty ? 'Chưa có mục nào' : '${ds.length} mục',
+        hanhDong: ds.isEmpty
+            ? null
+            : TextButton.icon(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const SoanBaoCaoScreen()),
+                ),
+                icon: const Icon(Icons.add_rounded, size: 17),
+                label: const Text('Thêm'),
+                style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+              ),
+      ),
+      const SizedBox(height: Gap.md),
+      if (ds.isEmpty)
+        const _ChuaViet()
+      else
+        for (final b in ds) ...[
+          TheBaoCao(
+            b,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => ChiTietBaoCaoScreen(baoCaoId: b.id),
+              ),
+            ),
+          ),
+          const SizedBox(height: Gap.sm + 2),
+        ],
+    ];
+
     return Scaffold(
       body: SafeArea(
         bottom: false,
@@ -36,74 +107,56 @@ class TrangChuHsScreen extends StatelessWidget {
           color: AppColor.muc,
           onRefresh: s.lamMoi,
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.md, Gap.lg, 96),
+            padding: EdgeInsets.fromLTRB(le, Gap.md, le, 96),
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Eyebrow(Ngay.dayDu(DateTime.now())),
-                        const SizedBox(height: 3),
-                        Text('Chào ${hs?.tenGoi ?? ''}', style: AppType.display(26)),
+              NoiDung(
+                // Màn rộng: cột trái tóm tắt ngày (lời nhắc, việc, con dấu,
+                // tiết học), cột phải rộng hơn là dòng báo cáo. Điện thoại
+                // giữ thứ tự đọc từ trên xuống.
+                child: HaiCot(
+                  tiLeTrai: 2,
+                  tiLePhai: 3,
+                  trai: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      chao,
+                      const SizedBox(height: Gap.lg),
+                      ...nhac,
+                      viec,
+                      const SizedBox(height: Gap.xl),
+                      const KeHuyHieu(),
+                      if (tietHomNay.isNotEmpty) ...[
+                        const SizedBox(height: Gap.xl),
+                        ...tietHomNay,
                       ],
-                    ),
+                    ],
                   ),
-                  AvatarChu(hs?.hoTen ?? '', kichThuoc: 44),
-                ],
-              ),
-              const SizedBox(height: Gap.lg),
-              if (chuaDoc.isNotEmpty) ...[
-                for (final nn in chuaDoc.take(2)) ...[
-                  _LoiNhac(nn: nn),
-                  const SizedBox(height: Gap.sm + 2),
-                ],
-                const SizedBox(height: Gap.sm),
-              ],
-              if (s.soNhap > 0) ...[
-                _ChoMang(so: s.soNhap),
-                const SizedBox(height: Gap.md),
-              ],
-              _ViecHomNay(tongKet: tk, soTiet: tiet.length),
-              const SizedBox(height: Gap.xl),
-              const KeHuyHieu(),
-              const SizedBox(height: Gap.xl),
-              if (tiet.isNotEmpty) ...[
-                TieuDeMuc('Hôm nay học gì', eyebrow: '${tiet.length} tiết'),
-                const SizedBox(height: Gap.md),
-                _DsTiet(ds: tiet),
-                const SizedBox(height: Gap.xl),
-              ],
-              TieuDeMuc(
-                'Báo cáo hôm nay',
-                eyebrow: ds.isEmpty ? 'Chưa có mục nào' : '${ds.length} mục',
-                hanhDong: ds.isEmpty
-                    ? null
-                    : TextButton.icon(
-                        onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const SoanBaoCaoScreen()),
-                        ),
-                        icon: const Icon(Icons.add_rounded, size: 17),
-                        label: const Text('Thêm'),
-                        style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
-                      ),
-              ),
-              const SizedBox(height: Gap.md),
-              if (ds.isEmpty)
-                const _ChuaViet()
-              else
-                for (final b in ds) ...[
-                  TheBaoCao(
-                    b,
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => ChiTietBaoCaoScreen(baoCaoId: b.id),
-                      ),
-                    ),
+                  phai: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: Gap.xxl + Gap.md),
+                      ...baoCao,
+                    ],
                   ),
-                  const SizedBox(height: Gap.sm + 2),
-                ],
+                  hep: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      chao,
+                      const SizedBox(height: Gap.lg),
+                      ...nhac,
+                      viec,
+                      const SizedBox(height: Gap.xl),
+                      const KeHuyHieu(),
+                      const SizedBox(height: Gap.xl),
+                      if (tietHomNay.isNotEmpty) ...[
+                        ...tietHomNay,
+                        const SizedBox(height: Gap.xl),
+                      ],
+                      ...baoCao,
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),

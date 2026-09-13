@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/layout/bo_cuc.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../core/utils/ngay.dart';
@@ -25,6 +26,44 @@ class TrangChuPhScreen extends StatelessWidget {
     final tk = s.tongKet(homNay);
     final dsHomNay = s.baoCaoNgay(homNay);
 
+    final le = BoCuc.le(context);
+
+    final dau = <Widget>[
+      const _HeaderPh(),
+      const SizedBox(height: Gap.lg),
+      if (hs == null) ...[
+        const SizedBox(height: Gap.xl),
+        const LoiMoiNhapMa(),
+      ],
+      if (s.dsCon.length > 1) ...[
+        _ChonCon(dsCon: s.dsCon, dangChon: hs),
+        const SizedBox(height: Gap.lg),
+      ],
+    ];
+    final baoCao = <Widget>[
+      if (hs != null) ...[
+        TieuDeMuc(
+          'Báo cáo hôm nay',
+          eyebrow: Ngay.dayDu(homNay),
+          hanhDong: dsHomNay.isEmpty
+              ? null
+              : Text(
+                  '${dsHomNay.length} mục',
+                  style: AppType.ui(12.5, color: AppColor.mucNhat, w: FontWeight.w500),
+                ),
+        ),
+        const SizedBox(height: Gap.md),
+        if (dsHomNay.isEmpty)
+          _ChuaCoBaoCao(tenCon: hs.tenGoi)
+        else
+          for (final loai in LoaiBaiTap.values)
+            _NhomTheoLoai(
+              loai: loai,
+              ds: dsHomNay.where((b) => b.loai == loai).toList(),
+            ),
+      ],
+    ];
+
     return Scaffold(
       body: SafeArea(
         bottom: false,
@@ -32,52 +71,46 @@ class TrangChuPhScreen extends StatelessWidget {
           color: AppColor.muc,
           onRefresh: s.taiLai,
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(
-              Gap.lg,
-              Gap.md,
-              Gap.lg,
-              Gap.xxl + Gap.xl,
-            ),
+            padding: EdgeInsets.fromLTRB(le, Gap.md, le, Gap.xxl + Gap.xl),
             children: [
-              const _HeaderPh(),
-              const SizedBox(height: Gap.lg),
-              if (hs == null) ...[
-                const SizedBox(height: Gap.xl),
-                const LoiMoiNhapMa(),
-              ],
-              if (s.dsCon.length > 1) ...[
-                _ChonCon(dsCon: s.dsCon, dangChon: hs),
-                const SizedBox(height: Gap.lg),
-              ],
-              if (hs != null) ...[
-                _TomTatNgay(tongKet: tk, chuoi: s.chuoiNgayTron),
-                const SizedBox(height: Gap.xl),
-                const _TietHomNay(),
-                const SizedBox(height: Gap.xl),
-                TieuDeMuc(
-                  'Báo cáo hôm nay',
-                  eyebrow: Ngay.dayDu(homNay),
-                  hanhDong: dsHomNay.isEmpty
-                      ? null
-                      : Text(
-                          '${dsHomNay.length} mục',
-                          style: AppType.ui(
-                            12.5,
-                            color: AppColor.mucNhat,
-                            w: FontWeight.w500,
-                          ),
+              NoiDung(
+                child: hs == null
+                    ? Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: dau)
+                    // Màn rộng: trái là tình hình trong ngày (tóm tắt, tiết
+                    // học), phải rộng hơn là báo cáo. Điện thoại đọc từ trên
+                    // xuống.
+                    : HaiCot(
+                        tiLeTrai: 2,
+                        tiLePhai: 3,
+                        trai: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            ...dau,
+                            _TomTatNgay(tongKet: tk, chuoi: s.chuoiNgayTron),
+                            const SizedBox(height: Gap.xl),
+                            const _TietHomNay(),
+                          ],
                         ),
-                ),
-                const SizedBox(height: Gap.md),
-                if (dsHomNay.isEmpty)
-                  _ChuaCoBaoCao(tenCon: hs.tenGoi)
-                else
-                  for (final loai in LoaiBaiTap.values)
-                    _NhomTheoLoai(
-                      loai: loai,
-                      ds: dsHomNay.where((b) => b.loai == loai).toList(),
-                    ),
-              ],
+                        phai: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const SizedBox(height: Gap.xxl + Gap.lg),
+                            ...baoCao,
+                          ],
+                        ),
+                        hep: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            ...dau,
+                            _TomTatNgay(tongKet: tk, chuoi: s.chuoiNgayTron),
+                            const SizedBox(height: Gap.xl),
+                            const _TietHomNay(),
+                            const SizedBox(height: Gap.xl),
+                            ...baoCao,
+                          ],
+                        ),
+                      ),
+              ),
             ],
           ),
         ),

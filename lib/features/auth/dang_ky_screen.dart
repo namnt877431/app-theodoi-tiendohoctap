@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/layout/bo_cuc.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../core/widgets/common.dart';
@@ -91,7 +92,12 @@ class _DangKyScreenState extends State<DangKyScreen> {
       body: Form(
         key: _form,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.sm, Gap.lg, Gap.xxl),
+          padding: EdgeInsets.fromLTRB(
+            BoCuc.leCanhGiua(MediaQuery.sizeOf(context).width, Gap.lg, toiDa: 560),
+            Gap.sm,
+            BoCuc.leCanhGiua(MediaQuery.sizeOf(context).width, Gap.lg, toiDa: 560),
+            Gap.xxl,
+          ),
           children: [
             Eyebrow('Bạn là ai'),
             const SizedBox(height: Gap.sm),

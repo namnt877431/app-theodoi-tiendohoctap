@@ -364,8 +364,11 @@ Gửi lại những hàng chưa đi: `select tb_goi_lai(id) from thong_bao where
 ## Phần 5 — Bản web trên GitHub Pages
 
 Cùng mã nguồn, chạy được trong trình duyệt (máy tính hoặc điện thoại, thêm
-vào màn hình chính như một app). Khác bản cài: chưa có thông báo đẩy, và bài
-viết lúc mất mạng chỉ giữ trong phiên đang mở chứ không cất xuống máy.
+vào màn hình chính như một app). Giao diện tự xếp theo bề ngang: điện thoại
+có thanh điều hướng dưới; cửa sổ từ 720 px có thanh bên trái; từ 1100 px
+nội dung xếp hai cột (bộ khung ở `lib/core/layout/`). Khác bản cài: chưa có
+thông báo đẩy, và bài viết lúc mất mạng chỉ giữ trong phiên đang mở chứ
+không cất xuống máy.
 
 Nhánh trên GitHub:
 

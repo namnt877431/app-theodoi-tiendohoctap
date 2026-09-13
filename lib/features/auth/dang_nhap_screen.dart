@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/layout/bo_cuc.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../data/app_state.dart';
@@ -68,16 +69,12 @@ class _DangNhapScreenState extends State<DangNhapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColor.giay,
-      body: Column(
-        children: [
-          const BiaSo(
-            phuDe: 'Mỗi tối, bố mẹ biết hôm nay con đã học những gì — không phải hỏi.',
-            gonGang: true,
-          ),
-          Expanded(
-            child: SingleChildScrollView(
+    const phuDe = 'Mỗi tối, bố mẹ biết hôm nay con đã học những gì — không phải hỏi.';
+    final rong = BoCuc.coThanhBen(context);
+
+    // Màn rộng: bìa sổ đứng bên trái, biểu mẫu bên phải; điện thoại: bìa
+    // trên, biểu mẫu dưới.
+    final bieuMau = SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(Gap.xl, Gap.xl, Gap.xl, Gap.xl),
               child: Form(
                 key: _form,
@@ -170,6 +167,32 @@ class _DangNhapScreenState extends State<DangNhapScreen> {
                     ),
                   ],
                 ),
+              ),
+            );
+
+    if (!rong) {
+      return Scaffold(
+        backgroundColor: AppColor.giay,
+        body: Column(
+          children: [
+            const BiaSo(phuDe: phuDe, gonGang: true),
+            Expanded(child: bieuMau),
+          ],
+        ),
+      );
+    }
+    return Scaffold(
+      backgroundColor: AppColor.giay,
+      body: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Expanded(flex: 5, child: BiaSo(phuDe: phuDe, dungDoc: true)),
+          Expanded(
+            flex: 6,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 460),
+                child: bieuMau,
               ),
             ),
           ),

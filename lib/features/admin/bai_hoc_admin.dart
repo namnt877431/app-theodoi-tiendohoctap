@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/layout/bo_cuc.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../core/widgets/common.dart';
@@ -59,8 +60,10 @@ class _DsBaiHocState extends State<DsBaiHoc> {
 
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.md, Gap.lg, 0),
+        LayoutBuilder(builder: (context, rang) {
+          final le = BoCuc.leCanhGiua(rang.maxWidth, BoCuc.le(context), toiDa: 900);
+          return Padding(
+          padding: EdgeInsets.fromLTRB(le, Gap.md, le, 0),
           child: Row(
             children: [
               SizedBox(
@@ -103,7 +106,8 @@ class _DsBaiHocState extends State<DsBaiHoc> {
               ),
             ],
           ),
-        ),
+        );
+        }),
         Expanded(
           child: _dangNap && tatCa.isEmpty
               ? const Center(child: CircularProgressIndicator())
@@ -148,10 +152,13 @@ class _DanhSach extends StatelessWidget {
       }
       muc.add(_Dong(bh: b));
     }
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(Gap.lg, 0, Gap.lg, 96),
-      children: muc,
-    );
+    return LayoutBuilder(builder: (context, rang) {
+      final le = BoCuc.leCanhGiua(rang.maxWidth, BoCuc.le(context), toiDa: 900);
+      return ListView(
+        padding: EdgeInsets.fromLTRB(le, 0, le, 96),
+        children: muc,
+      );
+    });
   }
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/layout/bo_cuc.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../core/utils/ngay.dart';
@@ -31,7 +32,9 @@ class _DanhSachBaoCaoState extends State<DanhSachBaoCao> {
   @override
   Widget build(BuildContext context) {
     final s = context.watch<AppState>();
-    final moc = Ngay.dauNgay(DateTime.now()).subtract(Duration(days: _soNgay - 1));
+    final moc = Ngay.dauNgay(
+      DateTime.now(),
+    ).subtract(Duration(days: _soNgay - 1));
 
     var ds = s.baoCao.where((b) => !b.ngay.isBefore(moc));
     if (_loai != null) ds = ds.where((b) => b.loai == _loai);
@@ -75,27 +78,39 @@ class _DanhSachBaoCaoState extends State<DanhSachBaoCao> {
                     child: const Text('Bỏ hết bộ lọc'),
                   ),
                 )
-              : ListView(
-                  padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.sm, Gap.lg, 96),
-                  children: [
-                    for (final n in ngayList) ...[
-                      _DauNgay(ngay: n, so: theoNgay[n]!.length),
-                      const SizedBox(height: Gap.md),
-                      for (final b in theoNgay[n]!) ...[
-                        TheBaoCao(
-                          b,
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => ChiTietBaoCaoScreen(baoCaoId: b.id),
-                            ),
+              : LayoutBuilder(
+                  builder: (context, rang) {
+                    final le = BoCuc.leCanhGiua(
+                      rang.maxWidth,
+                      BoCuc.le(context),
+                    );
+                    return ListView(
+                      padding: EdgeInsets.fromLTRB(le, Gap.sm, le, 96),
+                      children: [
+                        for (final n in ngayList) ...[
+                          _DauNgay(ngay: n, so: theoNgay[n]!.length),
+                          const SizedBox(height: Gap.md),
+                          // Màn rộng xếp thẻ thành hai ba cột; điện thoại một cột.
+                          LuoiThe(
+                            children: [
+                              for (final b in theoNgay[n]!)
+                                TheBaoCao(
+                                  b,
+                                  onTap: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          ChiTietBaoCaoScreen(baoCaoId: b.id),
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
-                        ),
-                        const SizedBox(height: Gap.sm + 2),
+                          const SizedBox(height: Gap.md + Gap.sm + 2),
+                        ],
+                        if (widget.hanhDongCuoi != null) widget.hanhDongCuoi!,
                       ],
-                      const SizedBox(height: Gap.md),
-                    ],
-                    if (widget.hanhDongCuoi != null) widget.hanhDongCuoi!,
-                  ],
+                    );
+                  },
                 ),
         ),
       ],
@@ -115,14 +130,19 @@ class _DauNgay extends StatelessWidget {
       children: [
         Text(
           Ngay.nhan(ngay),
-          style: AppType.ui(13.5,
-              w: FontWeight.w700, color: homNay ? AppColor.muc : AppColor.ink),
+          style: AppType.ui(
+            13.5,
+            w: FontWeight.w700,
+            color: homNay ? AppColor.muc : AppColor.ink,
+          ),
         ),
         const SizedBox(width: Gap.sm),
         Expanded(child: Container(height: 1, color: AppColor.dongKe)),
         const SizedBox(width: Gap.sm),
-        Text('$so mục',
-            style: AppType.ui(11.5, color: AppColor.mucNhat, w: FontWeight.w500)),
+        Text(
+          '$so mục',
+          style: AppType.ui(11.5, color: AppColor.mucNhat, w: FontWeight.w500),
+        ),
       ],
     );
   }
@@ -156,77 +176,96 @@ class _ThanhLoc extends StatelessWidget {
     final s = context.read<AppState>();
     final dsGv = s.gvTheoLoai(LoaiBaiTap.hocThem);
 
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppColor.dongKe)),
-      ),
-      padding: const EdgeInsets.only(bottom: Gap.md),
-      child: Column(
-        children: [
-          SizedBox(
-            height: 34,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: Gap.lg),
-              children: [
-                for (final n in [7, 30, 90])
-                  _Chip(
-                    nhan: n == 90 ? 'Tất cả' : '$n ngày',
-                    chon: soNgay == n,
-                    onTap: () => onSoNgay(n),
-                  ),
-                const _Vach(),
-                _Chip(nhan: 'Mọi hạng mục', chon: loai == null, onTap: () => onLoai(null)),
-                for (final l in LoaiBaiTap.values)
-                  _Chip(
-                    nhan: l.nhanNgan,
-                    chon: loai == l,
-                    mau: l.mau,
-                    onTap: () => onLoai(l),
-                  ),
-                const _Vach(),
-                _Chip(
-                    nhan: 'Mọi trạng thái',
-                    chon: trangThai == null,
-                    onTap: () => onTrangThai(null)),
-                for (final t in TrangThai.values)
-                  _Chip(
-                    nhan: t.nhan,
-                    chon: trangThai == t,
-                    mau: t.mau,
-                    onTap: () => onTrangThai(t),
-                  ),
-              ],
-            ),
+    return LayoutBuilder(
+      builder: (context, rang) {
+        final le = BoCuc.leCanhGiua(rang.maxWidth, BoCuc.le(context));
+        return Container(
+          decoration: const BoxDecoration(
+            border: Border(bottom: BorderSide(color: AppColor.dongKe)),
           ),
-          if (loai == LoaiBaiTap.hocThem) ...[
-            const SizedBox(height: Gap.sm),
-            SizedBox(
-              height: 34,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: Gap.lg),
-                children: [
-                  _Chip(nhan: 'Mọi thầy cô', chon: gvId == null, onTap: () => onGv(null)),
-                  for (final g in dsGv)
+          padding: const EdgeInsets.only(bottom: Gap.md),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 34,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.symmetric(horizontal: le),
+                  children: [
+                    for (final n in [7, 30, 90])
+                      _Chip(
+                        nhan: n == 90 ? 'Tất cả' : '$n ngày',
+                        chon: soNgay == n,
+                        onTap: () => onSoNgay(n),
+                      ),
+                    const _Vach(),
                     _Chip(
-                      nhan: g.hoTen,
-                      chon: gvId == g.id,
-                      mau: AppColor.hocThem,
-                      onTap: () => onGv(g.id),
+                      nhan: 'Mọi hạng mục',
+                      chon: loai == null,
+                      onTap: () => onLoai(null),
                     ),
-                ],
+                    for (final l in LoaiBaiTap.values)
+                      _Chip(
+                        nhan: l.nhanNgan,
+                        chon: loai == l,
+                        mau: l.mau,
+                        onTap: () => onLoai(l),
+                      ),
+                    const _Vach(),
+                    _Chip(
+                      nhan: 'Mọi trạng thái',
+                      chon: trangThai == null,
+                      onTap: () => onTrangThai(null),
+                    ),
+                    for (final t in TrangThai.values)
+                      _Chip(
+                        nhan: t.nhan,
+                        chon: trangThai == t,
+                        mau: t.mau,
+                        onTap: () => onTrangThai(t),
+                      ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ],
-      ),
+              if (loai == LoaiBaiTap.hocThem) ...[
+                const SizedBox(height: Gap.sm),
+                SizedBox(
+                  height: 34,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.symmetric(horizontal: le),
+                    children: [
+                      _Chip(
+                        nhan: 'Mọi thầy cô',
+                        chon: gvId == null,
+                        onTap: () => onGv(null),
+                      ),
+                      for (final g in dsGv)
+                        _Chip(
+                          nhan: g.hoTen,
+                          chon: gvId == g.id,
+                          mau: AppColor.hocThem,
+                          onTap: () => onGv(g.id),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        );
+      },
     );
   }
 }
 
 class _Chip extends StatelessWidget {
-  const _Chip({required this.nhan, required this.chon, required this.onTap, this.mau});
+  const _Chip({
+    required this.nhan,
+    required this.chon,
+    required this.onTap,
+    this.mau,
+  });
   final String nhan;
   final bool chon;
   final VoidCallback onTap;
@@ -252,8 +291,11 @@ class _Chip extends StatelessWidget {
             child: Center(
               child: Text(
                 nhan,
-                style: AppType.ui(12.5,
-                    w: FontWeight.w600, color: chon ? Colors.white : AppColor.mucNhat),
+                style: AppType.ui(
+                  12.5,
+                  w: FontWeight.w600,
+                  color: chon ? Colors.white : AppColor.mucNhat,
+                ),
               ),
             ),
           ),
@@ -268,7 +310,7 @@ class _Vach extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Gap.sm, vertical: 8),
-        child: Container(width: 1, color: AppColor.dongKe),
-      );
+    padding: const EdgeInsets.symmetric(horizontal: Gap.sm, vertical: 8),
+    child: Container(width: 1, color: AppColor.dongKe),
+  );
 }

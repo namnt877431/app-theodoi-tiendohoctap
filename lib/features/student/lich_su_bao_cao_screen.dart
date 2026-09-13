@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/layout/bo_cuc.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../data/app_state.dart';
@@ -19,8 +20,9 @@ class LichSuBaoCaoScreen extends StatelessWidget {
         bottom: false,
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.md, Gap.lg, Gap.md),
+            LeTrang(
+              tren: Gap.md,
+              duoi: Gap.md,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/layout/bo_cuc.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../core/utils/ngay.dart';
@@ -25,8 +26,10 @@ class HoSoScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         bottom: false,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.md, Gap.lg, Gap.xxl),
+        child: LayoutBuilder(builder: (context, rang) {
+          final le = BoCuc.leCanhGiua(rang.maxWidth, BoCuc.le(context), toiDa: 760);
+          return ListView(
+          padding: EdgeInsets.fromLTRB(le, Gap.md, le, Gap.xxl),
           children: [
             Text('Tài khoản', style: AppType.display(24)),
             const SizedBox(height: Gap.lg),
@@ -154,7 +157,8 @@ class HoSoScreen extends StatelessWidget {
                   style: AppType.ui(11.5, color: AppColor.mucNhat, w: FontWeight.w400)),
             ),
           ],
-        ),
+        );
+        }),
       ),
     );
   }

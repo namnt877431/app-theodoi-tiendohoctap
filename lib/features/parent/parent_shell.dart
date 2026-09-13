@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/theme/tokens.dart';
+import '../../core/layout/khung_dieu_huong.dart';
 import '../../data/app_state.dart';
 import '../shared/ho_so_screen.dart';
 import '../shared/thoi_khoa_bieu_screen.dart';
@@ -22,51 +22,27 @@ class _ParentShellState extends State<ParentShell> {
   Widget build(BuildContext context) {
     final chuaDoc = context.select<AppState, int>((s) => s.soNhacNhoChuaDoc);
 
-    return Scaffold(
-      body: IndexedStack(
-        index: _tab,
-        children: const [
-          TrangChuPhScreen(),
-          ThoiKhoaBieuScreen(),
-          BaoCaoPhScreen(),
-          HoSoScreen(),
-        ],
-      ),
-      bottomNavigationBar: DecoratedBox(
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: AppColor.dongKe)),
-        ),
-        child: NavigationBar(
-          selectedIndex: _tab,
-          onDestinationSelected: (i) => setState(() => _tab = i),
-          destinations: [
-            const NavigationDestination(
-              icon: Icon(Icons.today_outlined),
-              selectedIcon: Icon(Icons.today_rounded),
-              label: 'Hôm nay',
-            ),
-            const NavigationDestination(
-              icon: Icon(Icons.grid_view_outlined),
-              selectedIcon: Icon(Icons.grid_view_rounded),
-              label: 'Thời khóa biểu',
-            ),
-            NavigationDestination(
-              icon: Badge(
-                isLabelVisible: chuaDoc > 0,
-                backgroundColor: AppColor.butDo,
-                child: const Icon(Icons.article_outlined),
-              ),
-              selectedIcon: const Icon(Icons.article_rounded),
-              label: 'Báo cáo',
-            ),
-            const NavigationDestination(
-              icon: Icon(Icons.person_outline_rounded),
-              selectedIcon: Icon(Icons.person_rounded),
-              label: 'Tài khoản',
-            ),
-          ],
-        ),
-      ),
+    return KhungDieuHuong(
+      tab: _tab,
+      onChon: (i) => setState(() => _tab = i),
+      diemDen: [
+        const DiemDen(icon: Icons.today_outlined, iconChon: Icons.today_rounded, nhan: 'Hôm nay'),
+        const DiemDen(
+            icon: Icons.grid_view_outlined, iconChon: Icons.grid_view_rounded, nhan: 'Thời khóa biểu'),
+        DiemDen(
+            icon: Icons.article_outlined,
+            iconChon: Icons.article_rounded,
+            nhan: 'Báo cáo',
+            huyHieu: chuaDoc),
+        const DiemDen(
+            icon: Icons.person_outline_rounded, iconChon: Icons.person_rounded, nhan: 'Tài khoản'),
+      ],
+      man: const [
+        TrangChuPhScreen(),
+        ThoiKhoaBieuScreen(),
+        BaoCaoPhScreen(),
+        HoSoScreen(),
+      ],
     );
   }
 }

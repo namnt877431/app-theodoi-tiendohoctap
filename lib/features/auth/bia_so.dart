@@ -9,12 +9,16 @@ import '../../core/theme/typography.dart';
 /// Không vẽ lề đỏ ở đây: sát mép màn hình và cụt hai đầu, nó trông như một
 /// vệt lỗi hơn là một cái lề. Lề đỏ để dành cho thẻ báo cáo, nơi nó có nghĩa.
 class BiaSo extends StatelessWidget {
-  const BiaSo({super.key, required this.phuDe, this.gonGang = false});
+  const BiaSo({super.key, required this.phuDe, this.gonGang = false, this.dungDoc = false});
 
   final String phuDe;
 
   /// Bản thấp hơn, dành cho màn có biểu mẫu bên dưới.
   final bool gonGang;
+
+  /// Bản đứng cả chiều cao màn, đặt cạnh biểu mẫu trên màn rộng: không bo
+  /// góc, chữ dồn xuống giữa.
+  final bool dungDoc;
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +31,17 @@ class BiaSo extends StatelessWidget {
         Gap.xl,
         gonGang ? Gap.xl : Gap.xxl,
       ),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColor.ink,
-        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(28)),
+        borderRadius: dungDoc
+            ? BorderRadius.zero
+            : const BorderRadius.only(bottomLeft: Radius.circular(28)),
       ),
       child: CustomPaint(
         painter: _KeBia(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: dungDoc ? MainAxisAlignment.center : MainAxisAlignment.start,
           children: [
             Row(
               children: [

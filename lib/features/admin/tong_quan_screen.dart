@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/layout/bo_cuc.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../core/utils/ngay.dart';
@@ -47,52 +48,42 @@ class _TongQuanScreenState extends State<TongQuanScreen> {
         child: RefreshIndicator(
           color: AppColor.muc,
           onRefresh: _tai,
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.md, Gap.lg, Gap.xxl),
+          child: LayoutBuilder(builder: (context, rang) {
+            final le = BoCuc.leCanhGiua(rang.maxWidth, BoCuc.le(context), toiDa: 1000);
+            return ListView(
+            padding: EdgeInsets.fromLTRB(le, Gap.md, le, Gap.xxl),
             children: [
               Eyebrow(Ngay.dayDu(DateTime.now())),
               const SizedBox(height: 3),
               Text('Tổng quan hệ thống', style: AppType.display(26)),
               const SizedBox(height: Gap.xl),
-              Row(
-                children: [
-                  Expanded(
-                    child: OSoLieu(
-                        so: '${hocSinh.length}', nhan: 'Học sinh', mau: AppColor.muc),
-                  ),
-                  const SizedBox(width: Gap.sm),
-                  Expanded(
-                    child: OSoLieu(
-                        so: '${phuHuynh.length}', nhan: 'Phụ huynh', mau: AppColor.hocThem),
-                  ),
-                  const SizedBox(width: Gap.sm),
-                  Expanded(
-                    child: OSoLieu(
-                        so: '${s.giaoVien.length}', nhan: 'Thầy cô', mau: AppColor.xong),
-                  ),
-                ],
-              ),
-              const SizedBox(height: Gap.sm),
-              Row(
-                children: [
-                  Expanded(
-                    child: OSoLieu(
-                        so: '${s.truong.length}', nhan: 'Trường', mau: AppColor.mucNhat),
-                  ),
-                  const SizedBox(width: Gap.sm),
-                  Expanded(
-                    child: OSoLieu(
-                        so: '${chuaLienKet.length}',
-                        nhan: 'Chưa liên kết',
-                        mau: AppColor.dangLam),
-                  ),
-                  const SizedBox(width: Gap.sm),
-                  Expanded(
-                    child: OSoLieu(
-                        so: '${biKhoa.length}', nhan: 'Đã khóa', mau: AppColor.butDo),
-                  ),
-                ],
-              ),
+              // Sáu ô số liệu: một hàng khi rộng, hai hàng ba ô khi hẹp.
+              LayoutBuilder(builder: (context, rang) {
+                final o = [
+                  OSoLieu(so: '${hocSinh.length}', nhan: 'Học sinh', mau: AppColor.muc),
+                  OSoLieu(so: '${phuHuynh.length}', nhan: 'Phụ huynh', mau: AppColor.hocThem),
+                  OSoLieu(so: '${s.giaoVien.length}', nhan: 'Thầy cô', mau: AppColor.xong),
+                  OSoLieu(so: '${s.truong.length}', nhan: 'Trường', mau: AppColor.mucNhat),
+                  OSoLieu(so: '${chuaLienKet.length}', nhan: 'Chưa liên kết', mau: AppColor.dangLam),
+                  OSoLieu(so: '${biKhoa.length}', nhan: 'Đã khóa', mau: AppColor.butDo),
+                ];
+                final moiHang = rang.maxWidth >= 720 ? 6 : 3;
+                return Column(
+                  children: [
+                    for (var i = 0; i < o.length; i += moiHang) ...[
+                      if (i > 0) const SizedBox(height: Gap.sm),
+                      Row(
+                        children: [
+                          for (var j = i; j < i + moiHang && j < o.length; j++) ...[
+                            if (j > i) const SizedBox(width: Gap.sm),
+                            Expanded(child: o[j]),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ],
+                );
+              }),
               const SizedBox(height: Gap.xl),
               TieuDeMuc(
                 'Cần xử lý',
@@ -138,7 +129,8 @@ class _TongQuanScreenState extends State<TongQuanScreen> {
                 const SizedBox(height: Gap.sm + 2),
               ],
             ],
-          ),
+          );
+          }),
         ),
       ),
     );

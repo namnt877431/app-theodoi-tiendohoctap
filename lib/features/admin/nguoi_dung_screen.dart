@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/layout/bo_cuc.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../core/widgets/common.dart';
@@ -58,8 +59,9 @@ class _NguoiDungScreenState extends State<NguoiDungScreen> {
         bottom: false,
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.md, Gap.lg, Gap.md),
+            LeTrang(
+              tren: Gap.md,
+              duoi: Gap.md,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -103,20 +105,30 @@ class _NguoiDungScreenState extends State<NguoiDungScreen> {
                   : RefreshIndicator(
                       color: AppColor.muc,
                       onRefresh: _tai,
-                      child: ListView.separated(
-                        padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.md, Gap.lg, Gap.xxl),
-                        itemCount: ketQua.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: Gap.sm + 2),
-                        itemBuilder: (_, i) => _TheNguoiDung(
-                          nd: ketQua[i],
-                          tatCa: _ds,
-                          onKhoa: () => _doiKhoa(ketQua[i]),
-                          onLienKet: () async {
-                            await moLienKet(context, ketQua[i]);
-                            await _tai();
-                          },
-                        ),
-                      ),
+                      child: LayoutBuilder(builder: (context, rang) {
+                        final le = BoCuc.leCanhGiua(rang.maxWidth, BoCuc.le(context));
+                        return ListView(
+                          padding: EdgeInsets.fromLTRB(le, Gap.md, le, Gap.xxl),
+                          children: [
+                            // Màn rộng xếp thẻ hai ba cột.
+                            LuoiThe(
+                              rongToiThieu: 360,
+                              children: [
+                                for (final nd in ketQua)
+                                  _TheNguoiDung(
+                                    nd: nd,
+                                    tatCa: _ds,
+                                    onKhoa: () => _doiKhoa(nd),
+                                    onLienKet: () async {
+                                      await moLienKet(context, nd);
+                                      await _tai();
+                                    },
+                                  ),
+                              ],
+                            ),
+                          ],
+                        );
+                      }),
                     ),
             ),
           ],

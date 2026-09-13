@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/theme/tokens.dart';
+import '../../core/layout/khung_dieu_huong.dart';
 import '../../data/app_state.dart';
 import '../parent/nhac_nho_screen.dart';
 import '../shared/ho_so_screen.dart';
@@ -24,70 +24,37 @@ class _StudentShellState extends State<StudentShell> {
   Widget build(BuildContext context) {
     final chuaDoc = context.select<AppState, int>((s) => s.soNhacNhoChuaDoc);
 
-    return Scaffold(
-      body: IndexedStack(
-        index: _tab,
-        children: const [
-          TrangChuHsScreen(),
-          ThoiKhoaBieuScreen(),
-          LichSuBaoCaoScreen(),
-          NhacNhoScreen(),
-          HoSoScreen(),
-        ],
-      ),
-      floatingActionButton: _tab == 0 || _tab == 2
-          ? FloatingActionButton.extended(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const SoanBaoCaoScreen()),
-              ),
-              backgroundColor: AppColor.muc,
-              foregroundColor: Colors.white,
-              elevation: 2,
-              icon: const Icon(Icons.edit_rounded, size: 19),
-              label: const Text('Viết báo cáo'),
-            )
-          : null,
-      bottomNavigationBar: DecoratedBox(
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: AppColor.dongKe)),
-        ),
-        child: NavigationBar(
-          selectedIndex: _tab,
-          onDestinationSelected: (i) => setState(() => _tab = i),
-          destinations: [
-            const NavigationDestination(
-              icon: Icon(Icons.today_outlined),
-              selectedIcon: Icon(Icons.today_rounded),
-              label: 'Hôm nay',
-            ),
-            const NavigationDestination(
-              icon: Icon(Icons.grid_view_outlined),
-              selectedIcon: Icon(Icons.grid_view_rounded),
-              label: 'Thời khóa biểu',
-            ),
-            const NavigationDestination(
-              icon: Icon(Icons.article_outlined),
-              selectedIcon: Icon(Icons.article_rounded),
-              label: 'Báo cáo',
-            ),
-            NavigationDestination(
-              icon: Badge(
-                isLabelVisible: chuaDoc > 0,
-                label: Text('$chuaDoc'),
-                backgroundColor: AppColor.butDo,
-                child: const Icon(Icons.campaign_outlined),
-              ),
-              selectedIcon: const Icon(Icons.campaign_rounded),
-              label: 'Nhắc nhở',
-            ),
-            const NavigationDestination(
-              icon: Icon(Icons.person_outline_rounded),
-              selectedIcon: Icon(Icons.person_rounded),
-              label: 'Tài khoản',
-            ),
-          ],
+    return KhungDieuHuong(
+      tab: _tab,
+      onChon: (i) => setState(() => _tab = i),
+      hanhDong: HanhDongChinh(
+        icon: Icons.edit_rounded,
+        nhan: 'Viết báo cáo',
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const SoanBaoCaoScreen()),
         ),
       ),
+      hienHanhDongO: const {0, 2},
+      diemDen: [
+        const DiemDen(icon: Icons.today_outlined, iconChon: Icons.today_rounded, nhan: 'Hôm nay'),
+        const DiemDen(
+            icon: Icons.grid_view_outlined, iconChon: Icons.grid_view_rounded, nhan: 'Thời khóa biểu'),
+        const DiemDen(icon: Icons.article_outlined, iconChon: Icons.article_rounded, nhan: 'Báo cáo'),
+        DiemDen(
+            icon: Icons.campaign_outlined,
+            iconChon: Icons.campaign_rounded,
+            nhan: 'Nhắc nhở',
+            huyHieu: chuaDoc),
+        const DiemDen(
+            icon: Icons.person_outline_rounded, iconChon: Icons.person_rounded, nhan: 'Tài khoản'),
+      ],
+      man: const [
+        TrangChuHsScreen(),
+        ThoiKhoaBieuScreen(),
+        LichSuBaoCaoScreen(),
+        NhacNhoScreen(),
+        HoSoScreen(),
+      ],
     );
   }
 }
