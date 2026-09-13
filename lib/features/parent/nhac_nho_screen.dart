@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/layout/bo_cuc.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../core/utils/ngay.dart';
@@ -52,12 +53,15 @@ class NhacNhoScreen extends StatelessWidget {
                     )
                   : null,
             )
-          : ListView.separated(
-              padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.md, Gap.lg, Gap.xxl),
-              itemCount: ds.length,
-              separatorBuilder: (_, _) => const SizedBox(height: Gap.md),
-              itemBuilder: (_, i) => _TheNhacNho(nn: ds[i], laPhuHuynh: laPhuHuynh),
-            ),
+          : LayoutBuilder(builder: (context, rang) {
+              final le = BoCuc.leCanhGiua(rang.maxWidth, BoCuc.le(context), toiDa: 800);
+              return ListView.separated(
+                padding: EdgeInsets.symmetric(horizontal: le, vertical: Gap.md),
+                itemCount: ds.length,
+                separatorBuilder: (_, _) => const SizedBox(height: Gap.md),
+                itemBuilder: (_, i) => _TheNhacNho(nn: ds[i], laPhuHuynh: laPhuHuynh),
+              );
+            }),
     );
   }
 }

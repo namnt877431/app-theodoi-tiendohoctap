@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/anh/nen_anh.dart';
+import '../../core/layout/bo_cuc.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../core/utils/ngay.dart';
@@ -159,6 +160,223 @@ class _SoanBaoCaoScreenState extends State<SoanBaoCaoScreen> {
       );
     }
 
+    // Bốn khối của biểu mẫu, xếp khác nhau tùy bề ngang màn hình.
+    final chonLua = <Widget>[
+      _Nhan('Hạng mục'),
+      Row(
+        children: [
+          for (final l in LoaiBaiTap.values) ...[
+            Expanded(
+              child: GestureDetector(
+                onTap: () => setState(() {
+                  _loai = l;
+                  _gvId = null;
+                }),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: Gap.md + 2),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: _loai == l ? l.mauNen : AppColor.giayTrang,
+                    borderRadius: BorderRadius.circular(R.md),
+                    border: Border.all(
+                      color: _loai == l ? l.mau.withValues(alpha: .45) : AppColor.dongKe,
+                      width: _loai == l ? 1.4 : 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        l == LoaiBaiTap.trenLop
+                            ? Icons.school_rounded
+                            : Icons.auto_stories_rounded,
+                        size: 16,
+                        color: _loai == l ? l.mau : AppColor.mucNhat,
+                      ),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          l.nhan,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppType.ui(13,
+                              w: FontWeight.w600,
+                              color: _loai == l ? l.mau : AppColor.mucNhat),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            if (l != LoaiBaiTap.values.last) const SizedBox(width: Gap.sm),
+          ],
+        ],
+      ),
+      const SizedBox(height: Gap.lg),
+      Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _Nhan('Môn học'),
+                DropdownButtonFormField<String>(
+                  initialValue: _monId,
+                  isExpanded: true,
+                  style: AppType.ui(15, w: FontWeight.w500),
+                  items: [
+                    for (final m in s.monHoc)
+                      DropdownMenuItem(value: m.id, child: Text(m.ten)),
+                  ],
+                  onChanged: (v) => setState(() {
+                    if (v != _monId) _baiHocId = null;
+                    _monId = v!;
+                  }),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: Gap.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _Nhan('Ngày học'),
+                InkWell(
+                  borderRadius: BorderRadius.circular(R.md),
+                  onTap: () async {
+                    final d = await showDatePicker(
+                      context: context,
+                      initialDate: _ngay,
+                      firstDate: DateTime.now().subtract(const Duration(days: 60)),
+                      lastDate: DateTime.now().add(const Duration(days: 7)),
+                    );
+                    if (d != null) setState(() => _ngay = Ngay.dauNgay(d));
+                  },
+                  child: InputDecorator(
+                    decoration: const InputDecoration(),
+                    child: Text(
+                      Ngay.nhan(_ngay),
+                      style: AppType.ui(15, w: FontWeight.w500),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: Gap.lg),
+      _Nhan(_loai == LoaiBaiTap.hocThem ? 'Thầy cô dạy thêm' : 'Giáo viên bộ môn'),
+      ChonGiaoVien(
+        loai: _loai,
+        giaTri: _gvId,
+        dsGv: dsGv,
+        monId: _monId,
+        onChanged: (v) => setState(() => _gvId = v),
+      ),
+      // Chỉ hiện khi khối lớp của em có danh mục cho môn này — không thì
+      // ô chọn rỗng chỉ làm người ta tưởng mình thiếu gì đó.
+      if (s.baiHocTheoMon(_monId).isNotEmpty) ...[
+        const SizedBox(height: Gap.lg),
+        _Nhan('Bài học trong sách'),
+        ChonBaiHoc(
+          monId: _monId,
+          giaTri: _baiHocId,
+          onChanged: (v) => setState(() => _baiHocId = v),
+        ),
+      ],
+      const SizedBox(height: Gap.lg),
+    ];
+    final viet = <Widget>[
+      _Nhan('Hôm nay con làm gì?'),
+      // Màn rộng ô viết cao hơn cho cân với cột bên trái.
+      _OViet(controller: _noiDung, soDong: BoCuc.coThanhBen(context) ? 12 : 5),
+      const SizedBox(height: Gap.lg),
+    ];
+    final trangThai = <Widget>[
+      _Nhan('Làm tới đâu rồi?'),
+      Row(
+        children: [
+          for (final tt in TrangThai.values) ...[
+            Expanded(
+              child: GestureDetector(
+                onTap: () => setState(() => _trangThai = tt),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: Gap.md),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: _trangThai == tt ? tt.mauNen : AppColor.giayTrang,
+                    borderRadius: BorderRadius.circular(R.md),
+                    border: Border.all(
+                      color: _trangThai == tt
+                          ? tt.mau.withValues(alpha: .5)
+                          : AppColor.dongKe,
+                      width: _trangThai == tt ? 1.4 : 1,
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(tt.icon,
+                          size: 18,
+                          color: _trangThai == tt ? tt.mau : AppColor.mucNhat),
+                      const SizedBox(height: 5),
+                      Text(
+                        tt.nhan,
+                        style: AppType.ui(11.5,
+                            w: FontWeight.w600,
+                            color: _trangThai == tt ? tt.mau : AppColor.mucNhat),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            if (tt != TrangThai.values.last) const SizedBox(width: Gap.sm),
+          ],
+        ],
+      ),
+      const SizedBox(height: Gap.lg),
+      _Nhan('Làm mất bao lâu? (không bắt buộc)'),
+      Wrap(
+        spacing: Gap.sm,
+        runSpacing: Gap.sm,
+        children: [
+          for (final p in [15, 30, 45, 60, 90])
+            ChoiceChip(
+              label: Text(Ngay.phut(p)),
+              selected: _soPhut == p,
+              showCheckmark: false,
+              selectedColor: AppColor.muc,
+              labelStyle: AppType.ui(13,
+                  w: FontWeight.w600,
+                  color: _soPhut == p ? Colors.white : AppColor.muc),
+              onSelected: (v) => setState(() => _soPhut = v ? p : null),
+            ),
+        ],
+      ),
+      const SizedBox(height: Gap.lg),
+    ];
+    final anhVaGui = <Widget>[
+      _Nhan('Ảnh bài làm (không bắt buộc)'),
+      _KhoAnh(
+        anh: _anh,
+        onXoa: (i) => setState(() => _anh = [..._anh]..removeAt(i)),
+        onChup: () => _themAnh(ImageSource.camera),
+        onChon: () => _themAnh(ImageSource.gallery),
+      ),
+      const SizedBox(height: Gap.xl),
+      FilledButton(
+        onPressed: _dangLuu ? null : _luu,
+        child: Text(
+          _dangLuu
+              ? 'Đang lưu…'
+              : (_suaCu ? 'Lưu thay đổi' : 'Gửi báo cáo cho bố mẹ'),
+        ),
+      ),
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_suaCu ? 'Sửa báo cáo' : 'Viết báo cáo'),
@@ -175,212 +393,27 @@ class _SoanBaoCaoScreenState extends State<SoanBaoCaoScreen> {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.sm, Gap.lg, Gap.xxl),
+        padding: EdgeInsets.fromLTRB(BoCuc.le(context), Gap.sm, BoCuc.le(context), Gap.xxl),
         children: [
-          _Nhan('Hạng mục'),
-          Row(
-            children: [
-              for (final l in LoaiBaiTap.values) ...[
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => setState(() {
-                      _loai = l;
-                      _gvId = null;
-                    }),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: Gap.md + 2),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: _loai == l ? l.mauNen : AppColor.giayTrang,
-                        borderRadius: BorderRadius.circular(R.md),
-                        border: Border.all(
-                          color: _loai == l ? l.mau.withValues(alpha: .45) : AppColor.dongKe,
-                          width: _loai == l ? 1.4 : 1,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            l == LoaiBaiTap.trenLop
-                                ? Icons.school_rounded
-                                : Icons.auto_stories_rounded,
-                            size: 16,
-                            color: _loai == l ? l.mau : AppColor.mucNhat,
-                          ),
-                          const SizedBox(width: 6),
-                          Flexible(
-                            child: Text(
-                              l.nhan,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppType.ui(13,
-                                  w: FontWeight.w600,
-                                  color: _loai == l ? l.mau : AppColor.mucNhat),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                if (l != LoaiBaiTap.values.last) const SizedBox(width: Gap.sm),
-              ],
-            ],
-          ),
-          const SizedBox(height: Gap.lg),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _Nhan('Môn học'),
-                    DropdownButtonFormField<String>(
-                      initialValue: _monId,
-                      isExpanded: true,
-                      style: AppType.ui(15, w: FontWeight.w500),
-                      items: [
-                        for (final m in s.monHoc)
-                          DropdownMenuItem(value: m.id, child: Text(m.ten)),
-                      ],
-                      onChanged: (v) => setState(() {
-                        if (v != _monId) _baiHocId = null;
-                        _monId = v!;
-                      }),
-                    ),
-                  ],
-                ),
+          NoiDung(
+            toiDa: 1100,
+            child: HaiCot(
+              tiLeTrai: 2,
+              tiLePhai: 3,
+              // Màn rộng: bên trái chọn hạng mục, môn, thầy cô, bài, trạng
+              // thái; bên phải viết nội dung, ảnh và nút gửi.
+              trai: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [...chonLua, ...trangThai],
               ),
-              const SizedBox(width: Gap.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _Nhan('Ngày học'),
-                    InkWell(
-                      borderRadius: BorderRadius.circular(R.md),
-                      onTap: () async {
-                        final d = await showDatePicker(
-                          context: context,
-                          initialDate: _ngay,
-                          firstDate: DateTime.now().subtract(const Duration(days: 60)),
-                          lastDate: DateTime.now().add(const Duration(days: 7)),
-                        );
-                        if (d != null) setState(() => _ngay = Ngay.dauNgay(d));
-                      },
-                      child: InputDecorator(
-                        decoration: const InputDecoration(),
-                        child: Text(
-                          Ngay.nhan(_ngay),
-                          style: AppType.ui(15, w: FontWeight.w500),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              phai: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [...viet, ...anhVaGui],
               ),
-            ],
-          ),
-          const SizedBox(height: Gap.lg),
-          _Nhan(_loai == LoaiBaiTap.hocThem ? 'Thầy cô dạy thêm' : 'Giáo viên bộ môn'),
-          ChonGiaoVien(
-            loai: _loai,
-            giaTri: _gvId,
-            dsGv: dsGv,
-            monId: _monId,
-            onChanged: (v) => setState(() => _gvId = v),
-          ),
-          // Chỉ hiện khi khối lớp của em có danh mục cho môn này — không thì
-          // ô chọn rỗng chỉ làm người ta tưởng mình thiếu gì đó.
-          if (s.baiHocTheoMon(_monId).isNotEmpty) ...[
-            const SizedBox(height: Gap.lg),
-            _Nhan('Bài học trong sách'),
-            ChonBaiHoc(
-              monId: _monId,
-              giaTri: _baiHocId,
-              onChanged: (v) => setState(() => _baiHocId = v),
-            ),
-          ],
-          const SizedBox(height: Gap.lg),
-          _Nhan('Hôm nay con làm gì?'),
-          _OViet(controller: _noiDung),
-          const SizedBox(height: Gap.lg),
-          _Nhan('Làm tới đâu rồi?'),
-          Row(
-            children: [
-              for (final tt in TrangThai.values) ...[
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => setState(() => _trangThai = tt),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: Gap.md),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: _trangThai == tt ? tt.mauNen : AppColor.giayTrang,
-                        borderRadius: BorderRadius.circular(R.md),
-                        border: Border.all(
-                          color: _trangThai == tt
-                              ? tt.mau.withValues(alpha: .5)
-                              : AppColor.dongKe,
-                          width: _trangThai == tt ? 1.4 : 1,
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          Icon(tt.icon,
-                              size: 18,
-                              color: _trangThai == tt ? tt.mau : AppColor.mucNhat),
-                          const SizedBox(height: 5),
-                          Text(
-                            tt.nhan,
-                            style: AppType.ui(11.5,
-                                w: FontWeight.w600,
-                                color: _trangThai == tt ? tt.mau : AppColor.mucNhat),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                if (tt != TrangThai.values.last) const SizedBox(width: Gap.sm),
-              ],
-            ],
-          ),
-          const SizedBox(height: Gap.lg),
-          _Nhan('Làm mất bao lâu? (không bắt buộc)'),
-          Wrap(
-            spacing: Gap.sm,
-            runSpacing: Gap.sm,
-            children: [
-              for (final p in [15, 30, 45, 60, 90])
-                ChoiceChip(
-                  label: Text(Ngay.phut(p)),
-                  selected: _soPhut == p,
-                  showCheckmark: false,
-                  selectedColor: AppColor.muc,
-                  labelStyle: AppType.ui(13,
-                      w: FontWeight.w600,
-                      color: _soPhut == p ? Colors.white : AppColor.muc),
-                  onSelected: (v) => setState(() => _soPhut = v ? p : null),
-                ),
-            ],
-          ),
-          const SizedBox(height: Gap.lg),
-          _Nhan('Ảnh bài làm (không bắt buộc)'),
-          _KhoAnh(
-            anh: _anh,
-            onXoa: (i) => setState(() => _anh = [..._anh]..removeAt(i)),
-            onChup: () => _themAnh(ImageSource.camera),
-            onChon: () => _themAnh(ImageSource.gallery),
-          ),
-          const SizedBox(height: Gap.xl),
-          FilledButton(
-            onPressed: _dangLuu ? null : _luu,
-            child: Text(
-              _dangLuu
-                  ? 'Đang lưu…'
-                  : (_suaCu ? 'Lưu thay đổi' : 'Gửi báo cáo cho bố mẹ'),
+              hep: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [...chonLua, ...viet, ...trangThai, ...anhVaGui],
+              ),
             ),
           ),
         ],
@@ -403,8 +436,9 @@ class _Nhan extends StatelessWidget {
 /// Ô nhập nội dung kẻ dòng đúng nhịp trang vở, để việc gõ báo cáo giống
 /// viết vào vở hơn là điền biểu mẫu.
 class _OViet extends StatefulWidget {
-  const _OViet({required this.controller});
+  const _OViet({required this.controller, this.soDong = 5});
   final TextEditingController controller;
+  final int soDong;
 
   @override
   State<_OViet> createState() => _OVietState();
@@ -444,7 +478,7 @@ class _OVietState extends State<_OViet> {
         child: TextField(
           controller: widget.controller,
           focusNode: _focus,
-          minLines: 5,
+          minLines: widget.soDong,
           maxLines: null,
           textCapitalization: TextCapitalization.sentences,
           style: AppType.ui(15, height: lineHeight / 15, w: FontWeight.w400),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/tokens.dart';
+import '../../core/layout/khung_dieu_huong.dart';
 import '../shared/ho_so_screen.dart';
 import 'danh_muc_screen.dart';
 import 'nguoi_dung_screen.dart';
@@ -18,47 +18,21 @@ class _AdminShellState extends State<AdminShell> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(
-        index: _tab,
-        children: const [
-          TongQuanScreen(),
-          NguoiDungScreen(),
-          DanhMucScreen(),
-          HoSoScreen(),
-        ],
-      ),
-      bottomNavigationBar: DecoratedBox(
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: AppColor.dongKe)),
-        ),
-        child: NavigationBar(
-          selectedIndex: _tab,
-          onDestinationSelected: (i) => setState(() => _tab = i),
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.insights_outlined),
-              selectedIcon: Icon(Icons.insights_rounded),
-              label: 'Tổng quan',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.group_outlined),
-              selectedIcon: Icon(Icons.group_rounded),
-              label: 'Người dùng',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.menu_book_outlined),
-              selectedIcon: Icon(Icons.menu_book_rounded),
-              label: 'Môn & thầy cô',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.person_outline_rounded),
-              selectedIcon: Icon(Icons.person_rounded),
-              label: 'Tài khoản',
-            ),
-          ],
-        ),
-      ),
+    return KhungDieuHuong(
+      tab: _tab,
+      onChon: (i) => setState(() => _tab = i),
+      diemDen: const [
+        DiemDen(icon: Icons.insights_outlined, iconChon: Icons.insights_rounded, nhan: 'Tổng quan'),
+        DiemDen(icon: Icons.group_outlined, iconChon: Icons.group_rounded, nhan: 'Người dùng'),
+        DiemDen(icon: Icons.menu_book_outlined, iconChon: Icons.menu_book_rounded, nhan: 'Danh mục'),
+        DiemDen(icon: Icons.person_outline_rounded, iconChon: Icons.person_rounded, nhan: 'Tài khoản'),
+      ],
+      man: const [
+        TongQuanScreen(),
+        NguoiDungScreen(),
+        DanhMucScreen(),
+        HoSoScreen(),
+      ],
     );
   }
 }

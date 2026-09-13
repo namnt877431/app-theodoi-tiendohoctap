@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/layout/bo_cuc.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../core/widgets/common.dart';
@@ -71,8 +72,9 @@ class _DanhMucScreenState extends State<DanhMucScreen>
         bottom: false,
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.md, Gap.lg, Gap.sm),
+            LeTrang(
+              tren: Gap.md,
+              duoi: Gap.sm,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -294,12 +296,24 @@ class _DsTruong extends StatelessWidget {
         moTa: 'Thêm trường để học sinh chọn lúc đăng ký, rồi gắn thầy cô trên lớp vào từng trường.',
       );
     }
-    return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.lg, Gap.lg, 96),
-      itemCount: truong.length,
-      separatorBuilder: (_, _) => const SizedBox(height: Gap.sm),
-      itemBuilder: (_, i) {
-        final t = truong[i];
+    return LayoutBuilder(builder: (context, rang) {
+      final le = BoCuc.leCanhGiua(rang.maxWidth, BoCuc.le(context));
+      return ListView(
+      padding: EdgeInsets.fromLTRB(le, Gap.lg, le, 96),
+      children: [
+        LuoiThe(
+          rongToiThieu: 340,
+          khe: Gap.sm,
+          children: [
+            for (final t in truong) _theTruong(context, s, t),
+          ],
+        ),
+      ],
+    );
+    });
+  }
+
+  Widget _theTruong(BuildContext context, AppState s, Truong t) {
         final soGv = s.giaoVien.where((g) => g.truongId == t.id).length;
         return _The(
           o: Container(
@@ -319,8 +333,6 @@ class _DsTruong extends StatelessWidget {
           ].join(' · '),
           onTap: () => moSuaTruong(context, truong: t),
         );
-      },
-    );
   }
 }
 
@@ -340,10 +352,12 @@ class _DsMon extends StatelessWidget {
         hanhDong: _NutNapMau(),
       );
     }
-    return GridView.builder(
-      padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.lg, Gap.lg, 96),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+    return LayoutBuilder(builder: (context, rang) {
+      final le = BoCuc.leCanhGiua(rang.maxWidth, BoCuc.le(context));
+      return GridView.builder(
+      padding: EdgeInsets.fromLTRB(le, Gap.lg, le, 96),
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 280,
         mainAxisSpacing: Gap.sm,
         crossAxisSpacing: Gap.sm,
         mainAxisExtent: 68,
@@ -391,6 +405,7 @@ class _DsMon extends StatelessWidget {
         ),
       ),
     );
+    });
   }
 }
 
@@ -435,9 +450,7 @@ class _DsGiaoVien extends StatelessWidget {
           s.tenTinh(g.tinhId) ?? 'Mọi tỉnh',
         g.noiDay,
       ];
-      return Padding(
-        padding: const EdgeInsets.only(bottom: Gap.sm),
-        child: _The(
+      return _The(
           o: AvatarChu(
             g.hoTen.replaceFirst(RegExp(r'^(Thầy|Cô) '), ''),
             kichThuoc: 40,
@@ -453,22 +466,28 @@ class _DsGiaoVien extends StatelessWidget {
                   style: AppType.numeric(11.5, color: AppColor.mucNhat, w: FontWeight.w500),
                 ),
           onTap: () => moSuaGiaoVien(context, giaoVien: g),
-        ),
-      );
+        );
     }
+    Widget luoi(List<GiaoVien> ds) => LuoiThe(
+          rongToiThieu: 340,
+          khe: Gap.sm,
+          children: [for (final g in ds) the(g)],
+        );
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.lg, Gap.lg, 96),
+    return LayoutBuilder(builder: (context, rang) {
+      final le = BoCuc.leCanhGiua(rang.maxWidth, BoCuc.le(context));
+      return ListView(
+      padding: EdgeInsets.fromLTRB(le, Gap.lg, le, 96),
       children: [
         if (trenLop.isNotEmpty) ...[
           dau(const NhanLoai(LoaiBaiTap.trenLop, dayDu: true)),
-          for (final g in trenLop) the(g),
-          const SizedBox(height: Gap.md),
+          luoi(trenLop),
+          const SizedBox(height: Gap.md + Gap.sm),
         ],
         if (hocThem.isNotEmpty) ...[
           dau(const NhanLoai(LoaiBaiTap.hocThem, dayDu: true)),
-          for (final g in hocThem) the(g),
-          const SizedBox(height: Gap.md),
+          luoi(hocThem),
+          const SizedBox(height: Gap.md + Gap.sm),
         ],
         if (rieng.isNotEmpty) ...[
           dau(Container(
@@ -482,10 +501,11 @@ class _DsGiaoVien extends StatelessWidget {
               style: AppType.ui(12, w: FontWeight.w600, color: AppColor.muc),
             ),
           )),
-          for (final g in rieng) the(g),
+          luoi(rieng),
         ],
       ],
     );
+    });
   }
 }
 

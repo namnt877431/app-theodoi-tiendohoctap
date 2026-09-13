@@ -114,7 +114,10 @@ abstract final class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(R.sm)),
       ),
 
+      // Bảng chọn từ dưới lên không kéo hết bề ngang màn máy tính — thu về
+      // cỡ một cột đọc, đặt giữa. Điện thoại hẹp hơn mức này nên không đổi.
       bottomSheetTheme: const BottomSheetThemeData(
+        constraints: BoxConstraints(maxWidth: 640),
         backgroundColor: AppColor.giayTrang,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(

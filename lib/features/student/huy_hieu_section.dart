@@ -45,7 +45,7 @@ class KeHuyHieu extends StatelessWidget {
             border: Border.all(color: AppColor.dongKe),
           ),
           child: SizedBox(
-            height: 118,
+            height: 128,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: Gap.md),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/layout/bo_cuc.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../core/utils/ngay.dart';
@@ -63,53 +64,93 @@ class _ThoiKhoaBieuScreenState extends State<ThoiKhoaBieuScreen> {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.only(bottom: Gap.xxl),
+        padding: EdgeInsets.fromLTRB(0, 0, 0, Gap.xxl),
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(Gap.lg, 0, Gap.lg, Gap.md),
-            child: _ChonBuoi(buoi: _buoi, onChon: (b) => setState(() => _buoi = b)),
-          ),
-          _LuoiTkb(buoi: _buoi),
-          const SizedBox(height: Gap.xl),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: Gap.lg),
-            child: TieuDeMuc(
-              'Học thêm trong tuần',
-              eyebrow: '${hocThem.length} buổi',
-              hanhDong: TextButton.icon(
-                onPressed: () =>
-                    moSuaTietHoc(context, buoi: Buoi.toi, loai: LoaiBaiTap.hocThem),
-                icon: const Icon(Icons.add_rounded, size: 17),
-                label: const Text('Thêm buổi'),
-                style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+          NoiDung(
+            // Màn rộng: lưới tiết bên trái, buổi học thêm bên phải.
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: BoCuc.le(context) - Gap.lg),
+              child: HaiCot(
+                trai: _KhungLuoi(buoi: _buoi, onChon: (b) => setState(() => _buoi = b)),
+                phai: _KhungHocThem(hocThem: hocThem),
+                khe: Gap.lg,
               ),
             ),
           ),
-          const SizedBox(height: Gap.md),
-          if (hocThem.isEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Gap.lg),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(Gap.lg),
-                decoration: BoxDecoration(
-                  color: AppColor.hocThemNhat,
-                  borderRadius: BorderRadius.circular(R.md),
-                ),
-                child: Text(
-                  'Chưa khai buổi học thêm nào. Thêm vào đây để báo cáo học thêm gắn đúng thầy cô.',
-                  style: AppType.ui(13, color: AppColor.hocThem, w: FontWeight.w500, height: 1.5),
-                ),
-              ),
-            )
-          else
-            for (final t in hocThem)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(Gap.lg, 0, Gap.lg, Gap.sm + 2),
-                child: _DongHocThem(t),
-              ),
         ],
       ),
+    );
+  }
+}
+
+/// Bộ chọn buổi và lưới tiết — lưới tự giãn theo bề ngang được cấp.
+class _KhungLuoi extends StatelessWidget {
+  const _KhungLuoi({required this.buoi, required this.onChon});
+  final Buoi buoi;
+  final ValueChanged<Buoi> onChon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(Gap.lg, 0, Gap.lg, Gap.md),
+          child: _ChonBuoi(buoi: buoi, onChon: onChon),
+        ),
+        _LuoiTkb(buoi: buoi),
+      ],
+    );
+  }
+}
+
+class _KhungHocThem extends StatelessWidget {
+  const _KhungHocThem({required this.hocThem});
+  final List<TietHoc> hocThem;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: Gap.lg),
+          child: TieuDeMuc(
+            'Học thêm trong tuần',
+            eyebrow: '${hocThem.length} buổi',
+            hanhDong: TextButton.icon(
+              onPressed: () =>
+                  moSuaTietHoc(context, buoi: Buoi.toi, loai: LoaiBaiTap.hocThem),
+              icon: const Icon(Icons.add_rounded, size: 17),
+              label: const Text('Thêm buổi'),
+              style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+            ),
+          ),
+        ),
+        const SizedBox(height: Gap.md),
+        if (hocThem.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Gap.lg),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(Gap.lg),
+              decoration: BoxDecoration(
+                color: AppColor.hocThemNhat,
+                borderRadius: BorderRadius.circular(R.md),
+              ),
+              child: Text(
+                'Chưa khai buổi học thêm nào. Thêm vào đây để báo cáo học thêm gắn đúng thầy cô.',
+                style: AppType.ui(13, color: AppColor.hocThem, w: FontWeight.w500, height: 1.5),
+              ),
+            ),
+          )
+        else
+          for (final t in hocThem)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(Gap.lg, 0, Gap.lg, Gap.sm + 2),
+              child: _DongHocThem(t),
+            ),
+      ],
     );
   }
 }

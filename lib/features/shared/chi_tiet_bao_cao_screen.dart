@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/layout/bo_cuc.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/typography.dart';
 import '../../core/utils/ngay.dart';
@@ -48,9 +49,10 @@ class ChiTietBaoCaoScreen extends StatelessWidget {
             ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.sm, Gap.lg, Gap.xxl),
-        children: [
+      body: Builder(builder: (context) {
+        final le = BoCuc.le(context);
+        // Lời của học sinh: nhãn và trang vở…
+        final trangVo = <Widget>[
           Row(
             children: [
               NhanLoai(bc.loai, dayDu: true),
@@ -90,44 +92,18 @@ class ChiTietBaoCaoScreen extends StatelessWidget {
               ],
             ),
           ),
-          if (bh != null) ...[
-            const SizedBox(height: Gap.lg),
-            TheBaiHoc(bh, laPhuHuynh: laPhuHuynh),
-          ],
+        ];
+        // …ảnh bài làm…
+        final anh = <Widget>[
           if (bc.anh.isNotEmpty) ...[
             const SizedBox(height: Gap.xl),
             TieuDeMuc('Ảnh bài làm', eyebrow: '${bc.anh.length} ảnh'),
             const SizedBox(height: Gap.md),
             _LuoiAnh(duongDan: bc.anh),
           ],
-          const SizedBox(height: Gap.xl),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: Gap.lg, vertical: Gap.sm),
-            decoration: BoxDecoration(
-              color: AppColor.giayTrang,
-              borderRadius: BorderRadius.circular(R.lg),
-              border: Border.all(color: AppColor.dongKe),
-            ),
-            child: Column(
-              children: [
-                DongThongTin(Icons.event_rounded, 'Ngày học', Ngay.dayDu(bc.ngay)),
-                const Divider(),
-                DongThongTin(Icons.schedule_rounded, 'Thời gian làm bài',
-                    bc.soPhut == null ? 'Chưa ghi' : Ngay.phut(bc.soPhut!)),
-                const Divider(),
-                DongThongTin(Icons.send_rounded, 'Gửi lúc',
-                    '${Ngay.gio(bc.taoLuc)} · ${Ngay.ddMM(bc.taoLuc)}'),
-                if (gv != null) ...[
-                  const Divider(),
-                  DongThongTin(
-                    Icons.person_outline_rounded,
-                    bc.loai == LoaiBaiTap.hocThem ? 'Thầy cô dạy thêm' : 'Giáo viên bộ môn',
-                    gv,
-                  ),
-                ],
-              ],
-            ),
-          ),
+        ];
+        // …và phần đối đáp: nhận xét của bố mẹ, nút nhắc hay đổi trạng thái.
+        final doiDap = <Widget>[
           const SizedBox(height: Gap.xl),
           _NhanXet(bc: bc, laPhuHuynh: laPhuHuynh),
           if (laPhuHuynh) ...[
@@ -145,8 +121,79 @@ class ChiTietBaoCaoScreen extends StatelessWidget {
             const SizedBox(height: Gap.xl),
             _DoiTrangThai(bc: bc),
           ],
-        ],
-      ),
+        ];
+        // Phần tra cứu: bài học trong sách và thông tin phụ.
+        final thongTin = Container(
+          padding: const EdgeInsets.symmetric(horizontal: Gap.lg, vertical: Gap.sm),
+          decoration: BoxDecoration(
+            color: AppColor.giayTrang,
+            borderRadius: BorderRadius.circular(R.lg),
+            border: Border.all(color: AppColor.dongKe),
+          ),
+          child: Column(
+            children: [
+              DongThongTin(Icons.event_rounded, 'Ngày học', Ngay.dayDu(bc.ngay)),
+              const Divider(),
+              DongThongTin(Icons.schedule_rounded, 'Thời gian làm bài',
+                  bc.soPhut == null ? 'Chưa ghi' : Ngay.phut(bc.soPhut!)),
+              const Divider(),
+              DongThongTin(Icons.send_rounded, 'Gửi lúc',
+                  '${Ngay.gio(bc.taoLuc)} · ${Ngay.ddMM(bc.taoLuc)}'),
+              if (gv != null) ...[
+                const Divider(),
+                DongThongTin(
+                  Icons.person_outline_rounded,
+                  bc.loai == LoaiBaiTap.hocThem ? 'Thầy cô dạy thêm' : 'Giáo viên bộ môn',
+                  gv,
+                ),
+              ],
+            ],
+          ),
+        );
+        final traCuu = <Widget>[
+          if (bh != null) ...[
+            TheBaiHoc(bh, laPhuHuynh: laPhuHuynh),
+            const SizedBox(height: Gap.lg),
+          ],
+          thongTin,
+        ];
+
+        return ListView(
+          padding: EdgeInsets.fromLTRB(le, Gap.sm, le, Gap.xxl),
+          children: [
+            NoiDung(
+              toiDa: 1100,
+              child: HaiCot(
+                // Màn rộng: trái là lời học sinh và đối đáp, phải là bài học
+                // trong sách cùng thông tin phụ.
+                trai: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [...trangVo, ...anh, ...doiDap],
+                ),
+                phai: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [const SizedBox(height: Gap.xxl + Gap.sm), ...traCuu],
+                ),
+                // Điện thoại: trang vở, bài học, ảnh, thông tin, rồi đối đáp.
+                hep: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ...trangVo,
+                    if (bh != null) ...[
+                      const SizedBox(height: Gap.lg),
+                      TheBaiHoc(bh, laPhuHuynh: laPhuHuynh),
+                    ],
+                    ...anh,
+                    const SizedBox(height: Gap.xl),
+                    thongTin,
+                    ...doiDap,
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      }),
     );
   }
 }
