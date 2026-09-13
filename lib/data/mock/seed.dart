@@ -234,6 +234,8 @@ abstract final class Seed {
             hocKi: 1, diem: 8, ngay: _ngay(5), taoBoi: 'ph_01', taoLuc: _ngay(5)),
         DiemThi(id: 'dt_05', hocSinhId: 'hs_01', monId: 'm_toan', loai: LoaiKiemTra.muoiLamPhut,
             hocKi: 1, diem: 10, ngay: _ngay(7), taoBoi: 'hs_01', taoLuc: _ngay(7)),
+        DiemThi(id: 'dt_06', hocSinhId: 'hs_01', monId: 'm_td', loai: LoaiKiemTra.mieng,
+            hocKi: 1, dat: true, ngay: _ngay(8), taoBoi: 'hs_01', taoLuc: _ngay(8)),
         DiemThi(id: 'dt_04', hocSinhId: 'hs_01', monId: 'm_toan', loai: LoaiKiemTra.giuaKi,
             hocKi: 1, diem: 8.5, ngay: _ngay(3), ghiChu: 'Sai câu hình cuối', taoBoi: 'hs_01',
             taoLuc: _ngay(3)),

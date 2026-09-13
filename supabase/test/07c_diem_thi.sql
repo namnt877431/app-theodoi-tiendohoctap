@@ -27,6 +27,22 @@
      $q$insert into diem_thi (hoc_sinh_id, mon_id, loai, hoc_ki, diem)
         values ('33333333-3333-3333-3333-333333333333', 'm_toan', 'thuongXuyen', 1, 8)$q$, 0),
 
+    ('Môn chấm nhận xét ghi Đ được, không kèm điểm số',
+     '33333333-3333-3333-3333-333333333333'::uuid, 'duoc',
+     $q$insert into diem_thi (id, hoc_sinh_id, mon_id, loai, hoc_ki, dat)
+        values ('eeeeeeee-0000-0000-0000-000000000002',
+                '33333333-3333-3333-3333-333333333333', 'm_toan', 'mieng', 1, true)$q$, 0),
+
+    ('Vừa điểm số vừa Đ thì bị chặn',
+     '33333333-3333-3333-3333-333333333333'::uuid, 'chan',
+     $q$insert into diem_thi (hoc_sinh_id, mon_id, loai, hoc_ki, diem, dat)
+        values ('33333333-3333-3333-3333-333333333333', 'm_toan', 'mieng', 1, 8, true)$q$, 0),
+
+    ('Không điểm số cũng không Đ/CĐ thì bị chặn',
+     '33333333-3333-3333-3333-333333333333'::uuid, 'chan',
+     $q$insert into diem_thi (hoc_sinh_id, mon_id, loai, hoc_ki)
+        values ('33333333-3333-3333-3333-333333333333', 'm_toan', 'mieng', 1)$q$, 0),
+
     ('Điểm ngoài thang 10 bị chặn',
      '33333333-3333-3333-3333-333333333333'::uuid, 'chan',
      $q$insert into diem_thi (hoc_sinh_id, mon_id, loai, hoc_ki, diem)

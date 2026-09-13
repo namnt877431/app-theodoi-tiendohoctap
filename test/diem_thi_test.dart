@@ -20,6 +20,17 @@ DiemThi _d(String mon, LoaiKiemTra loai, double diem, {int hocKi = 1, int lui = 
       taoLuc: DateTime(2026, 10, 20),
     );
 
+DiemThi _nx(String mon, bool dat, {int lui = 0}) => DiemThi(
+      id: '$mon-nx-$dat-$lui',
+      hocSinhId: 'hs',
+      monId: mon,
+      loai: LoaiKiemTra.mieng,
+      hocKi: 1,
+      dat: dat,
+      ngay: DateTime(2026, 10, 20).subtract(Duration(days: lui)),
+      taoLuc: DateTime(2026, 10, 20),
+    );
+
 PhanThuong _qua({String? mon, LoaiKiemTra? ki, double diem = 8, int soLanTrao = 0}) => PhanThuong(
       id: 'q',
       hocSinhId: 'hs',
@@ -47,7 +58,7 @@ void main() {
   });
 
   group('Quà điểm thi', () {
-    test('chỉ bài lớn, đúng môn, đúng kì, đủ điểm, từ ngày treo', () {
+    test('chỉ bài lớn, đúng môn, đúng kì, đủ điểm, từ ngày treo; Đ/CĐ không tính', () {
       final q = _qua(mon: 'm_toan', ki: LoaiKiemTra.giuaKi, diem: 8);
       expect(q.khopDiem(_d('m_toan', LoaiKiemTra.giuaKi, 8)), isTrue);
       expect(q.khopDiem(_d('m_toan', LoaiKiemTra.giuaKi, 7.75)), isFalse, reason: 'thiếu điểm');
@@ -55,6 +66,7 @@ void main() {
       expect(q.khopDiem(_d('m_van', LoaiKiemTra.giuaKi, 9)), isFalse, reason: 'sai môn');
       expect(q.khopDiem(_d('m_toan', LoaiKiemTra.mieng, 10)), isFalse, reason: 'bài nhỏ');
       expect(q.khopDiem(_d('m_toan', LoaiKiemTra.giuaKi, 9, lui: 40)), isFalse, reason: 'trước ngày treo');
+      expect(q.khopDiem(_nx('m_toan', true).copyWith(loai: LoaiKiemTra.giuaKi)), isFalse, reason: 'Đ không phải điểm');
     });
 
     test('môn và kì bỏ trống là môn nào, kì nào cũng được; thường xuyên vẫn không', () {
@@ -99,11 +111,30 @@ void main() {
       expect(diemTrungBinh([_d('m_toan', LoaiKiemTra.mieng, 7), _d('m_toan', LoaiKiemTra.cuoiKi, 7)]), isNull);
     });
 
-    test('màu theo mức xếp loại', () {
-      expect(mauDiem(8), AppColor.xong);
-      expect(mauDiem(6.5), AppColor.muc);
-      expect(mauDiem(5), AppColor.dangLam);
-      expect(mauDiem(4.75), AppColor.butDo);
+    test('màu theo mức xếp loại; Đ xanh, CĐ đỏ', () {
+      expect(mauSo(8), AppColor.xong);
+      expect(mauSo(6.5), AppColor.muc);
+      expect(mauSo(5), AppColor.dangLam);
+      expect(mauSo(4.75), AppColor.butDo);
+      expect(mauDiem(_nx('m_td', true)), AppColor.xong);
+      expect(mauDiem(_nx('m_td', false)), AppColor.butDo);
+    });
+
+    test('TBM ghi một chữ số lẻ; môn chấm nhận xét ra Đ khi mọi bài đều Đ', () {
+      expect(chuTbm(55 / 7), '7,9');
+      expect(chuTbm(10), '10,0');
+      expect(chuTbmMon([_nx('m_td', true), _nx('m_td', true)]), 'Đ');
+      expect(chuTbmMon([_nx('m_td', true), _nx('m_td', false)]), 'CĐ');
+      expect(chuTbmMon([_d('m_toan', LoaiKiemTra.mieng, 9)]), isNull);
+      // Điểm Đ/CĐ không kéo TBM số.
+      expect(
+        diemTrungBinh([
+          _d('m_toan', LoaiKiemTra.giuaKi, 8),
+          _d('m_toan', LoaiKiemTra.cuoiKi, 8),
+          _nx('m_toan', true),
+        ]),
+        closeTo(8, 1e-9),
+      );
     });
   });
 
@@ -123,9 +154,12 @@ void main() {
         for (final m in s.monHoc) {
           expect(find.text(m.ten), findsOneWidget);
         }
-        // Khôi có 9 miệng, 10 (15 phút), 8,5 giữa kì Toán; chưa có cuối kì → TB "—".
-        expect(find.text('8,5'), findsOneWidget);
-        expect(find.text('—'), findsNWidgets(s.monHoc.length));
+        // Khôi có 9 miệng, 10 (15 phút), 8,5 1 tiết Toán; chưa có học kỳ → chưa có TBM.
+        // Thể dục chấm Đ → TBM Đ.
+        expect(find.textContaining('8,5'), findsOneWidget);
+        expect(find.text('Đ'), findsWidgets);
+        expect(find.text('Môn học'), findsOneWidget);
+        expect(find.text('TBM'), findsOneWidget);
       });
     }
 
@@ -139,12 +173,24 @@ void main() {
         child: const MaterialApp(home: SoDiemScreen()),
       ));
       await t.pump();
-      // Ô "Cuối kì" của Toán là ô trống đầu tiên trên hàng Toán (miệng, 15', GK đã có).
-      await t.tap(find.byIcon(Icons.add_rounded).first);
+      // Chạm ô "Học kỳ" của Toán (còn trống) → bảng ghi với Toán, cột Học kỳ chọn sẵn.
+      final oToan = find.descendant(
+        of: find.ancestor(of: find.text('Toán'), matching: find.byType(Row)).first,
+        matching: find.byType(InkWell),
+      );
+      await t.tap(oToan.at(3));
       await t.pumpAndSettle();
       expect(find.text('Ghi điểm'), findsWidgets);
-      final chonCuoiKi = t.widgetList<OChon>(find.byType(OChon)).firstWhere((o) => o.nhan == 'Cuối kì');
-      expect(chonCuoiKi.chon, isTrue);
+      final chonHocKy = t.widgetList<OChon>(find.byType(OChon)).firstWhere((o) => o.nhan == 'Học kỳ');
+      expect(chonHocKy.chon, isTrue);
+
+      // Ô có điểm rồi (miệng Toán) thì mở danh sách để sửa hay ghi thêm.
+      Navigator.of(t.element(find.byType(OChon).first)).pop();
+      await t.pumpAndSettle();
+      await t.tap(oToan.at(0));
+      await t.pumpAndSettle();
+      expect(find.text('Ghi thêm'), findsOneWidget);
+      expect(find.byIcon(Icons.edit_outlined), findsOneWidget);
     });
   });
 
@@ -177,7 +223,7 @@ void main() {
       expect(qua.soLanDat, 2);
 
       // Cùng kho mẫu trong bộ nhớ: phụ huynh đăng nhập bằng repo của phiên này.
-      await hs.luuDiem(moi.copyWith(diem: 9.5, ghiChu: () => 'Cô chấm lại'));
+      await hs.luuDiem(moi.copyWith(diem: () => 9.5, ghiChu: () => 'Cô chấm lại'));
       final sua = hs.diemThi.firstWhere((d) => d.id == moi.id);
       expect(sua.diem, 9.5);
       expect(sua.ghiChu, 'Cô chấm lại');

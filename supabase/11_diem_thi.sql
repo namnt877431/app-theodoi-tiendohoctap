@@ -1,5 +1,7 @@
 -- =============================================================================
--- Sổ điểm — điểm miệng, 15 phút, giữa kì, cuối kì của học sinh.
+-- Sổ điểm — bốn cột như sổ ở trường: miệng, 15 phút, 1 tiết (giuaKi, hệ số
+-- 2), học kỳ (cuoiKi, hệ số 3). Điểm là số thang 10, hoặc Đ/CĐ với môn chấm
+-- bằng nhận xét (cột `dat`) — đúng một trong hai.
 --
 -- Con hay bố mẹ đều ghi được, và sửa/xóa được — điểm ghi nhầm là chuyện
 -- thường, không cần khóa. Phần thưởng loại "điểm thi" (10_phan_thuong.sql)
@@ -14,7 +16,8 @@ create table if not exists diem_thi (
   mon_id      text not null references mon_hoc(id) on delete cascade,
   loai        text not null check (loai in ('mieng', 'muoiLamPhut', 'giuaKi', 'cuoiKi')),
   hoc_ki      int  not null check (hoc_ki in (1, 2)),
-  diem        numeric(4, 2) not null check (diem between 0 and 10),
+  diem        numeric(4, 2) check (diem is null or diem between 0 and 10),
+  dat         boolean,
   ngay        date not null default (now() at time zone 'Asia/Ho_Chi_Minh')::date,
   ghi_chu     text check (ghi_chu is null or length(ghi_chu) <= 200),
   tao_boi     uuid references nguoi_dung(id) on delete set null,
@@ -29,6 +32,13 @@ alter table diem_thi drop constraint if exists diem_thi_loai_check;
 update diem_thi set loai = 'mieng' where loai = 'thuongXuyen';
 alter table diem_thi add constraint diem_thi_loai_check
   check (loai in ('mieng', 'muoiLamPhut', 'giuaKi', 'cuoiKi'));
+
+-- Môn chấm Đ/CĐ: thêm cột `dat`, cho `diem` trống, và bắt đúng một trong hai.
+alter table diem_thi add column if not exists dat boolean;
+alter table diem_thi alter column diem drop not null;
+alter table diem_thi drop constraint if exists diem_thi_diem_hoac_dat;
+alter table diem_thi add constraint diem_thi_diem_hoac_dat
+  check ((diem is null) <> (dat is null));
 
 grant select, insert, update, delete on diem_thi to authenticated;
 revoke all on diem_thi from anon;

@@ -399,14 +399,17 @@ class NhacNho {
       );
 }
 
-/// Bốn cột điểm trên sổ điểm ở trường phổ thông, kèm hệ số trường dùng để
-/// tính trung bình môn: miệng và 15 phút hệ số 1, giữa kì 2, cuối kì 3.
-/// Hai bài lớn là chỗ phần thưởng nhắm tới.
+/// Bốn cột điểm trên sổ điểm ở trường, đúng thứ tự và hệ số trường dùng để
+/// tính TBM: miệng và 15 phút hệ số 1, 1 tiết hệ số 2, học kỳ hệ số 3.
+///
+/// Tên trong mã giữ `giuaKi` / `cuoiKi` (cũng là giá trị lưu trong bảng) vì
+/// trường theo chương trình mới gọi hai cột đó là giữa kì và cuối kì; cùng
+/// hệ số, cùng một cột trên sổ. Hai cột đó là chỗ phần thưởng nhắm tới.
 enum LoaiKiemTra {
-  mieng('Miệng', 'M', 1),
-  muoiLamPhut('15 phút', "15'", 1),
-  giuaKi('Giữa kì', 'GK', 2),
-  cuoiKi('Cuối kì', 'CK', 3);
+  mieng('Điểm miệng', 'Miệng', 1),
+  muoiLamPhut('Điểm 15 phút', '15 phút', 1),
+  giuaKi('Điểm 1 tiết', '1 tiết', 2),
+  cuoiKi('Học kỳ', 'Học kỳ', 3);
 
   const LoaiKiemTra(this.nhan, this.nhanNgan, this.heSo);
   final String nhan;
@@ -416,8 +419,11 @@ enum LoaiKiemTra {
   bool get laBaiLon => heSo > 1;
 }
 
-/// Một điểm kiểm tra trong sổ điểm. Con hay bố mẹ đều ghi được; điểm là
-/// thang 10, lẻ tới 0,25.
+/// Một điểm trong sổ điểm. Con hay bố mẹ đều ghi được.
+///
+/// Điểm là thang 10, lẻ tới 0,25 — hoặc, với môn chấm bằng nhận xét (Thể
+/// dục, Âm nhạc, Mĩ thuật…), là Đ / CĐ: khi đó [diem] null và [dat] có giá
+/// trị. Đúng một trong hai.
 class DiemThi {
   const DiemThi({
     required this.id,
@@ -425,9 +431,10 @@ class DiemThi {
     required this.monId,
     required this.loai,
     required this.hocKi,
-    required this.diem,
     required this.ngay,
     required this.taoLuc,
+    this.diem,
+    this.dat,
     this.ghiChu,
     this.taoBoi,
   });
@@ -439,7 +446,10 @@ class DiemThi {
 
   /// Học kì 1 hay 2.
   final int hocKi;
-  final double diem;
+  final double? diem;
+
+  /// Đạt / chưa đạt, cho môn chấm bằng nhận xét. Null khi chấm bằng số.
+  final bool? dat;
   final DateTime ngay;
   final String? ghiChu;
 
@@ -447,14 +457,17 @@ class DiemThi {
   final String? taoBoi;
   final DateTime taoLuc;
 
-  /// "8,5" — dấu phẩy như trên học bạ, bỏ ",0".
-  String get diemChu => chuDiem(diem);
+  bool get bangNhanXet => diem == null;
+
+  /// "8,5" — dấu phẩy như trên học bạ, bỏ ",0"; hoặc "Đ" / "CĐ".
+  String get diemChu => diem != null ? chuDiem(diem!) : (dat ?? false) ? 'Đ' : 'CĐ';
 
   DiemThi copyWith({
     String? monId,
     LoaiKiemTra? loai,
     int? hocKi,
-    double? diem,
+    double? Function()? diem,
+    bool? Function()? dat,
     DateTime? ngay,
     String? Function()? ghiChu,
   }) =>
@@ -464,7 +477,8 @@ class DiemThi {
         monId: monId ?? this.monId,
         loai: loai ?? this.loai,
         hocKi: hocKi ?? this.hocKi,
-        diem: diem ?? this.diem,
+        diem: diem == null ? this.diem : diem(),
+        dat: dat == null ? this.dat : dat(),
         ngay: ngay ?? this.ngay,
         ghiChu: ghiChu == null ? this.ghiChu : ghiChu(),
         taoBoi: taoBoi,
@@ -558,9 +572,10 @@ class PhanThuong {
   bool khopDiem(DiemThi d) =>
       loai == LoaiPhanThuong.diem &&
       d.loai.laBaiLon &&
+      d.diem != null &&
       (monId == null || d.monId == monId) &&
       (kiThi == null || d.loai == kiThi) &&
-      d.diem >= (diemToiThieu ?? 10) &&
+      d.diem! >= (diemToiThieu ?? 10) &&
       !d.ngay.isBefore(DateTime(tuNgay.year, tuNgay.month, tuNgay.day));
 
   PhanThuong copyWith({
@@ -939,6 +954,7 @@ extension DiemThiPg on DiemThi {
         'loai': loai.name,
         'hoc_ki': hocKi,
         'diem': diem,
+        'dat': dat,
         'ngay': ngayIso(ngay),
         'ghi_chu': ghiChu,
         'tao_boi': taoBoi,
@@ -950,7 +966,8 @@ extension DiemThiPg on DiemThi {
         monId: '${m['mon_id'] ?? ''}',
         loai: enumTu(LoaiKiemTra.values, m['loai'], LoaiKiemTra.mieng),
         hocKi: soTu(m['hoc_ki']) ?? 1,
-        diem: thucTu(m['diem']) ?? 0,
+        diem: thucTu(m['diem']),
+        dat: m['dat'] as bool?,
         ngay: ngayTu(m['ngay']) ?? DateTime.now(),
         ghiChu: m['ghi_chu'] as String?,
         taoBoi: m['tao_boi'] as String?,

@@ -808,17 +808,20 @@ class AppState extends ChangeNotifier {
   /// Sổ điểm của học sinh đang xem, mới nhất trước.
   List<DiemThi> get diemThi => _diemThi;
 
-  /// Ghi một điểm mới. Con hay bố mẹ ghi đều được; ai ghi thì ghi tên người đó.
+  /// Ghi một điểm mới — số ([diem]) hoặc Đ/CĐ ([dat]), đúng một trong hai.
+  /// Con hay bố mẹ ghi đều được; ai ghi thì ghi tên người đó.
   Future<void> ghiDiem({
     required String monId,
     required LoaiKiemTra loai,
     required int hocKi,
-    required double diem,
     required DateTime ngay,
+    double? diem,
+    bool? dat,
     String? ghiChu,
   }) async {
     final hs = hocSinhHienTai;
     if (hs == null) return;
+    assert((diem == null) != (dat == null), 'điểm số hoặc Đ/CĐ, đúng một');
     await _repo.luuDiemThi(DiemThi(
       id: _id(),
       hocSinhId: hs.id,
@@ -826,6 +829,7 @@ class AppState extends ChangeNotifier {
       loai: loai,
       hocKi: hocKi,
       diem: diem,
+      dat: dat,
       ngay: Ngay.dauNgay(ngay),
       ghiChu: (ghiChu ?? '').trim().isEmpty ? null : ghiChu!.trim(),
       taoBoi: _nguoiDung?.id,

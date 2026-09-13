@@ -95,13 +95,15 @@ không dùng đổ bóng.
   "Đã xong" ở đâu khác ngoài chuỗi, để con không có lý do bấm cho qua. Mốc
   chuỗi mặc định **lặp lại** (cứ 7 ngày lại một lần) — thưởng đều mới thành
   nếp; quà lớn một lần là ngoại lệ, phải tắt lặp.
-- **Bảng điểm** (`SoDiemScreen`) giữ đúng hình dạng sổ điểm ở trường: mỗi môn
-  một hàng — đủ mọi môn, kể cả môn chưa có điểm, để nhìn là biết còn thiếu
-  cột nào — các cột Miệng · 15 phút · Giữa kì · Cuối kì · TB. Sáu cột cộng
-  lại vừa khít điện thoại 390 px, không bắt cuộn ngang mới thấy cuối kì.
-  Màu điểm theo bốn mức xếp loại (xanh lá ≥ 8, mực ≥ 6,5, hổ phách ≥ 5, đỏ
-  dưới 5); TB môn tính đúng hệ số trường dùng (1, 1, 2, 3) và chỉ hiện khi
-  đủ cả giữa kì lẫn cuối kì — con số nửa vời chỉ gây hiểu nhầm.
+- **Sổ điểm** (`SoDiemScreen`) là tờ sổ điểm ở trường chuyển vào máy, không
+  phải một danh sách: đầu bảng nền mực chữ trắng, mỗi môn một hàng — đủ mọi
+  môn, kể cả môn chưa có điểm — các cột Điểm miệng · Điểm 15 phút · Điểm 1
+  tiết · Học kỳ · TBM; nhiều điểm trong một ô ghi liền "10 | 9,5" như cô ghi;
+  ô trống để trống, không bày nút. Môn chấm nhận xét ghi Đ/CĐ. Sáu cột cộng
+  lại vừa khít điện thoại 390 px, không bắt cuộn ngang mới thấy học kỳ. Màu
+  điểm theo bốn mức xếp loại (xanh lá ≥ 8, mực ≥ 6,5, hổ phách ≥ 5, đỏ dưới
+  5); TBM tính đúng hệ số trường dùng (1, 1, 2, 3), một chữ số lẻ, chỉ hiện
+  khi đủ cả 1 tiết lẫn học kỳ — con số nửa vời chỉ gây hiểu nhầm.
 
 ## Chữ nghĩa trong giao diện
 
