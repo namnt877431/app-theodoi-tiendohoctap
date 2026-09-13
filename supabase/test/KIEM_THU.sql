@@ -960,7 +960,7 @@ begin
      '11111111-1111-1111-1111-111111111111'::uuid, 'chan',
      $q$insert into phan_thuong (hoc_sinh_id, tao_boi, loai, moc, ten, ki_thi, diem_toi_thieu)
         values ('33333333-3333-3333-3333-333333333333',
-                '11111111-1111-1111-1111-111111111111', 'diem', 1, 'Sai kì', 'thuongXuyen', 8)$q$, 0),
+                '11111111-1111-1111-1111-111111111111', 'diem', 1, 'Sai kì', 'mieng', 8)$q$, 0),
 
     -- ----------------------------------------------------------- sổ điểm
     --
@@ -984,6 +984,11 @@ begin
      '33333333-3333-3333-3333-333333333333'::uuid, 'chan',
      $q$insert into diem_thi (hoc_sinh_id, mon_id, loai, hoc_ki, diem)
         values ('44444444-4444-4444-4444-444444444444', 'm_toan', 'giuaKi', 1, 10)$q$, 0),
+
+    ('Loại điểm lạ bị chặn',
+     '33333333-3333-3333-3333-333333333333'::uuid, 'chan',
+     $q$insert into diem_thi (hoc_sinh_id, mon_id, loai, hoc_ki, diem)
+        values ('33333333-3333-3333-3333-333333333333', 'm_toan', 'thuongXuyen', 1, 8)$q$, 0),
 
     ('Điểm ngoài thang 10 bị chặn',
      '33333333-3333-3333-3333-333333333333'::uuid, 'chan',

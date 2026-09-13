@@ -67,5 +67,46 @@ void main() {
       expect(find.textContaining('/'), findsNothing);
       expect(find.byTooltip('Đóng'), findsOneWidget);
     });
+
+    testWidgets('nút phóng to / thu nhỏ / xoay; phóng to thì khóa lật trang', (t) async {
+      final s = (await t.runAsync(() => vaoVoiVaiTro(VaiTro.hocSinh)))!;
+      t.view.physicalSize = const Size(390, 800);
+      t.view.devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      late BuildContext ctx;
+      await t.pumpWidget(ChangeNotifierProvider.value(
+        value: s,
+        child: MaterialApp(
+          home: Builder(builder: (c) {
+            ctx = c;
+            return const Scaffold(body: SizedBox());
+          }),
+        ),
+      ));
+      moXemAnh(ctx, duongDan: const ['demo:a', 'demo:b']);
+      await t.pumpAndSettle();
+
+      // Chưa phóng: nút thu nhỏ mờ, vuốt được sang trang.
+      expect(t.widget<IconButton>(find.ancestor(of: find.byTooltip('Thu nhỏ'), matching: find.byType(IconButton))).onPressed, isNull);
+      await t.tap(find.byTooltip('Phóng to'));
+      await t.pumpAndSettle();
+      final iv = t.widget<InteractiveViewer>(find.byType(InteractiveViewer).first);
+      expect(iv.transformationController!.value.getMaxScaleOnAxis(), closeTo(1.6, 1e-6));
+      expect(t.widget<PageView>(find.byType(PageView)).physics, isA<NeverScrollableScrollPhysics>());
+
+      await t.tap(find.byTooltip('Thu nhỏ'));
+      await t.pumpAndSettle();
+      expect(iv.transformationController!.value, Matrix4.identity());
+      expect(t.widget<PageView>(find.byType(PageView)).physics, isA<PageScrollPhysics>());
+
+      await t.tap(find.byTooltip('Xoay'));
+      await t.pumpAndSettle();
+      expect(t.widget<RotatedBox>(find.byType(RotatedBox).first).quarterTurns, 1);
+
+      // Ảnh mẫu thì tải chỉ nói là ảnh mẫu.
+      await t.tap(find.byTooltip('Tải về máy'));
+      await t.pumpAndSettle();
+      expect(find.textContaining('ảnh mẫu'), findsOneWidget);
+    });
   });
 }

@@ -249,11 +249,19 @@ class _NhanXetState extends State<_NhanXet> {
   }
 
   Future<void> _luu() async {
-    await context
-        .read<AppState>()
-        .luuBaoCao(widget.bc.copyWith(nhanXetPhuHuynh: _c.text.trim()));
+    final tb = ScaffoldMessenger.of(context);
+    try {
+      await context
+          .read<AppState>()
+          .luuBaoCao(widget.bc.copyWith(nhanXetPhuHuynh: _c.text.trim()));
+    } catch (e) {
+      // Không lưu được thì phải nói — im lặng là bố mẹ tưởng con đã đọc.
+      tb.showSnackBar(SnackBar(content: Text('Không lưu được nhận xét: $e')));
+      return;
+    }
     if (!mounted) return;
     setState(() => _dangSua = false);
+    tb.showSnackBar(const SnackBar(content: Text('Đã lưu nhận xét, con sẽ thấy trên app')));
   }
 
   @override

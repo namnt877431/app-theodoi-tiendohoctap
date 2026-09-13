@@ -399,20 +399,21 @@ class NhacNho {
       );
 }
 
-/// Ba loại bài kiểm tra ở trường phổ thông. Thường xuyên là điểm miệng, 15
-/// phút; giữa kì và cuối kì là hai bài lớn mỗi học kì — thưởng thường treo
-/// vào hai bài đó.
+/// Bốn cột điểm trên sổ điểm ở trường phổ thông, kèm hệ số trường dùng để
+/// tính trung bình môn: miệng và 15 phút hệ số 1, giữa kì 2, cuối kì 3.
+/// Hai bài lớn là chỗ phần thưởng nhắm tới.
 enum LoaiKiemTra {
-  thuongXuyen('Thường xuyên', 'TX'),
-  giuaKi('Giữa kì', 'GK'),
-  cuoiKi('Cuối kì', 'CK');
+  mieng('Miệng', 'M', 1),
+  muoiLamPhut('15 phút', "15'", 1),
+  giuaKi('Giữa kì', 'GK', 2),
+  cuoiKi('Cuối kì', 'CK', 3);
 
-  const LoaiKiemTra(this.nhan, this.nhanNgan);
+  const LoaiKiemTra(this.nhan, this.nhanNgan, this.heSo);
   final String nhan;
   final String nhanNgan;
+  final int heSo;
 
-  /// Hai bài lớn — loại mà phần thưởng nhắm tới.
-  bool get laBaiLon => this != thuongXuyen;
+  bool get laBaiLon => heSo > 1;
 }
 
 /// Một điểm kiểm tra trong sổ điểm. Con hay bố mẹ đều ghi được; điểm là
@@ -947,7 +948,7 @@ extension DiemThiPg on DiemThi {
         id: '${m['id'] ?? ''}',
         hocSinhId: '${m['hoc_sinh_id'] ?? ''}',
         monId: '${m['mon_id'] ?? ''}',
-        loai: enumTu(LoaiKiemTra.values, m['loai'], LoaiKiemTra.thuongXuyen),
+        loai: enumTu(LoaiKiemTra.values, m['loai'], LoaiKiemTra.mieng),
         hocKi: soTu(m['hoc_ki']) ?? 1,
         diem: thucTu(m['diem']) ?? 0,
         ngay: ngayTu(m['ngay']) ?? DateTime.now(),

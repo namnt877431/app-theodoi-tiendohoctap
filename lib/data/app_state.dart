@@ -953,14 +953,19 @@ class AppState extends ChangeNotifier {
   /// không có mạng, để bài được cất đi thay vì màn hình đứng mãi.
   Future<void> _day(BaoCao bc) => _dayKhongGioiHan(bc).timeout(const Duration(seconds: 30));
 
+  /// Ảnh này còn nằm trên máy (vừa chụp, chưa gửi) hay đã ở đâu đó rồi?
+  ///
+  /// Đã ở đâu đó: link http, ảnh mẫu `demo:`, hoặc đường dẫn trong kho —
+  /// kho đặt tên `<id học sinh>/<số>.jpg`. Nhận nhầm đường dẫn kho là file
+  /// trên máy thì lúc bố mẹ lưu nhận xét, app đi tìm file đó để tải lên và
+  /// hỏng ngay — nhận xét không lưu được mà không biết vì sao.
+  static bool anhConTrenMay(String a, String hocSinhId) =>
+      !a.startsWith('http') && !a.startsWith('demo:') && !a.startsWith('$hocSinhId/');
+
   Future<void> _dayKhongGioiHan(BaoCao bc) async {
     final anh = <String>[];
     for (final a in bc.anh) {
-      if (a.startsWith('http') || a.startsWith('demo:')) {
-        anh.add(a);
-      } else {
-        anh.add(await _repo.taiAnhLen(bc.hocSinhId, a));
-      }
+      anh.add(anhConTrenMay(a, bc.hocSinhId) ? await _repo.taiAnhLen(bc.hocSinhId, a) : a);
     }
     await _repo.luuBaoCao(bc.copyWith(anh: anh));
   }
@@ -969,7 +974,7 @@ class AppState extends ChangeNotifier {
     // Ảnh chụp nằm trong cache, Android dọn bất cứ lúc nào — chép sang chỗ bền.
     final anh = <String>[];
     for (final a in bc.anh) {
-      anh.add(a.startsWith('http') || a.startsWith('demo:') ? a : await _khoNhap.giuAnh(a));
+      anh.add(anhConTrenMay(a, bc.hocSinhId) ? await _khoNhap.giuAnh(a) : a);
     }
     _nhap = [..._nhap.where((b) => b.id != bc.id), bc.copyWith(anh: anh)];
     await _khoNhap.ghi(_nhap);
@@ -979,7 +984,7 @@ class AppState extends ChangeNotifier {
     final cu = _nhap.where((b) => b.id == id).firstOrNull;
     if (cu == null) return;
     for (final a in cu.anh) {
-      if (!a.startsWith('http') && !a.startsWith('demo:')) await _khoNhap.boAnh(a);
+      if (anhConTrenMay(a, cu.hocSinhId)) await _khoNhap.boAnh(a);
     }
     _nhap = _nhap.where((b) => b.id != id).toList();
     await _khoNhap.ghi(_nhap);

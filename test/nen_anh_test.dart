@@ -24,12 +24,19 @@ Future<String> anhTam(int co) async {
 void main() {
   const kb = 1024;
 
-  test('ảnh đã nhỏ hơn mức thì giữ nguyên, không nén', () async {
+  test('ảnh đã nhỏ vẫn qua plugin một lần ở chất lượng cao — để nướng chiều xoay', () async {
     final goc = await anhTam(300 * kb);
     final daGoi = <int>[];
-    final ra = await nenAnhBaiLam(goc, nen: mayNenGia({}, daGoi: daGoi));
+    final ra = await nenAnhBaiLam(goc, nen: mayNenGia({92: 320 * kb}, daGoi: daGoi));
+    expect(daGoi, [92]);
+    expect(ra, isNot(goc));
+    expect(await File(ra).length(), 320 * kb);
+  });
+
+  test('ảnh nhỏ mà plugin hỏng thì giữ bản gốc', () async {
+    final goc = await anhTam(300 * kb);
+    final ra = await nenAnhBaiLam(goc, nen: mayNenGia({}));
     expect(ra, goc);
-    expect(daGoi, isEmpty);
   });
 
   test('hạ chất lượng từng nấc, dừng ngay khi lọt dưới 500 KB', () async {

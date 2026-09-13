@@ -29,9 +29,10 @@ buộc, có câu mẫu theo từng môn và app tự nhớ những câu con hay 
 Toán từ 8 trở lên → đi xem phim"). App đếm, con thấy trên trang chủ còn mấy
 ngày, bố mẹ bấm "Đã trao". Chuỗi không đứt oan: ngày không có tiết trong thời
 khóa biểu không tính, và mỗi tuần con có một **vé nghỉ** tự dùng. Điểm ghi
-vào **sổ điểm** — thường xuyên, giữa kì, cuối kì, có điểm trung bình môn theo
-cách trường tính — con hay bố mẹ ghi đều được. Ảnh bài làm chạm vào là xem
-cả màn hình, phóng to đọc được chữ.
+vào **bảng điểm** đúng dạng sổ điểm ở trường — mỗi môn một hàng, cột miệng,
+15 phút, giữa kì, cuối kì và trung bình môn tính theo hệ số trường dùng — con
+hay bố mẹ ghi đều được, chạm ô trống là ghi vào đúng môn đúng cột. Ảnh bài
+làm chạm vào là xem cả màn hình: phóng to đọc chữ, xoay, tải về máy.
 
 ---
 
@@ -73,7 +74,7 @@ nội dung một file vào khung soạn thảo rồi bấm **Run** (hoặc `Ctrl
 | 7 | `08_tinh_thanh.sql` | 34 tỉnh, thành phố theo sắp xếp từ 1/7/2025 — để học sinh chọn lúc đăng ký |
 | 8 | `09_bai_hoc_lop8.sql` | Danh mục bài học lớp 8 (421 mục, 9 sách) kèm tóm tắt và câu hỏi cho phụ huynh — cần `05_danh_muc.sql` chạy trước vì tham chiếu mã môn `m_toan`, `m_van`… |
 | 9 | `10_phan_thuong.sql` | Phần thưởng bố mẹ treo: theo chuỗi ngày trọn vẹn ("7 ngày liền → đi ăn kem") hoặc theo điểm thi |
-| 10 | `11_diem_thi.sql` | Sổ điểm: điểm thường xuyên, giữa kì, cuối kì — con hay bố mẹ ghi đều được |
+| 10 | `11_diem_thi.sql` | Bảng điểm: miệng, 15 phút, giữa kì, cuối kì — con hay bố mẹ ghi đều được. Đã chạy bản cũ thì chạy lại, nó tự dời dữ liệu sang bốn cột mới |
 
 Mỗi lần chạy xong phải thấy **Success. No rows returned**. Nếu thấy chữ đỏ thì
 dừng lại, đừng chạy file tiếp theo — xem bảng lỗi ở cuối trang này.
@@ -105,7 +106,7 @@ Kết quả hiện ra trong một **khung đỏ** — đó là bình thường, 
 nhìn màu:
 
 ```
-KIỂM THỬ PHÂN QUYỀN — tất cả 180 phép thử đều ĐẠT.
+KIỂM THỬ PHÂN QUYỀN — tất cả 181 phép thử đều ĐẠT.
 ```
 
 Còn nếu có chỗ hỏng thì nó liệt kê ra từng cái. Khung đỏ vì bộ test cố ý ném

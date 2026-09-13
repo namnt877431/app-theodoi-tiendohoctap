@@ -15,21 +15,27 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 /// 3–4 MB thì ~300 tấm là đầy; 400 KB thì được ~2.500 tấm — và tải lên 4G
 /// nhanh gấp mười.
 ///
+/// Ảnh vốn đã nhỏ vẫn đi qua plugin một lần ở chất lượng cao: plugin xoay
+/// điểm ảnh theo thẻ EXIF rồi bỏ thẻ đi, nhờ vậy tấm ảnh hiện cùng một chiều
+/// ở mọi nơi. Giữ thẻ thì điện thoại hiểu, trình duyệt lại không — cùng một
+/// ảnh lúc ngang lúc dọc.
+///
 /// Trả về đường dẫn file đã nén (trong thư mục tạm), hoặc chính đường dẫn cũ
-/// khi ảnh vốn đã nhỏ hay không nén được — không bao giờ làm mất tấm ảnh.
+/// khi không nén được — không bao giờ làm mất tấm ảnh.
 Future<String> nenAnhBaiLam(
   String duongDan, {
   int mucByte = 500 * 1024,
   MayNen nen = _nenBangPlugin,
 }) async {
-  // Trên web không có file để nén; image_picker đã thu ảnh về 1600 px và
-  // chất lượng 85 ngay lúc chọn, thường đã dưới mức rồi.
+  // Trên web không có file để nén; image_picker đã thu ảnh về 1600 px, chất
+  // lượng 85 ngay lúc chọn — và vẽ qua canvas nên chiều xoay đã được nướng vào.
   if (kIsWeb) return duongDan;
   try {
-    if (await File(duongDan).length() <= mucByte) return duongDan;
+    final daNho = await File(duongDan).length() <= mucByte;
+    final cacMuc = daNho ? const [92] : const [80, 70, 60, 50, 40];
 
     var tot = duongDan;
-    for (final chatLuong in const [80, 70, 60, 50, 40]) {
+    for (final chatLuong in cacMuc) {
       final dich = '${Directory.systemTemp.path}/nen_'
           '${DateTime.now().microsecondsSinceEpoch}_$chatLuong.jpg';
       final f = await nen(duongDan, dich, chatLuong);
@@ -58,6 +64,8 @@ Future<File?> _nenBangPlugin(String nguon, String dich, int chatLuong) async {
     minWidth: 1600,
     minHeight: 1600,
     format: CompressFormat.jpeg,
+    // Xoay điểm ảnh theo thẻ EXIF trước khi bỏ thẻ — xem chú thích ở trên.
+    autoCorrectionAngle: true,
     // Bỏ EXIF: tọa độ GPS và số máy không có việc gì trên ảnh vở của trẻ con.
     keepExif: false,
   );

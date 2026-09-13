@@ -68,4 +68,4 @@
      '11111111-1111-1111-1111-111111111111'::uuid, 'chan',
      $q$insert into phan_thuong (hoc_sinh_id, tao_boi, loai, moc, ten, ki_thi, diem_toi_thieu)
         values ('33333333-3333-3333-3333-333333333333',
-                '11111111-1111-1111-1111-111111111111', 'diem', 1, 'Sai kì', 'thuongXuyen', 8)$q$, 0),
+                '11111111-1111-1111-1111-111111111111', 'diem', 1, 'Sai kì', 'mieng', 8)$q$, 0),

@@ -639,8 +639,8 @@ class _SoanPhanThuongState extends State<_SoanPhanThuong> {
           ),
           const SizedBox(height: Gap.sm),
           Text(
-            'Mỗi bài đạt là một lần quà. Điểm thường xuyên không tính — chỉ giữa kì và '
-            'cuối kì, ghi trong Sổ điểm.',
+            'Mỗi bài đạt là một lần quà. Điểm miệng, 15 phút không tính — chỉ giữa kì và '
+            'cuối kì, ghi trong bảng điểm.',
             style: AppType.ui(12.5, color: AppColor.mucNhat, w: FontWeight.w400, height: 1.45),
           ),
         ] else ...[

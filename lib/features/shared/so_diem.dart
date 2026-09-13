@@ -55,8 +55,8 @@ class KhungSoDiem extends StatelessWidget {
                   ? Padding(
                       padding: const EdgeInsets.all(Gap.lg),
                       child: Text(
-                        'Cô trả bài kiểm tra là ghi vào đây — điểm thường xuyên, giữa kì, '
-                        'cuối kì. Bố mẹ theo dõi được, và quà điểm thi đếm từ đây.',
+                        'Cô trả bài là ghi vào — miệng, 15 phút, giữa kì, cuối kì — thành '
+                        'bảng điểm đủ các môn, có điểm trung bình. Quà điểm thi đếm từ đây.',
                         style: AppType.ui(13, color: AppColor.mucNhat, w: FontWeight.w400, height: 1.5),
                       ),
                     )
@@ -64,14 +64,14 @@ class KhungSoDiem extends StatelessWidget {
                       children: [
                         for (var i = 0; i < hien.length; i++) ...[
                           if (i > 0) const Divider(indent: Gap.lg, endIndent: Gap.lg, height: 1),
-                          _DongDiem(d: hien[i], gon: true),
+                          _DongDiem(d: hien[i], gon: true, onTap: () => moGhiDiem(context, d: hien[i])),
                         ],
                         if (ds.length > 3)
                           Padding(
                             padding: const EdgeInsets.fromLTRB(Gap.lg, 0, Gap.lg, Gap.sm + 2),
                             child: Align(
                               alignment: Alignment.centerRight,
-                              child: Text('Xem cả sổ điểm của $ten ›',
+                              child: Text('Xem bảng điểm của $ten ›',
                                   style: AppType.ui(12.5, color: AppColor.muc, w: FontWeight.w600)),
                             ),
                           ),
@@ -95,13 +95,7 @@ class _DongDiem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = context.read<AppState>();
-    final mau = d.diem >= 8
-        ? AppColor.xong
-        : d.diem >= 6.5
-            ? AppColor.muc
-            : d.diem >= 5
-                ? AppColor.dangLam
-                : AppColor.butDo;
+    final mau = mauDiem(d.diem);
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -159,7 +153,10 @@ class _DongDiem extends StatelessWidget {
 
 // ------------------------------------------------------------------ cả sổ
 
-/// Cả sổ điểm, theo học kì, gom theo môn. Chạm một dòng để sửa hay xóa.
+/// Bảng điểm một học kì, đúng dạng sổ điểm ở trường: mỗi môn một hàng, các
+/// cột Miệng · 15 phút · Giữa kì · Cuối kì · TB. Đủ mọi môn trong danh mục,
+/// kể cả môn chưa có điểm — nhìn là biết còn thiếu cột nào. Chạm một điểm để
+/// sửa, chạm ô trống để ghi vào đúng môn, đúng cột.
 class SoDiemScreen extends StatefulWidget {
   const SoDiemScreen({super.key});
 
@@ -175,23 +172,14 @@ class _SoDiemScreenState extends State<SoDiemScreen> {
     final s = context.watch<AppState>();
     final ten = s.hocSinhHienTai?.tenGoi ?? 'con';
     final ds = s.diemThi.where((d) => d.hocKi == _hocKi).toList();
-
-    // Gom theo môn, giữ thứ tự danh mục môn.
-    final theoMon = <String, List<DiemThi>>{};
-    for (final d in ds) {
-      theoMon.putIfAbsent(d.monId, () => []).add(d);
-    }
-    final thuTuMon = [
-      for (final m in s.monHoc)
-        if (theoMon.containsKey(m.id)) m.id,
-      for (final id in theoMon.keys)
-        if (!s.monHoc.any((m) => m.id == id)) id,
-    ];
+    final tbCacMon = [
+      for (final m in s.monHoc) diemTrungBinh(ds.where((d) => d.monId == m.id).toList()),
+    ].whereType<double>().toList();
 
     return Scaffold(
-      appBar: AppBar(title: Text('Sổ điểm của $ten')),
+      appBar: AppBar(title: Text('Bảng điểm của $ten')),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => moGhiDiem(context),
+        onPressed: () => moGhiDiem(context, hocKi: _hocKi),
         icon: const Icon(Icons.add_rounded),
         label: const Text('Ghi điểm'),
       ),
@@ -199,7 +187,7 @@ class _SoDiemScreenState extends State<SoDiemScreen> {
         padding: EdgeInsets.fromLTRB(BoCuc.le(context), Gap.sm, BoCuc.le(context), 96),
         children: [
           NoiDung(
-            toiDa: 760,
+            toiDa: 900,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -217,23 +205,36 @@ class _SoDiemScreenState extends State<SoDiemScreen> {
                       ),
                       const SizedBox(width: Gap.sm),
                     ],
-                    const Spacer(),
-                    Text('${ds.length} điểm',
-                        style: AppType.ui(12.5, color: AppColor.mucNhat, w: FontWeight.w500)),
+                    Expanded(
+                      child: Text(
+                        tbCacMon.isEmpty
+                            ? '${ds.length} điểm'
+                            : 'TB các môn ${chuDiem(_lamTron(tbCacMon.reduce((a, b) => a + b) / tbCacMon.length))}',
+                        textAlign: TextAlign.right,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppType.numeric(12.5,
+                            color: tbCacMon.isEmpty ? AppColor.mucNhat : AppColor.muc,
+                            w: FontWeight.w700),
+                      ),
+                    ),
                   ],
                 ),
-                const SizedBox(height: Gap.lg),
-                if (ds.isEmpty)
-                  TrangTrong(
-                    icon: Icons.grade_outlined,
-                    tieuDe: 'Học kì $_hocKi chưa có điểm nào',
-                    moTa: 'Cô trả bài là ghi vào — điểm thường xuyên, giữa kì, cuối kì.',
+                const SizedBox(height: Gap.md),
+                if (s.monHoc.isEmpty)
+                  const TrangTrong(
+                    icon: Icons.menu_book_outlined,
+                    tieuDe: 'Chưa có môn học nào',
+                    moTa: 'Danh mục môn học còn trống nên chưa lập được bảng điểm.',
                   )
                 else
-                  for (final monId in thuTuMon) ...[
-                    _NhomMon(monId: monId, ds: theoMon[monId]!),
-                    const SizedBox(height: Gap.md),
-                  ],
+                  _BangDiem(ds: ds, hocKi: _hocKi),
+                const SizedBox(height: Gap.md),
+                Text(
+                  'TB môn = (miệng + 15 phút + 2 × giữa kì + 3 × cuối kì) ÷ (số bài nhỏ + 5), '
+                  'chỉ tính khi đã có cả giữa kì lẫn cuối kì.',
+                  style: AppType.ui(12, color: AppColor.mucNhat, w: FontWeight.w400, height: 1.45),
+                ),
               ],
             ),
           ),
@@ -243,78 +244,256 @@ class _SoDiemScreenState extends State<SoDiemScreen> {
   }
 }
 
-class _NhomMon extends StatelessWidget {
-  const _NhomMon({required this.monId, required this.ds});
-  final String monId;
+/// Bảng cuộn ngang khi màn hẹp. Cột môn giữ bề rộng cố định; bốn cột điểm và
+/// cột TB giãn ra khi có chỗ.
+class _BangDiem extends StatelessWidget {
+  const _BangDiem({required this.ds, required this.hocKi});
   final List<DiemThi> ds;
+  final int hocKi;
+
+  // Cộng lại đúng 358 — vừa khít điện thoại 390 trừ lề, để năm cột điểm đều
+  // nằm trong tầm mắt, không phải cuộn mới thấy giữa kì, cuối kì.
+  static const _rongMon = 84.0;
+  static const _rongToiThieu = {
+    LoaiKiemTra.mieng: 64.0,
+    LoaiKiemTra.muoiLamPhut: 64.0,
+    LoaiKiemTra.giuaKi: 52.0,
+    LoaiKiemTra.cuoiKi: 52.0,
+  };
+  static const _rongTb = 42.0;
 
   @override
   Widget build(BuildContext context) {
     final s = context.read<AppState>();
-    final tb = diemTrungBinh(ds);
 
+    return LayoutBuilder(builder: (context, rang) {
+      final toiThieu = _rongMon + _rongToiThieu.values.fold(0.0, (t, r) => t + r) + _rongTb;
+      // Thừa chỗ thì chia đều cho các cột điểm; thiếu thì giữ tối thiểu và cuộn.
+      // Trừ 2 cho viền trái phải của khung.
+      final thua = ((rang.maxWidth - 2 - toiThieu) / LoaiKiemTra.values.length).clamp(0.0, 48.0);
+      final rongCot = {
+        for (final l in LoaiKiemTra.values) l: _rongToiThieu[l]! + thua,
+      };
+      final rongBang = _rongMon + rongCot.values.fold(0.0, (t, r) => t + r) + _rongTb + 2;
+
+      final bang = Container(
+        width: rongBang,
+        decoration: BoxDecoration(
+          color: AppColor.giayTrang,
+          borderRadius: BorderRadius.circular(R.lg),
+          border: Border.all(color: AppColor.dongKe),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          children: [
+            _HangTieuDe(rongCot: rongCot),
+            for (final m in s.monHoc) ...[
+              const Divider(height: 1),
+              _HangMon(
+                mon: m,
+                ds: ds.where((d) => d.monId == m.id).toList(),
+                hocKi: hocKi,
+                rongCot: rongCot,
+              ),
+            ],
+          ],
+        ),
+      );
+      if (rongBang <= rang.maxWidth) return bang;
+      return SingleChildScrollView(scrollDirection: Axis.horizontal, child: bang);
+    });
+  }
+}
+
+class _HangTieuDe extends StatelessWidget {
+  const _HangTieuDe({required this.rongCot});
+  final Map<LoaiKiemTra, double> rongCot;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget o(double rong, String chu) => SizedBox(
+          width: rong,
+          child: Center(child: Eyebrow(chu)),
+        );
     return Container(
-      decoration: BoxDecoration(
-        color: AppColor.giayTrang,
-        borderRadius: BorderRadius.circular(R.lg),
-        border: Border.all(color: AppColor.dongKe),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      color: AppColor.skySoft,
+      padding: const EdgeInsets.symmetric(vertical: Gap.sm + 2),
+      child: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(Gap.lg, Gap.md, Gap.lg, Gap.xs),
-            child: Row(
-              children: [
-                Expanded(child: Text(s.tenMon(monId), style: AppType.ui(15.5, w: FontWeight.w700))),
-                Text(
-                  tb == null ? '${ds.length} điểm' : 'TB ${_chu(tb)}',
-                  style: AppType.numeric(13, color: tb == null ? AppColor.mucNhat : AppColor.muc, w: FontWeight.w700),
-                ),
-              ],
+          SizedBox(
+            width: _BangDiem._rongMon,
+            child: Padding(
+              padding: const EdgeInsets.only(left: Gap.md),
+              child: Eyebrow('Môn'),
             ),
           ),
-          for (final d in ds) _DongDiem(d: d, onTap: () => moGhiDiem(context, d: d)),
-          const SizedBox(height: Gap.xs),
+          for (final l in LoaiKiemTra.values) o(rongCot[l]!, l.nhan),
+          o(_BangDiem._rongTb, 'TB'),
         ],
       ),
     );
   }
-
-  static String _chu(double v) => v.toStringAsFixed(1).replaceAll('.', ',');
 }
 
-/// Điểm trung bình môn một học kì theo cách trường tính: thường xuyên hệ số
-/// 1, giữa kì hệ số 2, cuối kì hệ số 3, chia cho (số bài thường xuyên + 5).
-/// Chưa có cả giữa kì lẫn cuối kì thì chưa tính — con số nửa vời chỉ gây
-/// hiểu nhầm.
+class _HangMon extends StatelessWidget {
+  const _HangMon({required this.mon, required this.ds, required this.hocKi, required this.rongCot});
+  final MonHoc mon;
+  final List<DiemThi> ds;
+  final int hocKi;
+  final Map<LoaiKiemTra, double> rongCot;
+
+  @override
+  Widget build(BuildContext context) {
+    final tb = diemTrungBinh(ds);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: _BangDiem._rongMon,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(Gap.md, Gap.sm, Gap.xs, Gap.sm),
+            child: Text(
+              mon.ten,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: AppType.ui(13.5, w: FontWeight.w700, height: 1.25),
+            ),
+          ),
+        ),
+        for (final l in LoaiKiemTra.values)
+          _ODiem(
+            rong: rongCot[l]!,
+            ds: ds.where((d) => d.loai == l).toList()..sort((a, b) => a.ngay.compareTo(b.ngay)),
+            onThem: () => moGhiDiem(context, monId: mon.id, loai: l, hocKi: hocKi),
+          ),
+        SizedBox(
+          width: _BangDiem._rongTb,
+          child: Center(
+            child: Text(
+              tb == null ? '—' : chuDiem(_lamTron(tb)),
+              style: AppType.numeric(14, w: FontWeight.w700, color: tb == null ? AppColor.dongKeDam : mauDiem(tb)),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Một ô trong bảng: các điểm đã có, chạm điểm để sửa; chạm chỗ trống để ghi
+/// thêm vào đúng môn và cột này.
+class _ODiem extends StatelessWidget {
+  const _ODiem({required this.rong, required this.ds, required this.onThem});
+  final double rong;
+  final List<DiemThi> ds;
+  final VoidCallback onThem;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: rong,
+      child: InkWell(
+        onTap: onThem,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 3, vertical: Gap.sm),
+          child: ds.isEmpty
+              ? Center(
+                  child: Icon(Icons.add_rounded, size: 16, color: AppColor.dongKeDam),
+                )
+              : Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 4,
+                  runSpacing: 4,
+                  children: [
+                    for (final d in ds)
+                      _ChipDiem(d: d, onTap: () => moGhiDiem(context, d: d)),
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ChipDiem extends StatelessWidget {
+  const _ChipDiem({required this.d, required this.onTap});
+  final DiemThi d;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final mau = mauDiem(d.diem);
+    return Material(
+      color: mau.withValues(alpha: .12),
+      borderRadius: BorderRadius.circular(R.sm),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(R.sm),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
+          child: Text(d.diemChu, style: AppType.numeric(12.5, w: FontWeight.w700, color: mau)),
+        ),
+      ),
+    );
+  }
+}
+
+/// Màu theo mức điểm: xanh lá từ 8, mực từ 6,5, hổ phách từ 5, đỏ dưới 5 —
+/// đúng bốn mức xếp loại ở trường.
+Color mauDiem(double d) => d >= 8
+    ? AppColor.xong
+    : d >= 6.5
+        ? AppColor.muc
+        : d >= 5
+            ? AppColor.dangLam
+            : AppColor.butDo;
+
+double _lamTron(double v) => (v * 10).round() / 10;
+
+/// Điểm trung bình môn một học kì theo cách trường tính: mỗi điểm nhân hệ số
+/// của cột (miệng, 15 phút 1; giữa kì 2; cuối kì 3), chia tổng hệ số. Chưa có
+/// cả giữa kì lẫn cuối kì thì chưa tính — con số nửa vời chỉ gây hiểu nhầm.
 double? diemTrungBinh(List<DiemThi> ds) {
-  final tx = ds.where((d) => d.loai == LoaiKiemTra.thuongXuyen).toList();
-  final gk = ds.where((d) => d.loai == LoaiKiemTra.giuaKi).firstOrNull;
-  final ck = ds.where((d) => d.loai == LoaiKiemTra.cuoiKi).firstOrNull;
-  if (gk == null || ck == null) return null;
-  final tong = tx.fold(0.0, (t, d) => t + d.diem) + 2 * gk.diem + 3 * ck.diem;
-  return tong / (tx.length + 5);
+  if (!ds.any((d) => d.loai == LoaiKiemTra.giuaKi) || !ds.any((d) => d.loai == LoaiKiemTra.cuoiKi)) {
+    return null;
+  }
+  var tong = 0.0;
+  var heSo = 0;
+  for (final d in ds) {
+    tong += d.diem * d.loai.heSo;
+    heSo += d.loai.heSo;
+  }
+  return tong / heSo;
 }
 
 // -------------------------------------------------------------------- ghi
 
-/// Bảng ghi hoặc sửa một điểm.
-Future<void> moGhiDiem(BuildContext context, {DiemThi? d}) {
+/// Bảng ghi hoặc sửa một điểm. Mở từ ô bảng thì [monId], [loai], [hocKi] đã
+/// đặt sẵn, chỉ còn gõ điểm.
+Future<void> moGhiDiem(
+  BuildContext context, {
+  DiemThi? d,
+  String? monId,
+  LoaiKiemTra? loai,
+  int? hocKi,
+}) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (_) => ChangeNotifierProvider.value(
       value: context.read<AppState>(),
-      child: _GhiDiem(d: d),
+      child: _GhiDiem(d: d, monId: monId, loai: loai, hocKi: hocKi),
     ),
   );
 }
 
 class _GhiDiem extends StatefulWidget {
-  const _GhiDiem({this.d});
+  const _GhiDiem({this.d, this.monId, this.loai, this.hocKi});
   final DiemThi? d;
+  final String? monId;
+  final LoaiKiemTra? loai;
+  final int? hocKi;
 
   @override
   State<_GhiDiem> createState() => _GhiDiemState();
@@ -323,9 +502,9 @@ class _GhiDiem extends StatefulWidget {
 class _GhiDiemState extends State<_GhiDiem> {
   static const _diemNhanh = [10.0, 9.5, 9.0, 8.5, 8.0, 7.5, 7.0, 6.5];
 
-  late String _monId = widget.d?.monId ?? context.read<AppState>().monMacDinh;
-  late LoaiKiemTra _loai = widget.d?.loai ?? LoaiKiemTra.thuongXuyen;
-  late int _hocKi = widget.d?.hocKi ?? AppState.hocKiCua(DateTime.now());
+  late String _monId = widget.d?.monId ?? widget.monId ?? context.read<AppState>().monMacDinh;
+  late LoaiKiemTra _loai = widget.d?.loai ?? widget.loai ?? LoaiKiemTra.mieng;
+  late int _hocKi = widget.d?.hocKi ?? widget.hocKi ?? AppState.hocKiCua(DateTime.now());
   late DateTime _ngay = widget.d?.ngay ?? Ngay.dauNgay(DateTime.now());
   late final _diem = TextEditingController(text: widget.d?.diemChu ?? '');
   late final _ghiChu = TextEditingController(text: widget.d?.ghiChu ?? '');
@@ -396,7 +575,7 @@ class _GhiDiemState extends State<_GhiDiem> {
 
     return KhungBieuMau(
       tieuDe: suaCu ? 'Sửa điểm' : 'Ghi điểm',
-      eyebrow: 'Sổ điểm của ${s.hocSinhHienTai?.tenGoi ?? 'con'}',
+      eyebrow: 'Bảng điểm của ${s.hocSinhHienTai?.tenGoi ?? 'con'}',
       nhanLuu: suaCu ? 'Lưu' : 'Ghi',
       dangLuu: _dangLuu,
       onLuu: _luu,
@@ -464,14 +643,15 @@ class _GhiDiemState extends State<_GhiDiem> {
           ],
         ),
         const SizedBox(height: Gap.lg),
-        const NhanO('Bài gì?'),
+        const NhanO('Cột nào?'),
         Row(
           children: [
             for (final l in LoaiKiemTra.values) ...[
               Expanded(
                 child: OChon(
                   icon: switch (l) {
-                    LoaiKiemTra.thuongXuyen => Icons.edit_note_rounded,
+                    LoaiKiemTra.mieng => Icons.record_voice_over_rounded,
+                    LoaiKiemTra.muoiLamPhut => Icons.timer_outlined,
                     LoaiKiemTra.giuaKi => Icons.flag_rounded,
                     LoaiKiemTra.cuoiKi => Icons.emoji_events_rounded,
                   },
@@ -482,7 +662,7 @@ class _GhiDiemState extends State<_GhiDiem> {
                   onTap: () => setState(() => _loai = l),
                 ),
               ),
-              if (l != LoaiKiemTra.values.last) const SizedBox(width: Gap.sm),
+              if (l != LoaiKiemTra.values.last) const SizedBox(width: Gap.sm - 2),
             ],
           ],
         ),

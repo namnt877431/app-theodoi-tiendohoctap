@@ -1,6 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
+import 'package:theodoi_hoctap/core/theme/tokens.dart';
 import 'package:theodoi_hoctap/data/app_state.dart';
 import 'package:theodoi_hoctap/data/models/models.dart';
+import 'package:theodoi_hoctap/core/widgets/common.dart';
 import 'package:theodoi_hoctap/features/shared/so_diem.dart';
 
 import 'tro_giup.dart';
@@ -49,7 +53,7 @@ void main() {
       expect(q.khopDiem(_d('m_toan', LoaiKiemTra.giuaKi, 7.75)), isFalse, reason: 'thiếu điểm');
       expect(q.khopDiem(_d('m_toan', LoaiKiemTra.cuoiKi, 9)), isFalse, reason: 'sai kì');
       expect(q.khopDiem(_d('m_van', LoaiKiemTra.giuaKi, 9)), isFalse, reason: 'sai môn');
-      expect(q.khopDiem(_d('m_toan', LoaiKiemTra.thuongXuyen, 10)), isFalse, reason: 'bài nhỏ');
+      expect(q.khopDiem(_d('m_toan', LoaiKiemTra.mieng, 10)), isFalse, reason: 'bài nhỏ');
       expect(q.khopDiem(_d('m_toan', LoaiKiemTra.giuaKi, 9, lui: 40)), isFalse, reason: 'trước ngày treo');
     });
 
@@ -57,7 +61,7 @@ void main() {
       final q = _qua(diem: 9);
       expect(q.khopDiem(_d('m_van', LoaiKiemTra.cuoiKi, 9)), isTrue);
       expect(q.khopDiem(_d('m_anh', LoaiKiemTra.giuaKi, 9.5)), isTrue);
-      expect(q.khopDiem(_d('m_anh', LoaiKiemTra.thuongXuyen, 10)), isFalse);
+      expect(q.khopDiem(_d('m_anh', LoaiKiemTra.muoiLamPhut, 10)), isFalse);
     });
 
     test('mỗi bài đạt là một lần; trao bớt thì nợ giảm; bài mới nhất đứng đầu', () {
@@ -79,20 +83,68 @@ void main() {
   });
 
   group('Điểm trung bình môn', () {
-    test('thường xuyên hệ số 1, giữa kì 2, cuối kì 3, chia số bài thường xuyên + 5', () {
+    test('miệng và 15 phút hệ số 1, giữa kì 2, cuối kì 3, chia tổng hệ số', () {
       final tb = diemTrungBinh([
-        _d('m_toan', LoaiKiemTra.thuongXuyen, 8),
-        _d('m_toan', LoaiKiemTra.thuongXuyen, 9),
+        _d('m_toan', LoaiKiemTra.mieng, 8),
+        _d('m_toan', LoaiKiemTra.muoiLamPhut, 9),
         _d('m_toan', LoaiKiemTra.giuaKi, 7),
         _d('m_toan', LoaiKiemTra.cuoiKi, 8),
       ]);
-      // (8 + 9 + 2·7 + 3·8) / (2 + 5) = 55 / 7
+      // (8 + 9 + 2·7 + 3·8) / (1 + 1 + 2 + 3) = 55 / 7
       expect(tb, closeTo(55 / 7, 1e-9));
     });
 
     test('thiếu giữa kì hay cuối kì thì chưa tính', () {
       expect(diemTrungBinh([_d('m_toan', LoaiKiemTra.giuaKi, 7)]), isNull);
-      expect(diemTrungBinh([_d('m_toan', LoaiKiemTra.thuongXuyen, 7)]), isNull);
+      expect(diemTrungBinh([_d('m_toan', LoaiKiemTra.mieng, 7), _d('m_toan', LoaiKiemTra.cuoiKi, 7)]), isNull);
+    });
+
+    test('màu theo mức xếp loại', () {
+      expect(mauDiem(8), AppColor.xong);
+      expect(mauDiem(6.5), AppColor.muc);
+      expect(mauDiem(5), AppColor.dangLam);
+      expect(mauDiem(4.75), AppColor.butDo);
+    });
+  });
+
+  group('Bảng điểm (widget)', () {
+    for (final rong in [360.0, 390.0, 800.0]) {
+      testWidgets('đủ mọi môn một hàng, không tràn ở $rong', (t) async {
+        final s = (await t.runAsync(() => vaoVoiVaiTro(VaiTro.hocSinh)))!;
+        t.view.physicalSize = Size(rong, 900);
+        t.view.devicePixelRatio = 1;
+        addTearDown(t.view.reset);
+        await t.pumpWidget(ChangeNotifierProvider.value(
+          value: s,
+          child: const MaterialApp(home: SoDiemScreen()),
+        ));
+        await t.pump();
+        expect(t.takeException(), isNull);
+        for (final m in s.monHoc) {
+          expect(find.text(m.ten), findsOneWidget);
+        }
+        // Khôi có 9 miệng, 10 (15 phút), 8,5 giữa kì Toán; chưa có cuối kì → TB "—".
+        expect(find.text('8,5'), findsOneWidget);
+        expect(find.text('—'), findsNWidgets(s.monHoc.length));
+      });
+    }
+
+    testWidgets('chạm ô trống mở bảng ghi với đúng môn và cột', (t) async {
+      final s = (await t.runAsync(() => vaoVoiVaiTro(VaiTro.hocSinh)))!;
+      t.view.physicalSize = const Size(390, 900);
+      t.view.devicePixelRatio = 1;
+      addTearDown(t.view.reset);
+      await t.pumpWidget(ChangeNotifierProvider.value(
+        value: s,
+        child: const MaterialApp(home: SoDiemScreen()),
+      ));
+      await t.pump();
+      // Ô "Cuối kì" của Toán là ô trống đầu tiên trên hàng Toán (miệng, 15', GK đã có).
+      await t.tap(find.byIcon(Icons.add_rounded).first);
+      await t.pumpAndSettle();
+      expect(find.text('Ghi điểm'), findsWidgets);
+      final chonCuoiKi = t.widgetList<OChon>(find.byType(OChon)).firstWhere((o) => o.nhan == 'Cuối kì');
+      expect(chonCuoiKi.chon, isTrue);
     });
   });
 

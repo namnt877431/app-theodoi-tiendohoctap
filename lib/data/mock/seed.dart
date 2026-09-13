@@ -226,12 +226,14 @@ abstract final class Seed {
 
   /// Sổ điểm của Khôi: vài bài thường xuyên và một bài giữa kì.
   static List<DiemThi> get diemThi => [
-        DiemThi(id: 'dt_01', hocSinhId: 'hs_01', monId: 'm_toan', loai: LoaiKiemTra.thuongXuyen,
+        DiemThi(id: 'dt_01', hocSinhId: 'hs_01', monId: 'm_toan', loai: LoaiKiemTra.mieng,
             hocKi: 1, diem: 9, ngay: _ngay(12), taoBoi: 'hs_01', taoLuc: _ngay(12)),
-        DiemThi(id: 'dt_02', hocSinhId: 'hs_01', monId: 'm_van', loai: LoaiKiemTra.thuongXuyen,
+        DiemThi(id: 'dt_02', hocSinhId: 'hs_01', monId: 'm_van', loai: LoaiKiemTra.muoiLamPhut,
             hocKi: 1, diem: 7.5, ngay: _ngay(9), taoBoi: 'hs_01', taoLuc: _ngay(9)),
-        DiemThi(id: 'dt_03', hocSinhId: 'hs_01', monId: 'm_anh', loai: LoaiKiemTra.thuongXuyen,
+        DiemThi(id: 'dt_03', hocSinhId: 'hs_01', monId: 'm_anh', loai: LoaiKiemTra.mieng,
             hocKi: 1, diem: 8, ngay: _ngay(5), taoBoi: 'ph_01', taoLuc: _ngay(5)),
+        DiemThi(id: 'dt_05', hocSinhId: 'hs_01', monId: 'm_toan', loai: LoaiKiemTra.muoiLamPhut,
+            hocKi: 1, diem: 10, ngay: _ngay(7), taoBoi: 'hs_01', taoLuc: _ngay(7)),
         DiemThi(id: 'dt_04', hocSinhId: 'hs_01', monId: 'm_toan', loai: LoaiKiemTra.giuaKi,
             hocKi: 1, diem: 8.5, ngay: _ngay(3), ghiChu: 'Sai câu hình cuối', taoBoi: 'hs_01',
             taoLuc: _ngay(3)),

@@ -6,6 +6,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Android 13+ phải xin quyền mới hiện được thông báo đẩy. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Lưu ảnh bài làm vào thư viện ảnh (gal). Từ Android 10 không cần quyền
+         này nữa, nên chỉ xin trên máy cũ. -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+                     android:maxSdkVersion="29" />
 
     <application
         android:label="Sổ liên lạc"

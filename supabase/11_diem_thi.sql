@@ -1,5 +1,5 @@
 -- =============================================================================
--- Sổ điểm — điểm kiểm tra thường xuyên, giữa kì, cuối kì của học sinh.
+-- Sổ điểm — điểm miệng, 15 phút, giữa kì, cuối kì của học sinh.
 --
 -- Con hay bố mẹ đều ghi được, và sửa/xóa được — điểm ghi nhầm là chuyện
 -- thường, không cần khóa. Phần thưởng loại "điểm thi" (10_phan_thuong.sql)
@@ -12,7 +12,7 @@ create table if not exists diem_thi (
   id          uuid primary key default gen_random_uuid(),
   hoc_sinh_id uuid not null references nguoi_dung(id) on delete cascade,
   mon_id      text not null references mon_hoc(id) on delete cascade,
-  loai        text not null check (loai in ('thuongXuyen', 'giuaKi', 'cuoiKi')),
+  loai        text not null check (loai in ('mieng', 'muoiLamPhut', 'giuaKi', 'cuoiKi')),
   hoc_ki      int  not null check (hoc_ki in (1, 2)),
   diem        numeric(4, 2) not null check (diem between 0 and 10),
   ngay        date not null default (now() at time zone 'Asia/Ho_Chi_Minh')::date,
@@ -22,6 +22,13 @@ create table if not exists diem_thi (
 );
 
 create index if not exists diem_thi_hs_idx on diem_thi(hoc_sinh_id, ngay desc);
+
+-- Bản đầu chỉ có "thường xuyên"; giờ tách thành miệng và 15 phút. Gỡ ràng
+-- buộc cũ, dời dữ liệu, đặt lại ràng buộc — chạy trên bảng mới cũng không sao.
+alter table diem_thi drop constraint if exists diem_thi_loai_check;
+update diem_thi set loai = 'mieng' where loai = 'thuongXuyen';
+alter table diem_thi add constraint diem_thi_loai_check
+  check (loai in ('mieng', 'muoiLamPhut', 'giuaKi', 'cuoiKi'));
 
 grant select, insert, update, delete on diem_thi to authenticated;
 revoke all on diem_thi from anon;
