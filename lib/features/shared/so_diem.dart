@@ -28,11 +28,25 @@ class KhungSoDiem extends StatelessWidget {
         TieuDeMuc(
           'Sổ điểm',
           eyebrow: ds.isEmpty ? 'Chưa có điểm nào' : '${ds.length} điểm đã ghi',
-          hanhDong: TextButton.icon(
-            onPressed: () => moGhiDiem(context),
-            icon: const Icon(Icons.add_rounded, size: 17),
-            label: const Text('Ghi điểm'),
-            style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+          // Hai việc hay làm nhất đặt ngay đầu khung: ghi một điểm, và mở cả
+          // tờ sổ — không bắt người dùng đoán rằng chạm vào khung là mở.
+          hanhDong: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextButton.icon(
+                onPressed: () => moGhiDiem(context),
+                icon: const Icon(Icons.add_rounded, size: 17),
+                label: const Text('Ghi điểm'),
+                style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const SoDiemScreen()),
+                ),
+                style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+                child: const Text('Mở sổ ›'),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: Gap.md),

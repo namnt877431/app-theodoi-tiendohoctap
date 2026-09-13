@@ -1,7 +1,7 @@
 name: theodoi_hoctap
 description: "Theo doi tien do hoc tap - So lien lac so"
 publish_to: 'none'
-version: 0.4.3+9
+version: 0.4.4+10
 
 environment:
   sdk: ^3.9.0
