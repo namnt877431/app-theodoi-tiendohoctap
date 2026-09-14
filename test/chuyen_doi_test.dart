@@ -11,6 +11,26 @@ void main() {
       expect(ngayTu(moc.millisecondsSinceEpoch), moc);
       expect(ngayTu(null), isNull);
     });
+
+    test('giờ UTC máy chủ trả về đổi sang giờ máy, không hiện thẳng', () {
+      // Postgres trả "…+00:00"; 21:30 giờ máy phải vẫn là 21:30 sau khi đọc.
+      final utc = moc.toUtc();
+      final chuoi = utc.toIso8601String().replaceFirst('Z', '+00:00');
+      final ra = ngayTu(chuoi)!;
+      expect(ra.isUtc, isFalse);
+      expect(ra, moc);
+      expect(ra.hour, 21);
+    });
+
+    test('cột date không có múi giờ thì ra đúng ngày, nửa đêm giờ máy', () {
+      final ra = ngayTu('2026-09-10')!;
+      expect(ra, DateTime(2026, 9, 10));
+    });
+
+    test('gửi giờ lên luôn kèm múi giờ', () {
+      expect(gioIso(moc), endsWith('Z'));
+      expect(DateTime.parse(gioIso(moc)).toLocal(), moc);
+    });
   });
 
   group('Chuyển đổi báo cáo', () {

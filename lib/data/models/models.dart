@@ -664,13 +664,21 @@ class TongKetNgay {
 // rơi về mặc định chứ không làm sập app của người chưa cập nhật.
 // ---------------------------------------------------------------------------
 
+/// Máy chủ trả `timestamptz` dạng "…T14:30:00+00:00" — giờ UTC. Đổi về giờ
+/// máy ngay ở đây, không thì báo cáo gửi lúc 21:30 hiện thành 14:30 và huy
+/// hiệu "chim sớm" đếm sai. Cột `date` ("2026-09-14") không mang múi giờ,
+/// parse ra đã là giờ máy, toLocal không đụng tới.
 DateTime? ngayTu(Object? v) {
   if (v == null) return null;
-  if (v is DateTime) return v;
+  if (v is DateTime) return v.toLocal();
   if (v is int) return DateTime.fromMillisecondsSinceEpoch(v);
-  if (v is String) return DateTime.tryParse(v);
+  if (v is String) return DateTime.tryParse(v)?.toLocal();
   return null;
 }
+
+/// Gửi giờ lên máy chủ: luôn kèm múi giờ (dạng "…Z"), vì chuỗi không có múi
+/// giờ thì Postgres hiểu là UTC — hẹn 20:00 sẽ thành 03:00 sáng hôm sau.
+String gioIso(DateTime d) => d.toUtc().toIso8601String();
 
 T enumTu<T extends Enum>(List<T> ds, Object? v, T macDinh) =>
     ds.where((e) => e.name == v).firstOrNull ?? macDinh;
@@ -894,7 +902,7 @@ extension NhacNhoPg on NhacNho {
         'tu_id': tuId,
         'den_id': denId,
         'noi_dung': noiDung,
-        'han_luc': hanLuc?.toIso8601String(),
+        'han_luc': hanLuc == null ? null : gioIso(hanLuc!),
         'da_doc': daDoc,
         'bao_cao_id': baoCaoId,
       };
@@ -922,7 +930,7 @@ extension PhanThuongPg on PhanThuong {
         'tu_ngay': ngayIso(tuNgay),
         'lap_lai': lapLai,
         'so_lan_trao': soLanTrao,
-        'trao_luc': traoLuc?.toIso8601String(),
+        'trao_luc': traoLuc == null ? null : gioIso(traoLuc!),
         'mon_id': monId,
         'ki_thi': kiThi?.name,
         'diem_toi_thieu': diemToiThieu,
