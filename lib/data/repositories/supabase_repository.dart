@@ -42,7 +42,14 @@ class SupabaseRepository implements HocTapRepository {
     final uid = _toi;
     if (uid == null) return null;
     try {
-      final nd = await hoSo(uid);
+      // Vừa đăng ký xong, sự kiện "đã đăng nhập" có thể tới trước khi trigger
+      // dựng xong hồ sơ. Đọc ngay ra rỗng mà đăng xuất luôn thì người vừa tạo
+      // tài khoản bị đá ra không lời giải thích — đọc lại vài nhịp đã.
+      NguoiDung? nd;
+      for (var lan = 0; lan < 5 && nd == null; lan++) {
+        if (lan > 0) await Future<void>.delayed(const Duration(milliseconds: 400));
+        nd = await hoSo(uid);
+      }
       // Tài khoản bị khóa thì đá ra ngay, không để lọt vào trong app.
       if (nd == null || !nd.hoatDong) {
         await _auth.signOut();

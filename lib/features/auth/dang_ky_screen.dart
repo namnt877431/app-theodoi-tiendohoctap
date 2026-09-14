@@ -63,6 +63,8 @@ class _DangKyScreenState extends State<DangKyScreen> {
     });
     try {
       final laHocSinh = _vaiTro == VaiTro.hocSinh;
+      final tb = ScaffoldMessenger.of(context);
+      final dieuHuong = Navigator.of(context);
       await context.read<AppState>().dangKy(
             hoTen: _hoTen.text,
             email: _email.text,
@@ -72,7 +74,12 @@ class _DangKyScreenState extends State<DangKyScreen> {
             truongId: laHocSinh ? _truongId : null,
             soDienThoai: laHocSinh ? null : _sdt.text.trim(),
           );
-      // Tạo xong là đã đăng nhập luôn; AuthGate lo phần chuyển màn.
+      // Tạo xong là đã đăng nhập luôn và AuthGate ở dưới đã đổi sang trang
+      // chủ — nhưng màn này được đẩy lên trên, phải tự rút đi mới thấy.
+      final ten = _hoTen.text.trim().split(RegExp(r'\s+')).last;
+      tb.showSnackBar(SnackBar(content: Text('Đã tạo tài khoản. Chào $ten!')));
+      dieuHuong.popUntil((r) => r.isFirst);
+      return;
     } on LoiHocTap catch (e) {
       if (mounted) setState(() => _loi = e.thongDiep);
     } catch (_) {
