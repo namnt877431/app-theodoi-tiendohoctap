@@ -695,8 +695,8 @@ class AppState extends ChangeNotifier {
 
   KetQuaChuoi get chuoi => demChuoi(baoCao, luat: luatChuoi);
 
-  /// Chuỗi ngày liên tiếp gần nhất mà mọi bài tập đều đã xong.
-  int get chuoiNgayTron => chuoi.hienTai;
+  /// Chuỗi ngày liên tiếp gần nhất có báo cáo, xong hay chưa đều tính.
+  int get chuoiNgayBaoCao => chuoi.hienTai;
 
   // ---------------------------------------------------------- phần thưởng
 

@@ -1,8 +1,8 @@
 -- =============================================================================
--- Phần thưởng theo chuỗi ngày trọn vẹn — "7 ngày liền → đi ăn kem".
+-- Phần thưởng theo chuỗi ngày có báo cáo — "7 ngày liền → đi ăn kem".
 --
 -- Bố mẹ treo, app đếm, bố mẹ trao. Hai loại:
---   chuoi  "7 ngày liền xong hết bài → kem" — đếm trên bao_cao kể từ tu_ngay;
+--   chuoi  "7 ngày liền báo cáo → kem" — đếm ngày có bao_cao kể từ tu_ngay;
 --          lap_lai thì cứ mỗi moc ngày một lần.
 --   diem   "điểm giữa kì Toán từ 8 trở lên → quà" — đếm trên diem_thi (file
 --          11); mon_id null là môn nào cũng được, ki_thi null là giữa hay cuối

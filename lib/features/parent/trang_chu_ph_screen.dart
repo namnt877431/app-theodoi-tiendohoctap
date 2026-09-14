@@ -88,7 +88,7 @@ class TrangChuPhScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             ...dau,
-                            _TomTatNgay(tongKet: tk, chuoi: s.chuoiNgayTron),
+                            _TomTatNgay(tongKet: tk, chuoi: s.chuoiNgayBaoCao),
                             const SizedBox(height: Gap.xl),
                             const KhungPhanThuong(),
                             const SizedBox(height: Gap.xl),
@@ -108,7 +108,7 @@ class TrangChuPhScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             ...dau,
-                            _TomTatNgay(tongKet: tk, chuoi: s.chuoiNgayTron),
+                            _TomTatNgay(tongKet: tk, chuoi: s.chuoiNgayBaoCao),
                             const SizedBox(height: Gap.xl),
                             const KhungPhanThuong(),
                             const SizedBox(height: Gap.xl),
@@ -307,7 +307,7 @@ class _TomTatNgay extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '$chuoi ngày trọn bài',
+                        '$chuoi ngày báo cáo đều',
                         style: AppType.ui(
                           11.5,
                           w: FontWeight.w600,

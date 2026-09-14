@@ -9,7 +9,7 @@ import 'chuoi.dart';
 /// mở app là có, đổi luật là đổi ngay cho mọi người. Mỗi con dấu có một mốc;
 /// chưa tới mốc thì hiện vòng tiến độ, để đứa trẻ biết còn bao xa.
 enum NhomHuyHieu {
-  chuoi('Chuỗi ngày trọn vẹn', 'Ngày nào cũng có báo cáo và xong hết bài'),
+  chuoi('Chuỗi ngày báo cáo', 'Ngày nào cũng mở app kể lại — bài xong hay chưa đều tính'),
   soBai('Bài đã xong', 'Đếm những bài báo cáo là đã làm xong'),
   thoiQuen('Thói quen tốt', 'Những việc nhỏ làm đều thành nếp');
 
@@ -49,13 +49,13 @@ class HuyHieu {
 /// Bộ con dấu. Thứ tự trong nhóm là thứ tự khó dần.
 const danhSachHuyHieu = <HuyHieu>[
   // Chuỗi ngày — số đo: chuỗi dài nhất từng đạt.
-  HuyHieu(id: 'chuoi_3', ten: 'Ba ngày liền', moTa: 'Ba ngày liên tiếp xong hết bài',
+  HuyHieu(id: 'chuoi_3', ten: 'Ba ngày liền', moTa: 'Ba ngày liên tiếp có báo cáo',
       icon: Icons.local_fire_department_rounded, nhom: NhomHuyHieu.chuoi, muc: 3, donVi: 'ngày'),
-  HuyHieu(id: 'chuoi_7', ten: 'Trọn một tuần', moTa: 'Bảy ngày liên tiếp xong hết bài',
+  HuyHieu(id: 'chuoi_7', ten: 'Trọn một tuần', moTa: 'Bảy ngày liên tiếp có báo cáo',
       icon: Icons.calendar_view_week_rounded, nhom: NhomHuyHieu.chuoi, muc: 7, donVi: 'ngày'),
-  HuyHieu(id: 'chuoi_14', ten: 'Hai tuần bền bỉ', moTa: 'Mười bốn ngày liên tiếp xong hết bài',
+  HuyHieu(id: 'chuoi_14', ten: 'Hai tuần bền bỉ', moTa: 'Mười bốn ngày liên tiếp có báo cáo',
       icon: Icons.date_range_rounded, nhom: NhomHuyHieu.chuoi, muc: 14, donVi: 'ngày'),
-  HuyHieu(id: 'chuoi_30', ten: 'Tháng vàng', moTa: 'Ba mươi ngày liên tiếp xong hết bài',
+  HuyHieu(id: 'chuoi_30', ten: 'Tháng vàng', moTa: 'Ba mươi ngày liên tiếp có báo cáo',
       icon: Icons.workspace_premium_rounded, nhom: NhomHuyHieu.chuoi, muc: 30, donVi: 'ngày', vang: true),
 
   // Số bài — số đo: báo cáo ở trạng thái xong.

@@ -39,7 +39,7 @@ void main() {
     expect(ds.every((t) => t.hienTai == 0), isTrue);
   });
 
-  group('Chuỗi ngày trọn vẹn', () {
+  group('Chuỗi ngày báo cáo', () {
     test('ba ngày liền xong hết → đạt Ba ngày liền, chưa đạt Trọn một tuần', () {
       final ds = tinhHuyHieu([bc(0), bc(1), bc(2)]);
       expect(cua(ds, 'chuoi_3').dat, isTrue);
@@ -47,10 +47,10 @@ void main() {
       expect(cua(ds, 'chuoi_7').dat, isFalse);
     });
 
-    test('một bài chưa xong làm ngày đó không trọn, đứt chuỗi', () {
+    test('bài chưa xong không làm đứt chuỗi — có báo cáo là tính', () {
       final ds = tinhHuyHieu([bc(0), bc(1), bc(1, tt: TrangThai.dangLam, mon: 'm_van'), bc(2), bc(3)]);
-      // Ngày 1 hỏng → hai chuỗi: [0] và [2,3] → dài nhất là 2.
-      expect(cua(ds, 'chuoi_3').hienTai, 2);
+      expect(cua(ds, 'chuoi_3').hienTai, 4);
+      expect(cua(ds, 'chuoi_3').dat, isTrue);
     });
 
     test('ngày trống làm đứt chuỗi, lấy chuỗi dài nhất từng có', () {

@@ -24,7 +24,7 @@ thường học vài tiết) với nút *Bài tiếp ›* khi lớp sang bài m�
 hay chụp ảnh thì mở biểu mẫu đầy đủ, cũng đã điền sẵn; phần chữ không bắt
 buộc, có câu mẫu theo từng môn và app tự nhớ những câu con hay ghi.
 
-Để con *muốn* báo cáo: bố mẹ **treo phần thưởng** — theo chuỗi ngày trọn bài
+Để con *muốn* báo cáo: bố mẹ **treo phần thưởng** — theo chuỗi ngày báo cáo đều
 ("cứ 7 ngày liền → đi ăn kem", lặp lại đều) hoặc theo **điểm thi** ("giữa kì
 Toán từ 8 trở lên → đi xem phim"). App đếm, con thấy trên trang chủ còn mấy
 ngày, bố mẹ bấm "Đã trao". Chuỗi không đứt oan: ngày không có tiết trong thời
@@ -75,7 +75,7 @@ nội dung một file vào khung soạn thảo rồi bấm **Run** (hoặc `Ctrl
 | — | `07_thong_bao_may_chu.sql` | Chỉ chạy khi bật thông báo đẩy, xem Phần 4 |
 | 7 | `08_tinh_thanh.sql` | 34 tỉnh, thành phố theo sắp xếp từ 1/7/2025 — để học sinh chọn lúc đăng ký |
 | 8 | `09_bai_hoc_lop8.sql` | Danh mục bài học lớp 8 (421 mục, 9 sách) kèm tóm tắt và câu hỏi cho phụ huynh — cần `05_danh_muc.sql` chạy trước vì tham chiếu mã môn `m_toan`, `m_van`… |
-| 9 | `10_phan_thuong.sql` | Phần thưởng bố mẹ treo: theo chuỗi ngày trọn vẹn ("7 ngày liền → đi ăn kem") hoặc theo điểm thi |
+| 9 | `10_phan_thuong.sql` | Phần thưởng bố mẹ treo: theo chuỗi ngày có báo cáo ("7 ngày liền → đi ăn kem") hoặc theo điểm thi |
 | 10 | `11_diem_thi.sql` | Sổ điểm: miệng, 15 phút, 1 tiết, học kỳ, và Đ/CĐ cho môn chấm nhận xét — con hay bố mẹ ghi đều được. Đã chạy bản cũ thì chạy lại, nó tự dời dữ liệu |
 
 Mỗi lần chạy xong phải thấy **Success. No rows returned**. Nếu thấy chữ đỏ thì

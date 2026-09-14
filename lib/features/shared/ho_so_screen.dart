@@ -342,7 +342,7 @@ class _ThongKeHs extends StatelessWidget {
           ],
         ),
         const SizedBox(height: Gap.md),
-        if (s.chuoiNgayTron >= 2)
+        if (s.chuoiNgayBaoCao >= 2)
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(Gap.md),
@@ -357,7 +357,7 @@ class _ThongKeHs extends StatelessWidget {
                 const SizedBox(width: Gap.sm),
                 Expanded(
                   child: Text(
-                    '${s.chuoiNgayTron} ngày liền làm hết bài. Giữ nhịp nhé.',
+                    '${s.chuoiNgayBaoCao} ngày liền có báo cáo. Giữ nhịp nhé.',
                     style: AppType.ui(13, w: FontWeight.w600, color: AppColor.xong),
                   ),
                 ),

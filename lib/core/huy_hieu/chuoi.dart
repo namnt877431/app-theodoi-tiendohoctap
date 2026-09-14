@@ -1,10 +1,12 @@
 import '../../data/models/models.dart';
 
-/// Luật đếm chuỗi ngày trọn vẹn.
+/// Luật đếm chuỗi ngày báo cáo.
 ///
-/// Một ngày "trọn vẹn" là ngày có ít nhất một báo cáo và mọi báo cáo đều
-/// xong. Chuỗi là số ngày trọn vẹn liên tiếp. Hai ngoại lệ để chuỗi không
-/// đứt oan:
+/// Một ngày tính là ngày có ít nhất một báo cáo — bài xong hay chưa xong đều
+/// được. Chuỗi thưởng cho thói quen mở app kể lại, không phải cho việc làm
+/// hết bài: bài cô giao cho tuần sau, con để gần ngày mới làm là hợp lí, không
+/// thể vì thế mà đứt chuỗi. Chuỗi là số ngày có báo cáo liên tiếp. Hai ngoại
+/// lệ để chuỗi không đứt oan:
 ///
 /// - [thuNghi]: thứ không có tiết học (theo thời khóa biểu — Chủ nhật, có
 ///   khi cả thứ Bảy). Không có báo cáo cũng không đứt, mà cũng không tính.
@@ -64,15 +66,15 @@ KetQuaChuoi demChuoi(
   final nay = _ngay(homNay ?? DateTime.now());
   final tuan = _tuanCua(nay);
 
-  // Trạng thái từng ngày: true là trọn vẹn, false là có bài chưa xong.
-  final theoNgay = <DateTime, bool>{};
+  // Những ngày có báo cáo, trạng thái gì cũng được.
+  final coBaoCao = <DateTime>{};
   for (final b in ds) {
     final n = _ngay(b.ngay);
     if (n.isAfter(nay)) continue;
     if (tuNgay != null && n.isBefore(_ngay(tuNgay))) continue;
-    theoNgay[n] = (theoNgay[n] ?? true) && b.trangThai == TrangThai.xong;
+    coBaoCao.add(n);
   }
-  if (theoNgay.isEmpty) {
+  if (coBaoCao.isEmpty) {
     return KetQuaChuoi(
       hienTai: 0,
       daiNhat: 0,
@@ -81,7 +83,7 @@ KetQuaChuoi demChuoi(
     );
   }
 
-  var dau = theoNgay.keys.reduce((a, b) => a.isBefore(b) ? a : b);
+  var dau = coBaoCao.reduce((a, b) => a.isBefore(b) ? a : b);
   if (tuNgay != null && _ngay(tuNgay).isAfter(dau)) dau = _ngay(tuNgay);
 
   final veDaDung = <DateTime, int>{};
@@ -95,14 +97,9 @@ KetQuaChuoi demChuoi(
   }
 
   for (var d = dau; !d.isAfter(nay); d = d.add(const Duration(days: 1))) {
-    final tron = theoNgay[d];
-    if (tron == true) {
+    if (coBaoCao.contains(d)) {
       hienTai++;
       if (hienTai > daiNhat) daiNhat = hienTai;
-      continue;
-    }
-    if (tron == false) {
-      dut();
       continue;
     }
     // Ngày trống.

@@ -38,7 +38,7 @@ class KhungPhanThuong extends StatelessWidget {
           'Phần thưởng',
           eyebrow: chuoi.hienTai == 0
               ? 'Chưa có chuỗi ngày nào'
-              : 'Chuỗi ${chuoi.hienTai} ngày trọn bài',
+              : 'Chuỗi ${chuoi.hienTai} ngày báo cáo đều',
           hanhDong: ds.isEmpty
               ? null
               : TextButton(
@@ -96,7 +96,7 @@ class _LoiMoiTreo extends StatelessWidget {
           Text('Treo một phần thưởng cho $ten', style: AppType.ui(15, w: FontWeight.w700)),
           const SizedBox(height: 4),
           Text(
-            'Ví dụ: 7 ngày liền xong hết bài → cả nhà đi ăn kem. App đếm ngày, '
+            'Ví dụ: 7 ngày liền báo cáo đều → cả nhà đi ăn kem. App đếm ngày, '
             'bạn trao quà. $ten thấy trên trang chủ còn bao nhiêu ngày nữa.',
             style: AppType.ui(13, color: AppColor.mucNhat, w: FontWeight.w400, height: 1.5),
           ),
@@ -143,7 +143,7 @@ class _DongTienDo extends StatelessWidget {
         : laDiem
             ? (moTaDieuKien(pt, s), AppColor.mucNhat)
             : td.conLai == pt.moc
-                ? ('${pt.moc} ngày liền xong hết bài${pt.lapLai ? ', lặp lại' : ''}', AppColor.mucNhat)
+                ? ('${pt.moc} ngày liền có báo cáo${pt.lapLai ? ', lặp lại' : ''}', AppColor.mucNhat)
                 : ('Còn ${td.conLai} ngày nữa$lanThu', AppColor.muc);
 
     return Padding(
@@ -237,7 +237,7 @@ class _VeNghi extends StatelessWidget {
   }
 }
 
-/// "Cứ 7 ngày liền xong hết bài lại được một lần" / "Điểm giữa kì Toán từ 8
+/// "Cứ 7 ngày liền báo cáo lại được một lần" / "Điểm giữa kì Toán từ 8
 /// trở lên" — một câu nói đủ điều kiện, dùng ở khung, danh sách và bảng treo.
 String moTaDieuKien(PhanThuong pt, AppState s) {
   if (pt.loai == LoaiPhanThuong.diem) {
@@ -246,8 +246,8 @@ String moTaDieuKien(PhanThuong pt, AppState s) {
     return 'Điểm $ki $mon từ ${chuDiem(pt.diemToiThieu ?? 8)} trở lên';
   }
   return pt.lapLai
-      ? 'Cứ ${pt.moc} ngày liền xong hết bài lại được một lần'
-      : '${pt.moc} ngày liền xong hết bài, một lần';
+      ? 'Cứ ${pt.moc} ngày liền báo cáo lại được một lần'
+      : '${pt.moc} ngày liền báo cáo, một lần';
 }
 
 Future<void> _trao(BuildContext context, PhanThuong pt) async {
@@ -573,7 +573,7 @@ class _SoanPhanThuongState extends State<_SoanPhanThuong> {
                   icon: l == LoaiPhanThuong.chuoi
                       ? Icons.local_fire_department_rounded
                       : Icons.grade_rounded,
-                  nhan: l == LoaiPhanThuong.chuoi ? 'Chuỗi ngày trọn bài' : 'Điểm thi cao',
+                  nhan: l == LoaiPhanThuong.chuoi ? 'Chuỗi ngày báo cáo' : 'Điểm thi cao',
                   mau: AppColor.muc,
                   mauNen: AppColor.sky,
                   chon: _loai == l,
@@ -644,7 +644,7 @@ class _SoanPhanThuongState extends State<_SoanPhanThuong> {
             style: AppType.ui(12.5, color: AppColor.mucNhat, w: FontWeight.w400, height: 1.45),
           ),
         ] else ...[
-        const NhanO('Bao nhiêu ngày liền xong hết bài?'),
+        const NhanO('Bao nhiêu ngày liền có báo cáo?'),
         Wrap(
           spacing: Gap.sm,
           runSpacing: Gap.sm,

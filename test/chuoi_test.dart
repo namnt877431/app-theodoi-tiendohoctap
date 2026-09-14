@@ -37,13 +37,15 @@ void main() {
       expect(kq.daiNhat, 2);
     });
 
-    test('một bài chưa xong làm ngày đó hỏng, đứt chuỗi', () {
+    test('bài chưa xong vẫn tính — có báo cáo là được, không cần làm hết', () {
+      // Bài để gần ngày mới làm là chuyện bình thường; chuỗi đo thói quen kể
+      // lại, không đo việc xong bài.
       final kq = demChuoi(
-        [_bc(_n(0)), _bc(_n(1)), _bc(_n(1), tt: TrangThai.dangLam), _bc(_n(2))],
+        [_bc(_n(0)), _bc(_n(1), tt: TrangThai.dangLam), _bc(_n(2), tt: TrangThai.chuaLam)],
         homNay: _n(2),
       );
-      expect(kq.hienTai, 1);
-      expect(kq.daiNhat, 1);
+      expect(kq.hienTai, 3);
+      expect(kq.daiNhat, 3);
     });
 
     test('báo cáo ghi ngày tương lai bỏ qua', () {
@@ -167,11 +169,10 @@ void main() {
     });
 
     test('demChuoi liệt kê từng chuỗi, chuỗi đang chạy ở cuối', () {
-      // T2,T3 xong · T4 hỏng · T5,T6 xong · T7 trống (vé) · CN nghỉ · T2 sau xong.
+      // T2,T3 · T4,T5 trống (một vé, ngày thứ hai đứt) · T6,T7 · CN nghỉ · T2 sau.
       final ds = [
         _bc(_n(0)), _bc(_n(1)),
-        _bc(_n(2), tt: TrangThai.chuaLam),
-        _bc(_n(3)), _bc(_n(4)),
+        _bc(_n(4)), _bc(_n(5)),
         _bc(_n(7)),
       ];
       final r = demChuoi(ds, luat: _luatNha, homNay: _n(7));
@@ -187,14 +188,19 @@ void main() {
       expect(s.luatChuoi.veMoiTuan, 1);
     });
 
-    test('phần thưởng mẫu: quà điểm đã đạt xếp đầu, rồi hai quà chuỗi mốc 7 và 30', () async {
+    test('phần thưởng mẫu: hai quà đã đạt xếp đầu (chuỗi trước điểm), Lego mốc 30 còn xa', () async {
       final s = await vaoVoiVaiTro(VaiTro.hocSinh);
       final ds = s.tienDoPhanThuong;
-      // Khôi có 8,5 giữa kì Toán, quà "từ 8 trở lên" đạt → còn nợ, xếp đầu.
-      expect(ds.first.phanThuong.loai, LoaiPhanThuong.diem);
-      expect(ds.first.dat, isTrue);
-      expect(ds.first.baiDat.single.diem, 8.5);
-      expect(ds.skip(1).map((t) => t.phanThuong.moc), [7, 30]);
+      // Khôi báo cáo bảy ngày liền (có hôm bài còn dang dở — vẫn tính) → quà kem
+      // mốc 7 nợ một lần; 8,5 giữa kì Toán → quà "từ 8 trở lên" đạt.
+      expect(s.chuoi.hienTai, 7);
+      expect(ds.map((t) => t.phanThuong.moc), [7, 1, 30]);
+      expect(ds[0].phanThuong.loai, LoaiPhanThuong.chuoi);
+      expect(ds[0].soLanDat, 1);
+      expect(ds[1].phanThuong.loai, LoaiPhanThuong.diem);
+      expect(ds[1].baiDat.single.diem, 8.5);
+      expect(ds.take(2).every((t) => t.dat), isTrue);
+      expect(ds.last.dat, isFalse);
       expect(ds.every((t) => !t.phanThuong.xongHan), isTrue);
     });
 

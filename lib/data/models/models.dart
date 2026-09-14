@@ -496,7 +496,7 @@ String chuDiem(double d) {
   return s.replaceAll('.', ',');
 }
 
-/// Phần thưởng thuộc về gì: chuỗi ngày trọn bài, hay điểm bài kiểm tra.
+/// Phần thưởng thuộc về gì: chuỗi ngày có báo cáo, hay điểm bài kiểm tra.
 enum LoaiPhanThuong {
   chuoi('Chuỗi ngày'),
   diem('Điểm thi');
@@ -510,7 +510,7 @@ enum LoaiPhanThuong {
 ///
 /// Hai loại, số lần đạt đều tính từ dữ liệu kể từ [tuNgay], không lưu:
 ///
-/// - [LoaiPhanThuong.chuoi]: "7 ngày liền xong hết bài → đi ăn kem".
+/// - [LoaiPhanThuong.chuoi]: "7 ngày liền báo cáo → đi ăn kem".
 ///   [lapLai] thì cứ mỗi [moc] ngày liền lại một lần — chuỗi 15 ngày với mốc
 ///   7 là hai lần; đứt rồi nối lại thì đếm tiếp. Không lặp thì một lần duy
 ///   nhất, trao xong "treo lại" mới đếm lại.
